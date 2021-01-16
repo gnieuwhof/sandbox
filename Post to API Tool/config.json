@@ -1,0 +1,33 @@
+{
+  "ApiUrl": "",
+  "TenantID": "",
+  "ClientID": "",
+  "Scope": "",
+  "Secret": "",
+  "Controllers": [
+    {
+      "Path": "cdsa.empire",
+      "Endpoints": [
+        "Inspectie",
+        "AfspraakOpties",
+        "Onderhoudsverzoek",
+        "Onderhoudsorder",
+        "Afspraak",
+        "Onderhoudstaak",
+        "InformatieObject"
+      ]
+    },
+    {
+      "Path": "vdt.ci365",
+      "Endpoints": [
+        "EmpireNotification"
+      ]
+    }
+  ],
+  "SelectedController": "cdsa.empire",
+  "SelectedEndpoint": "AfspraakOpties",
+  "MainFrmWidth": 797,
+  "MainFrmHeight": 504,
+  "ResponseViewerFrmWidth": 869,
+  "ResponseViewerFrmHeight": 442
+}
