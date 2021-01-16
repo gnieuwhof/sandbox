@@ -1,0 +1,27 @@
+{
+  "ApiUrl": "",
+  "TenantID": "",
+  "ClientID": "",
+  "Scope": "",
+  "Secret": "",
+  "Controllers": [
+    {
+      "Path": "cdsa.empire",
+      "Endpoints": [
+        "Inspectie",
+        "AfspraakOpties",
+        "Onderhoudsverzoek",
+        "Onderhoudsorder",
+        "Afspraak",
+        "Onderhoudstaak",
+        "InformatieObject"
+      ]
+    },
+    {
+      "Path": "vdt.ci365",
+      "Endpoints": [
+        "EmpireNotification"
+      ]
+    }
+  ]
+}
