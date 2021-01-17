@@ -1,8 +1,8 @@
 {
-  "ApiUrl": "",
+  "ApiUrl": "https://",
   "TenantID": "",
   "ClientID": "",
-  "Scope": "",
+  "Scope": "https://.crm4.dynamics.com",
   "Secret": "",
   "Controllers": [
     {
@@ -26,8 +26,9 @@
   ],
   "SelectedController": "cdsa.empire",
   "SelectedEndpoint": "AfspraakOpties",
-  "MainFrmWidth": 797,
-  "MainFrmHeight": 504,
+  "MainFrmWidth": 679,
+  "MainFrmHeight": 583,
   "ResponseViewerFrmWidth": 869,
-  "ResponseViewerFrmHeight": 442
+  "ResponseViewerFrmHeight": 536,
+  "FontSize": 9
 }

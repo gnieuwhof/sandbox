@@ -4,6 +4,7 @@
     using Post_to_API_Tool.Configuration;
     using System;
     using System.Collections.Generic;
+    using System.Drawing;
     using System.IO;
     using System.Linq;
     using System.Net;
@@ -21,6 +22,7 @@
 
         private readonly HttpClient httpClient;
         private readonly string configFilePath;
+
         private Config config;
         private AuthenticationHeaderValue tokenHeader;
         private DateTime tokenAquiredTime;
@@ -34,46 +36,47 @@
 
             this.EnableControls(false);
 
-            try
+            bool cont = this.LoadConfigFile(this.configFilePath);
+            if (!cont)
             {
-                bool cont = this.LoadConfigFile(configFilePath);
-                if (!cont)
+                return;
+            }
+
+            if (config != null)
+            {
+                if (this.config.MainFrmWidth >= this.MinimumSize.Width)
                 {
-                    this.Close();
+                    this.Width = this.config.MainFrmWidth;
+                }
+                if (this.config.MainFrmHeight >= this.MinimumSize.Height)
+                {
+                    this.Height = this.config.MainFrmHeight;
                 }
 
-                if (config != null)
+                IEnumerable<string> controllers =
+                    this.config.Controllers.Select(c => c.Path);
+                this.ControllerCmb.Items.AddRange(controllers.ToArray());
+                this.ControllerCmb.SelectedIndex = 0;
+
+                if (this.ControllerCmb.Items.Contains(this.config.SelectedController ?? ""))
                 {
-                    if (this.config.MainFrmWidth >= this.MinimumSize.Width)
-                    {
-                        this.Width = this.config.MainFrmWidth;
-                    }
-                    if (this.config.MainFrmHeight >= this.MinimumSize.Height)
-                    {
-                        this.Height = this.config.MainFrmHeight;
-                    }
-
-                    var controllers = config.Controllers.Select(c => c.Path);
-                    this.ControllerCmb.Items.AddRange(controllers.ToArray());
-                    this.ControllerCmb.SelectedIndex = 0;
-
-                    if (this.ControllerCmb.Items.Contains(this.config.SelectedController ?? ""))
-                    {
-                        this.ControllerCmb.SelectedItem = this.config.SelectedController;
-                    }
-                    if(this.EndpointCmb.Items.Contains(this.config.SelectedEndpoint ?? ""))
-                    {
-                        this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
-                    }
+                    this.ControllerCmb.SelectedItem = this.config.SelectedController;
                 }
-                this.httpClient = new HttpClient();
+                if (this.EndpointCmb.Items.Contains(this.config.SelectedEndpoint ?? ""))
+                {
+                    this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
+                }
 
-                _ = this.UpdateTokenHeader();
+                if(this.config.FontSize > 0)
+                {
+                    this.PayloadTxt.Font = new Font(
+                        this.PayloadTxt.Font.FontFamily, this.config.FontSize);
+                }
             }
-            finally 
-            {
-                this.EnableControls(true);
-            }
+
+            this.httpClient = new HttpClient();
+
+            _ = this.UpdateTokenHeader(true);
         }
 
         private bool LoadConfigFile(string path)
@@ -89,8 +92,11 @@
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Deserializing config failed {ex.Message}",
-                    "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string message = "Deserializing config failed." +
+                    Environment.NewLine + Environment.NewLine + ex.Message;
+
+                MessageBox.Show(message, Program.PROGRAM_TITLE,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
             return false;
@@ -131,15 +137,17 @@
                 }
 
                 string path = $"{this.ControllerCmb.SelectedItem}/{this.EndpointCmb.SelectedItem}";
-                var notificationUrl = new Uri(new Uri(this.config.ApiUrl), path);
+                var uri = new Uri(new Uri(this.config.ApiUrl), path);
                 string message = txt;
 
                 if (DateTime.Now.Subtract(this.tokenAquiredTime) > TimeSpan.FromMinutes(42))
                 {
-                    await this.UpdateTokenHeader();
+                    await this.UpdateTokenHeader(false);
                 }
 
-                HttpResponseMessage response = await Post(message, notificationUrl, this.tokenHeader);
+                this.SetStatus($"Calling: {uri}");
+                HttpResponseMessage response = await Post(message, uri, this.tokenHeader);
+                this.SetStatus($"Response received from: {uri}");
 
                 this.StatusCodeLbl.Text = $"{STATUS_CODE_PREFIX} {response.StatusCode}";
 
@@ -163,7 +171,8 @@
         {
             string selectedControler = (string)this.ControllerCmb.SelectedItem;
 
-            Controller controller = this.config.Controllers.FirstOrDefault(c => c.Path == selectedControler);
+            Controller controller = this.config.Controllers
+                .FirstOrDefault(c => c.Path == selectedControler);
 
             if (controller != null)
             {
@@ -173,21 +182,31 @@
             }
         }
 
-        private Task UpdateTokenHeader()
+        private async Task UpdateTokenHeader(bool setControlsEnabled)
         {
+            if (config == null)
+            {
+                return;
+            }
+
             string clientId = this.config.ClientID;
             string secret = this.config.Secret;
             string tenantId = this.config.TenantID;
             string scope = $"{this.config.Scope}/.default";
 
-            return this.GetAuthenticationHeader(
+            await this.GetAuthenticationHeader(
                 clientId, secret, tenantId, scope);
+
+            if(setControlsEnabled)
+            {
+                this.EnableControls(true);
+            }
         }
 
         private async Task GetAuthenticationHeader(
             string clientId, string secret, string tenantId, string scope)
         {
-            this.ToolStripStatusLabel.Text = "Aquiring token...";
+            this.SetStatus("Aquiring token...");
             string loginUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
 
             string postData = $"client_id={clientId}" +
@@ -214,7 +233,12 @@
 
             this.tokenHeader = header;
             this.tokenAquiredTime = DateTime.Now;
-            this.ToolStripStatusLabel.Text = $"{this.tokenAquiredTime:HH:mm:ss} Token aquired";
+            this.SetStatus("Token aquired");
+        }
+
+        private void SetStatus(string status)
+        {
+            this.ToolStripStatusLabel.Text = $"[{DateTime.Now:HH:mm:ss}] {status}";
         }
 
         private async Task<HttpResponseMessage> Post(string json,
@@ -231,20 +255,22 @@
 
         private void MainFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            this.config.SelectedController = $"{this.ControllerCmb.SelectedItem}";
-            this.config.SelectedEndpoint = $"{this.EndpointCmb.SelectedItem}";
-            this.config.MainFrmWidth = this.Width;
-            this.config.MainFrmHeight = this.Height;
+            if (this.config != null)
+            {
+                this.config.SelectedController = $"{this.ControllerCmb.SelectedItem}";
+                this.config.SelectedEndpoint = $"{this.EndpointCmb.SelectedItem}";
 
-            this.SaveConfig();
-        }
+                if (this.WindowState != FormWindowState.Maximized)
+                {
+                    this.config.MainFrmWidth = this.Width;
+                    this.config.MainFrmHeight = this.Height;
+                }
 
-        private void SaveConfig()
-        {
-            string json = JsonConvert.SerializeObject(
-                this.config, Formatting.Indented);
+                string json = JsonConvert.SerializeObject(
+                    this.config, Formatting.Indented);
 
-            File.WriteAllText(this.configFilePath, json);
+                File.WriteAllText(this.configFilePath, json);
+            }
         }
     }
 }

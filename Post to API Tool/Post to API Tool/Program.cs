@@ -8,6 +8,9 @@
 
     static class Program
     {
+        public const string PROGRAM_TITLE = "Post to API Tool";
+
+
         /// <summary>
         /// The main entry point for the application.
         /// </summary>
@@ -16,14 +19,21 @@
         {
             if (args.Length == 0)
             {
-                MessageBox.Show("No config arg found",
-                    "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                string message = "Program cannot start: No config argument found." +
+                    Environment.NewLine +
+                    "Pass in the path of the config file as command line argument.";
+
+                MessageBox.Show(message, PROGRAM_TITLE,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
                 return;
             }
 
+            string configFilePath = args[0];
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainFrm(args[0]));
+            Application.Run(new MainFrm(configFilePath));
         }
     }
 }

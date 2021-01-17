@@ -37,9 +37,9 @@ namespace Post_to_API_Tool
             // 
             this.CloseBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CloseBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CloseBtn.Location = new System.Drawing.Point(720, 561);
+            this.CloseBtn.Location = new System.Drawing.Point(650, 556);
             this.CloseBtn.Name = "CloseBtn";
-            this.CloseBtn.Size = new System.Drawing.Size(100, 30);
+            this.CloseBtn.Size = new System.Drawing.Size(150, 35);
             this.CloseBtn.TabIndex = 0;
             this.CloseBtn.Text = "&Close";
             this.CloseBtn.UseVisualStyleBackColor = true;
@@ -56,7 +56,7 @@ namespace Post_to_API_Tool
             this.ResponseTxt.Name = "ResponseTxt";
             this.ResponseTxt.ReadOnly = true;
             this.ResponseTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ResponseTxt.Size = new System.Drawing.Size(808, 543);
+            this.ResponseTxt.Size = new System.Drawing.Size(808, 538);
             this.ResponseTxt.TabIndex = 1;
             // 
             // ResponseViewerFrm
@@ -66,11 +66,12 @@ namespace Post_to_API_Tool
             this.ClientSize = new System.Drawing.Size(832, 603);
             this.Controls.Add(this.ResponseTxt);
             this.Controls.Add(this.CloseBtn);
+            this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(500, 300);
             this.Name = "ResponseViewerFrm";
             this.Text = "Response Viewer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ResponseViewerFrm_FormClosing);
-            this.Resize += new System.EventHandler(this.ResponseViewerFrm_Resize);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ResponseViewerFrm_KeyDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
