@@ -24,18 +24,9 @@
 
             this.ApplyConfig();
 
-            try
-            {
-                object obj = JsonConvert.DeserializeObject(response);
-                string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-                this.TextTxt.Text = json;
-            }
-            catch
-            {
-                this.TextTxt.Text = response;
-            }
+            string txt = JsonHelper.FormatIfJson(response);
 
-            this.CloseBtn.Focus();
+            this.TextTxt.Text = txt;
         }
 
         private void ApplyConfig()

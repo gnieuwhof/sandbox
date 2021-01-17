@@ -40,7 +40,7 @@ namespace Post_to_API_Tool
             this.CloseBtn.Location = new System.Drawing.Point(650, 556);
             this.CloseBtn.Name = "CloseBtn";
             this.CloseBtn.Size = new System.Drawing.Size(150, 35);
-            this.CloseBtn.TabIndex = 1;
+            this.CloseBtn.TabIndex = 0;
             this.CloseBtn.Text = "&Close";
             this.CloseBtn.UseVisualStyleBackColor = true;
             this.CloseBtn.Click += new System.EventHandler(this.CloseBtn_Click);
@@ -57,7 +57,7 @@ namespace Post_to_API_Tool
             this.TextTxt.ReadOnly = true;
             this.TextTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.TextTxt.Size = new System.Drawing.Size(808, 538);
-            this.TextTxt.TabIndex = 0;
+            this.TextTxt.TabIndex = 1;
             this.TextTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ResponseTxt_KeyDown);
             this.TextTxt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ResponseTxt_KeyUp);
             // 

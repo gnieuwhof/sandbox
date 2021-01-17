@@ -134,6 +134,8 @@
 
                 string txt = this.PreparePayload(this.PayloadTxt.Text);
 
+                txt = JsonHelper.FormatIfJson(txt);
+
                 this.PayloadTxt.Text = txt;
 
                 string path = $"{this.ControllerCmb.SelectedItem}/{this.EndpointCmb.SelectedItem}";
