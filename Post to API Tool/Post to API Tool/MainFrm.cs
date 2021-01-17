@@ -36,47 +36,54 @@
 
             this.EnableControls(false);
 
-            bool cont = this.LoadConfigFile(this.configFilePath);
-            if (!cont)
+            bool validConfig = this.LoadConfigFile(this.configFilePath);
+            if (!validConfig)
             {
                 return;
             }
 
             if (config != null)
             {
-                if (this.config.MainFrmWidth >= this.MinimumSize.Width)
-                {
-                    this.Width = this.config.MainFrmWidth;
-                }
-                if (this.config.MainFrmHeight >= this.MinimumSize.Height)
-                {
-                    this.Height = this.config.MainFrmHeight;
-                }
+                this.ApplyConfig();
 
-                IEnumerable<string> controllers =
-                    this.config.Controllers.Select(c => c.Path);
-                this.ControllerCmb.Items.AddRange(controllers.ToArray());
-                this.ControllerCmb.SelectedIndex = 0;
+                this.httpClient = new HttpClient();
 
-                if (this.ControllerCmb.Items.Contains(this.config.SelectedController ?? ""))
-                {
-                    this.ControllerCmb.SelectedItem = this.config.SelectedController;
-                }
-                if (this.EndpointCmb.Items.Contains(this.config.SelectedEndpoint ?? ""))
-                {
-                    this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
-                }
+                _ = this.UpdateTokenHeaderIfNecessary(true);
+            }
+        }
 
-                if(this.config.FontSize > 0)
-                {
-                    this.PayloadTxt.Font = new Font(
-                        this.PayloadTxt.Font.FontFamily, this.config.FontSize);
-                }
+        private void ApplyConfig()
+        {
+            if (this.config.MainFrmWidth >= this.MinimumSize.Width)
+            {
+                this.Width = this.config.MainFrmWidth;
             }
 
-            this.httpClient = new HttpClient();
+            if (this.config.MainFrmHeight >= this.MinimumSize.Height)
+            {
+                this.Height = this.config.MainFrmHeight;
+            }
 
-            _ = this.UpdateTokenHeader(true);
+            IEnumerable<string> controllers =
+                this.config.Controllers.Select(c => c.Path);
+            this.ControllerCmb.Items.AddRange(controllers.ToArray());
+            this.ControllerCmb.SelectedIndex = 0;
+
+            if (this.ControllerCmb.Items.Contains(this.config.SelectedController ?? ""))
+            {
+                this.ControllerCmb.SelectedItem = this.config.SelectedController;
+            }
+
+            if (this.EndpointCmb.Items.Contains(this.config.SelectedEndpoint ?? ""))
+            {
+                this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
+            }
+
+            if (this.config.FontSize > 0)
+            {
+                this.PayloadTxt.Font = new Font(
+                    this.PayloadTxt.Font.FontFamily, this.config.FontSize);
+            }
         }
 
         private bool LoadConfigFile(string path)
@@ -85,8 +92,9 @@
             {
                 using (StreamReader file = File.OpenText(path))
                 {
-                    JsonSerializer serializer = new JsonSerializer();
+                    var serializer = new JsonSerializer();
                     this.config = (Config)serializer.Deserialize(file, typeof(Config));
+
                     return true;
                 }
             }
@@ -112,38 +120,22 @@
 
         private async void CallAPIBtn_Click(object sender, EventArgs e)
         {
-            string content;
+            string content = string.Empty;
+            Uri uri = null;
             try
             {
                 this.EnableControls(false);
                 this.StatusCodeLbl.Text = STATUS_CODE_PREFIX;
 
+                string txt = this.PreparePayload(this.PayloadTxt.Text);
 
-                string txt = this.PayloadTxt.Text;
-
-                int start = txt.IndexOf(BEGIN_PAYLOAD_MARK);
-                int end = txt.IndexOf(END_PAYLOAD_MARK);
-
-                if ((start != -1) && (end != -1) && (start < end))
-                {
-                    int from = start + BEGIN_PAYLOAD_MARK.Length;
-                    int length = end - from;
-
-                    txt = txt.Substring(from, length);
-
-                    txt = txt.Trim('\n', '\r');
-
-                    this.PayloadTxt.Text = txt;
-                }
+                this.PayloadTxt.Text = txt;
 
                 string path = $"{this.ControllerCmb.SelectedItem}/{this.EndpointCmb.SelectedItem}";
-                var uri = new Uri(new Uri(this.config.ApiUrl), path);
+                uri = new Uri(new Uri(this.config.ApiUrl), path);
                 string message = txt;
 
-                if (DateTime.Now.Subtract(this.tokenAquiredTime) > TimeSpan.FromMinutes(42))
-                {
-                    await this.UpdateTokenHeader(false);
-                }
+                await this.UpdateTokenHeaderIfNecessary(false);
 
                 this.SetStatus($"Calling: {uri}");
                 HttpResponseMessage response = await Post(message, uri, this.tokenHeader);
@@ -153,6 +145,17 @@
 
                 content = await response.Content.ReadAsStringAsync();
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show($"An Exception was thrown while calling {uri}.", Program.PROGRAM_TITLE,
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                using (var pop = new TextViewerFrm("Exception Viewer", this.config, ex.ToString()))
+                {
+                    pop.ShowDialog();
+                }
+                return;
+            }
             finally
             {
                 this.EnableControls(true);
@@ -160,11 +163,29 @@
 
             if (!string.IsNullOrEmpty(content))
             {
-                using (var pop = new ResponseViewerFrm(this.config, content))
+                using (var pop = new TextViewerFrm("Response Viewer", this.config, content))
                 {
                     pop.ShowDialog();
                 }
             }
+        }
+
+        private string PreparePayload(string payload)
+        {
+            int start = payload.IndexOf(BEGIN_PAYLOAD_MARK);
+            int end = payload.IndexOf(END_PAYLOAD_MARK);
+
+            if ((start != -1) && (end != -1) && (start < end))
+            {
+                int from = start + BEGIN_PAYLOAD_MARK.Length;
+                int length = end - from;
+
+                payload = payload.Substring(from, length);
+
+                payload = payload.Trim('\n', '\r');
+            }
+
+            return payload;
         }
 
         private void ControllerCmb_SelectedIndexChanged(object sender, EventArgs e)
@@ -182,20 +203,26 @@
             }
         }
 
-        private async Task UpdateTokenHeader(bool setControlsEnabled)
+        private async Task UpdateTokenHeaderIfNecessary(bool setControlsEnabled)
         {
-            if (config == null)
+            bool renewToken = true;
+
+            if(this.tokenAquiredTime != default)
             {
-                return;
+                TimeSpan age = DateTime.Now.Subtract(this.tokenAquiredTime);
+                renewToken = (age > TimeSpan.FromMinutes(42));
             }
 
-            string clientId = this.config.ClientID;
-            string secret = this.config.Secret;
-            string tenantId = this.config.TenantID;
-            string scope = $"{this.config.Scope}/.default";
+            if ((config != null) && renewToken)
+            {
+                string clientId = this.config.ClientID;
+                string secret = this.config.Secret;
+                string tenantId = this.config.TenantID;
+                string scope = $"{this.config.Scope}/.default";
 
-            await this.GetAuthenticationHeader(
-                clientId, secret, tenantId, scope);
+                await this.GetAuthenticationHeader(
+                    clientId, secret, tenantId, scope);
+            }
 
             if(setControlsEnabled)
             {

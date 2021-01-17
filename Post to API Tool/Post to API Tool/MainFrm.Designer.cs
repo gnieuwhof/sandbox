@@ -146,6 +146,7 @@ namespace Post_to_API_Tool
             this.Controls.Add(this.StatusStrip);
             this.MinimumSize = new System.Drawing.Size(700, 300);
             this.Name = "MainFrm";
+            this.ShowIcon = false;
             this.Text = "Post to API Tool";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainFrm_FormClosing);
             this.StatusStrip.ResumeLayout(false);

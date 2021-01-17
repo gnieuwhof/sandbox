@@ -5,18 +5,20 @@
     using System.Drawing;
     using System.Windows.Forms;
 
-    public partial class ResponseViewerFrm : Form
+    public partial class TextViewerFrm : Form
     {
         private readonly Config config;
 
 
-        public ResponseViewerFrm(Config config, string response)
+        public TextViewerFrm(string title, Config config, string response)
         {
             this.config = config;
 
             InitializeComponent();
 
-            if(this.config.ResponseViewerFrmWidth >= this.MinimumSize.Width)
+            this.Text = title;
+
+            if (this.config.ResponseViewerFrmWidth >= this.MinimumSize.Width)
             {
                 this.Width = this.config.ResponseViewerFrmWidth;
             }
@@ -59,7 +61,7 @@
 
         private void ResponseViewerFrm_KeyDown(object sender, KeyEventArgs e)
         {
-            if(e.KeyCode == Keys.Escape)
+            if (e.KeyCode == Keys.Escape)
             {
                 this.Close();
             }

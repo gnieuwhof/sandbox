@@ -1,7 +1,7 @@
 ﻿
 namespace Post_to_API_Tool
 {
-    partial class ResponseViewerFrm
+    partial class TextViewerFrm
     {
         /// <summary>
         /// Required designer variable.
@@ -59,7 +59,7 @@ namespace Post_to_API_Tool
             this.ResponseTxt.Size = new System.Drawing.Size(808, 538);
             this.ResponseTxt.TabIndex = 1;
             // 
-            // ResponseViewerFrm
+            // TextViewerFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -68,8 +68,9 @@ namespace Post_to_API_Tool
             this.Controls.Add(this.CloseBtn);
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(500, 300);
-            this.Name = "ResponseViewerFrm";
-            this.Text = "Response Viewer";
+            this.Name = "TextViewerFrm";
+            this.ShowIcon = false;
+            this.Text = "Post to API Tool";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ResponseViewerFrm_FormClosing);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ResponseViewerFrm_KeyDown);
             this.ResumeLayout(false);
