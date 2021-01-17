@@ -27,6 +27,8 @@
         private Config config;
         private AuthenticationHeaderValue tokenHeader;
         private DateTime tokenAquiredTime;
+        private bool keyDown;
+        private Keys pressedKey;
 
 
         public MainFrm(string configFilePath)
@@ -34,6 +36,8 @@
             this.configFilePath = configFilePath;
 
             InitializeComponent();
+
+            this.PayloadTxt.MouseWheel += PayloadTxt_MouseWheel;
 
             this.EnableControls(false);
 
@@ -82,8 +86,7 @@
 
             if (this.config.FontSize > 0)
             {
-                this.PayloadTxt.Font = new Font(
-                    this.PayloadTxt.Font.FontFamily, this.config.FontSize);
+                this.SetFontSize(this.config.FontSize);
             }
         }
 
@@ -310,6 +313,47 @@
             {
                 pop.ShowDialog();
             }
+        }
+
+        private void PayloadTxt_KeyDown(object sender, KeyEventArgs e)
+        {
+            this.keyDown = true;
+
+            this.pressedKey = e.KeyCode;
+        }
+
+        private void PayloadTxt_KeyUp(object sender, KeyEventArgs e)
+        {
+            this.keyDown = false;
+        }
+
+        private void PayloadTxt_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if(this.keyDown && (this.pressedKey == Keys.ControlKey))
+            {
+                if(e.Delta < 0)
+                {
+                    if(this.config.FontSize > 1)
+                    {
+                        this.SetFontSize(--this.config.FontSize);
+                    }
+                }
+                else
+                {
+                    if (this.config.FontSize < 25)
+                    {
+                        this.SetFontSize(++this.config.FontSize);
+                    }
+                }
+            }
+        }
+
+        private void SetFontSize(int size)
+        {
+            this.config.FontSize = size;
+
+            this.PayloadTxt.Font = new Font(
+                this.PayloadTxt.Font.FontFamily, this.config.FontSize);
         }
     }
 }

@@ -70,6 +70,8 @@ namespace Post_to_API_Tool
             this.PayloadTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.PayloadTxt.Size = new System.Drawing.Size(758, 316);
             this.PayloadTxt.TabIndex = 1;
+            this.PayloadTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyDown);
+            this.PayloadTxt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyUp);
             // 
             // ControllerCmb
             // 
@@ -140,9 +142,9 @@ namespace Post_to_API_Tool
             this.TokenAquireTimeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TokenAquireTimeLbl.Location = new System.Drawing.Point(12, 373);
             this.TokenAquireTimeLbl.Name = "TokenAquireTimeLbl";
-            this.TokenAquireTimeLbl.Size = new System.Drawing.Size(221, 20);
+            this.TokenAquireTimeLbl.Size = new System.Drawing.Size(230, 20);
             this.TokenAquireTimeLbl.TabIndex = 8;
-            this.TokenAquireTimeLbl.Text = "Token aquire time:  00:00:00";
+            this.TokenAquireTimeLbl.Text = "Token aquired time:  00:00:00";
             // 
             // ShowTokenLbl
             // 
@@ -151,7 +153,7 @@ namespace Post_to_API_Tool
             this.ShowTokenLbl.Cursor = System.Windows.Forms.Cursors.Hand;
             this.ShowTokenLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ShowTokenLbl.ForeColor = System.Drawing.Color.Blue;
-            this.ShowTokenLbl.Location = new System.Drawing.Point(279, 373);
+            this.ShowTokenLbl.Location = new System.Drawing.Point(289, 372);
             this.ShowTokenLbl.Name = "ShowTokenLbl";
             this.ShowTokenLbl.Size = new System.Drawing.Size(93, 20);
             this.ShowTokenLbl.TabIndex = 9;
