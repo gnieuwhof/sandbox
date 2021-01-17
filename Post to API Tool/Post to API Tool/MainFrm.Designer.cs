@@ -30,6 +30,7 @@ namespace Post_to_API_Tool
         private void InitializeComponent()
         {
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
+            this.ToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.PayloadTxt = new System.Windows.Forms.TextBox();
             this.ControllerCmb = new System.Windows.Forms.ComboBox();
             this.EndpointCmb = new System.Windows.Forms.ComboBox();
@@ -37,7 +38,8 @@ namespace Post_to_API_Tool
             this.EndpointLbl = new System.Windows.Forms.Label();
             this.CallAPIBtn = new System.Windows.Forms.Button();
             this.StatusCodeLbl = new System.Windows.Forms.Label();
-            this.ToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TokenAquireTimeLbl = new System.Windows.Forms.Label();
+            this.ShowTokenLbl = new System.Windows.Forms.Label();
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -51,6 +53,11 @@ namespace Post_to_API_Tool
             this.StatusStrip.Size = new System.Drawing.Size(782, 22);
             this.StatusStrip.TabIndex = 0;
             this.StatusStrip.Text = "StatusStrip";
+            // 
+            // ToolStripStatusLabel
+            // 
+            this.ToolStripStatusLabel.Name = "ToolStripStatusLabel";
+            this.ToolStripStatusLabel.Size = new System.Drawing.Size(0, 16);
             // 
             // PayloadTxt
             // 
@@ -126,16 +133,38 @@ namespace Post_to_API_Tool
             this.StatusCodeLbl.TabIndex = 7;
             this.StatusCodeLbl.Text = "Status Code:";
             // 
-            // ToolStripStatusLabel
+            // TokenAquireTimeLbl
             // 
-            this.ToolStripStatusLabel.Name = "ToolStripStatusLabel";
-            this.ToolStripStatusLabel.Size = new System.Drawing.Size(0, 18);
+            this.TokenAquireTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.TokenAquireTimeLbl.AutoSize = true;
+            this.TokenAquireTimeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TokenAquireTimeLbl.Location = new System.Drawing.Point(12, 373);
+            this.TokenAquireTimeLbl.Name = "TokenAquireTimeLbl";
+            this.TokenAquireTimeLbl.Size = new System.Drawing.Size(221, 20);
+            this.TokenAquireTimeLbl.TabIndex = 8;
+            this.TokenAquireTimeLbl.Text = "Token aquire time:  00:00:00";
+            // 
+            // ShowTokenLbl
+            // 
+            this.ShowTokenLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowTokenLbl.AutoSize = true;
+            this.ShowTokenLbl.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ShowTokenLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShowTokenLbl.ForeColor = System.Drawing.Color.Blue;
+            this.ShowTokenLbl.Location = new System.Drawing.Point(279, 373);
+            this.ShowTokenLbl.Name = "ShowTokenLbl";
+            this.ShowTokenLbl.Size = new System.Drawing.Size(93, 20);
+            this.ShowTokenLbl.TabIndex = 9;
+            this.ShowTokenLbl.Text = "show token";
+            this.ShowTokenLbl.Click += new System.EventHandler(this.ShowTokenLbl_Click);
             // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 453);
+            this.Controls.Add(this.ShowTokenLbl);
+            this.Controls.Add(this.TokenAquireTimeLbl);
             this.Controls.Add(this.StatusCodeLbl);
             this.Controls.Add(this.CallAPIBtn);
             this.Controls.Add(this.EndpointLbl);
@@ -167,6 +196,8 @@ namespace Post_to_API_Tool
         private System.Windows.Forms.Button CallAPIBtn;
         private System.Windows.Forms.Label StatusCodeLbl;
         private System.Windows.Forms.ToolStripStatusLabel ToolStripStatusLabel;
+        private System.Windows.Forms.Label TokenAquireTimeLbl;
+        private System.Windows.Forms.Label ShowTokenLbl;
     }
 }
 

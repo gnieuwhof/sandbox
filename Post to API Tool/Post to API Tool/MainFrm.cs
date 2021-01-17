@@ -19,6 +19,7 @@
         private const string BEGIN_PAYLOAD_MARK = "--BEGIN_PAYLOAD";
         private const string END_PAYLOAD_MARK = "--END_PAYLOAD";
         private const string STATUS_CODE_PREFIX = "Status Code:";
+        private const string TOKEN_AQUIRED_TIME_PREFIX = "Token aquired time:";
 
         private readonly HttpClient httpClient;
         private readonly string configFilePath;
@@ -261,6 +262,7 @@
             this.tokenHeader = header;
             this.tokenAquiredTime = DateTime.Now;
             this.SetStatus("Token aquired");
+            this.TokenAquireTimeLbl.Text = $"{TOKEN_AQUIRED_TIME_PREFIX} {DateTime.Now:HH:mm:ss}";
         }
 
         private void SetStatus(string status)
@@ -297,6 +299,16 @@
                     this.config, Formatting.Indented);
 
                 File.WriteAllText(this.configFilePath, json);
+            }
+        }
+
+        private void ShowTokenLbl_Click(object sender, EventArgs e)
+        {
+            string token = this.tokenHeader.ToString();
+
+            using (var pop = new TextViewerFrm("Token Viewer", this.config, token))
+            {
+                pop.ShowDialog();
             }
         }
     }
