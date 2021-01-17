@@ -19,14 +19,14 @@
         private const string BEGIN_PAYLOAD_MARK = "--BEGIN_PAYLOAD";
         private const string END_PAYLOAD_MARK = "--END_PAYLOAD";
         private const string STATUS_CODE_PREFIX = "Status Code:";
-        private const string TOKEN_AQUIRED_TIME_PREFIX = "Token aquired time:";
+        private const string TOKEN_ACQUIRED_TIME_PREFIX = "Token acquired time:";
 
         private readonly HttpClient httpClient;
         private readonly string configFilePath;
 
         private Config config;
         private AuthenticationHeaderValue tokenHeader;
-        private DateTime tokenAquiredTime;
+        private DateTime tokenAcquiredTime;
         private bool keyDown;
         private Keys pressedKey;
 
@@ -215,9 +215,9 @@
         {
             bool renewToken = true;
 
-            if (this.tokenAquiredTime != default)
+            if (this.tokenAcquiredTime != default)
             {
-                TimeSpan age = DateTime.Now.Subtract(this.tokenAquiredTime);
+                TimeSpan age = DateTime.Now.Subtract(this.tokenAcquiredTime);
                 renewToken = (age > TimeSpan.FromMinutes(42));
             }
 
@@ -228,8 +228,23 @@
                 string tenantId = this.config.TenantID;
                 string scope = $"{this.config.Scope}/.default";
 
+                try
+                {
                 await this.GetAuthenticationHeader(
                     clientId, secret, tenantId, scope);
+                }
+                catch(Exception ex)
+                {
+                    MessageBox.Show($"An Exception was thrown while acquiring the token.", Program.PROGRAM_TITLE,
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+                    using (var pop = new TextViewerFrm("Exception Viewer", this.config, ex.ToString()))
+                    {
+                        pop.ShowDialog();
+
+                        return;
+                    }
+                }
             }
 
             if (setControlsEnabled)
@@ -246,7 +261,7 @@
         private async Task GetAuthenticationHeader(
             string clientId, string secret, string tenantId, string scope)
         {
-            this.SetStatus("Aquiring token...");
+            this.SetStatus("Acquiring token...");
             string loginUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
 
             string postData = $"client_id={clientId}" +
@@ -272,9 +287,9 @@
             var header = new AuthenticationHeaderValue("Bearer", token);
 
             this.tokenHeader = header;
-            this.tokenAquiredTime = DateTime.Now;
-            this.SetStatus("Token aquired");
-            this.TokenAquireTimeLbl.Text = $"{TOKEN_AQUIRED_TIME_PREFIX} {DateTime.Now:HH:mm:ss}";
+            this.tokenAcquiredTime = DateTime.Now;
+            this.SetStatus("Token acquired");
+            this.TokenAcquireTimeLbl.Text = $"{TOKEN_ACQUIRED_TIME_PREFIX} {DateTime.Now:HH:mm:ss}";
         }
 
         private void SetStatus(string status)
@@ -316,11 +331,14 @@
 
         private void ShowTokenLbl_Click(object sender, EventArgs e)
         {
-            string token = this.tokenHeader.ToString();
-
-            using (var pop = new TextViewerFrm("Token Viewer", this.config, token))
+            if (this.tokenHeader != null)
             {
-                pop.ShowDialog();
+                string token = this.tokenHeader.ToString();
+
+                using (var pop = new TextViewerFrm("Token Viewer", this.config, token))
+                {
+                    pop.ShowDialog();
+                }
             }
         }
 

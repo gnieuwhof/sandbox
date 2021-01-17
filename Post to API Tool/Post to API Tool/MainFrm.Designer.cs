@@ -38,7 +38,7 @@ namespace Post_to_API_Tool
             this.EndpointLbl = new System.Windows.Forms.Label();
             this.CallAPIBtn = new System.Windows.Forms.Button();
             this.StatusCodeLbl = new System.Windows.Forms.Label();
-            this.TokenAquireTimeLbl = new System.Windows.Forms.Label();
+            this.TokenAcquireTimeLbl = new System.Windows.Forms.Label();
             this.ShowTokenLbl = new System.Windows.Forms.Label();
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
@@ -137,14 +137,14 @@ namespace Post_to_API_Tool
             // 
             // TokenAquireTimeLbl
             // 
-            this.TokenAquireTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.TokenAquireTimeLbl.AutoSize = true;
-            this.TokenAquireTimeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.TokenAquireTimeLbl.Location = new System.Drawing.Point(12, 373);
-            this.TokenAquireTimeLbl.Name = "TokenAquireTimeLbl";
-            this.TokenAquireTimeLbl.Size = new System.Drawing.Size(230, 20);
-            this.TokenAquireTimeLbl.TabIndex = 5;
-            this.TokenAquireTimeLbl.Text = "Token aquired time:  00:00:00";
+            this.TokenAcquireTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.TokenAcquireTimeLbl.AutoSize = true;
+            this.TokenAcquireTimeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.TokenAcquireTimeLbl.Location = new System.Drawing.Point(12, 373);
+            this.TokenAcquireTimeLbl.Name = "TokenAquireTimeLbl";
+            this.TokenAcquireTimeLbl.Size = new System.Drawing.Size(230, 20);
+            this.TokenAcquireTimeLbl.TabIndex = 5;
+            this.TokenAcquireTimeLbl.Text = "Token aquired time:  00:00:00";
             // 
             // ShowTokenLbl
             // 
@@ -166,7 +166,7 @@ namespace Post_to_API_Tool
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(782, 453);
             this.Controls.Add(this.ShowTokenLbl);
-            this.Controls.Add(this.TokenAquireTimeLbl);
+            this.Controls.Add(this.TokenAcquireTimeLbl);
             this.Controls.Add(this.StatusCodeLbl);
             this.Controls.Add(this.CallAPIBtn);
             this.Controls.Add(this.EndpointLbl);
@@ -198,7 +198,7 @@ namespace Post_to_API_Tool
         private System.Windows.Forms.Button CallAPIBtn;
         private System.Windows.Forms.Label StatusCodeLbl;
         private System.Windows.Forms.ToolStripStatusLabel ToolStripStatusLabel;
-        private System.Windows.Forms.Label TokenAquireTimeLbl;
+        private System.Windows.Forms.Label TokenAcquireTimeLbl;
         private System.Windows.Forms.Label ShowTokenLbl;
     }
 }
