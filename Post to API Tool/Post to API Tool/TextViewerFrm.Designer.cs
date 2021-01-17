@@ -30,7 +30,7 @@ namespace Post_to_API_Tool
         private void InitializeComponent()
         {
             this.CloseBtn = new System.Windows.Forms.Button();
-            this.ResponseTxt = new System.Windows.Forms.TextBox();
+            this.TextTxt = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // CloseBtn
@@ -40,31 +40,33 @@ namespace Post_to_API_Tool
             this.CloseBtn.Location = new System.Drawing.Point(650, 556);
             this.CloseBtn.Name = "CloseBtn";
             this.CloseBtn.Size = new System.Drawing.Size(150, 35);
-            this.CloseBtn.TabIndex = 0;
+            this.CloseBtn.TabIndex = 1;
             this.CloseBtn.Text = "&Close";
             this.CloseBtn.UseVisualStyleBackColor = true;
             this.CloseBtn.Click += new System.EventHandler(this.CloseBtn_Click);
             // 
-            // ResponseTxt
+            // TextTxt
             // 
-            this.ResponseTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.TextTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.ResponseTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ResponseTxt.Location = new System.Drawing.Point(12, 12);
-            this.ResponseTxt.Multiline = true;
-            this.ResponseTxt.Name = "ResponseTxt";
-            this.ResponseTxt.ReadOnly = true;
-            this.ResponseTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ResponseTxt.Size = new System.Drawing.Size(808, 538);
-            this.ResponseTxt.TabIndex = 1;
+            this.TextTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TextTxt.Location = new System.Drawing.Point(12, 12);
+            this.TextTxt.Multiline = true;
+            this.TextTxt.Name = "TextTxt";
+            this.TextTxt.ReadOnly = true;
+            this.TextTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.TextTxt.Size = new System.Drawing.Size(808, 538);
+            this.TextTxt.TabIndex = 0;
+            this.TextTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ResponseTxt_KeyDown);
+            this.TextTxt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ResponseTxt_KeyUp);
             // 
             // TextViewerFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(832, 603);
-            this.Controls.Add(this.ResponseTxt);
+            this.Controls.Add(this.TextTxt);
             this.Controls.Add(this.CloseBtn);
             this.KeyPreview = true;
             this.MinimumSize = new System.Drawing.Size(500, 300);
@@ -81,6 +83,6 @@ namespace Post_to_API_Tool
         #endregion
 
         private System.Windows.Forms.Button CloseBtn;
-        private System.Windows.Forms.TextBox ResponseTxt;
+        private System.Windows.Forms.TextBox TextTxt;
     }
 }

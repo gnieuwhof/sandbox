@@ -26,6 +26,8 @@
 
         public int ResponseViewerFrmHeight { get; set; }
 
-        public int FontSize { get; set; }
+        public int MainFrmFontSize { get; set; }
+
+        public int TextViewerFrmFontSize { get; set; }
     }
 }

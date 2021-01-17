@@ -26,9 +26,10 @@
   ],
   "SelectedController": "cdsa.empire",
   "SelectedEndpoint": "AfspraakOpties",
-  "MainFrmWidth": 679,
+  "MainFrmWidth": 829,
   "MainFrmHeight": 583,
-  "ResponseViewerFrmWidth": 869,
+  "ResponseViewerFrmWidth": 535,
   "ResponseViewerFrmHeight": 536,
-  "FontSize": 9
+  "MainFrmFontSize": 8,
+  "TextViewerFrmFontSize": 10
 }

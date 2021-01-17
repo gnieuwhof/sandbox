@@ -8,6 +8,8 @@
     public partial class TextViewerFrm : Form
     {
         private readonly Config config;
+        private bool keyDown;
+        private Keys pressedKey;
 
 
         public TextViewerFrm(string title, Config config, string response)
@@ -16,8 +18,28 @@
 
             InitializeComponent();
 
+            this.TextTxt.MouseWheel += this.PayloadTxt_MouseWheel;
+
             this.Text = title;
 
+            this.ApplyConfig();
+
+            try
+            {
+                object obj = JsonConvert.DeserializeObject(response);
+                string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
+                this.TextTxt.Text = json;
+            }
+            catch
+            {
+                this.TextTxt.Text = response;
+            }
+
+            this.CloseBtn.Focus();
+        }
+
+        private void ApplyConfig()
+        {
             if (this.config.ResponseViewerFrmWidth >= this.MinimumSize.Width)
             {
                 this.Width = this.config.ResponseViewerFrmWidth;
@@ -27,21 +49,9 @@
                 this.Height = this.config.ResponseViewerFrmHeight;
             }
 
-            if (this.config.FontSize > 0)
+            if (this.config.TextViewerFrmFontSize > 0)
             {
-                this.ResponseTxt.Font = new Font(
-                    this.ResponseTxt.Font.FontFamily, this.config.FontSize);
-            }
-
-            try
-            {
-                object obj = JsonConvert.DeserializeObject(response);
-                string json = JsonConvert.SerializeObject(obj, Formatting.Indented);
-                this.ResponseTxt.Text = json;
-            }
-            catch
-            {
-                this.ResponseTxt.Text = response;
+                this.SetFontSize(this.config.TextViewerFrmFontSize);
             }
         }
 
@@ -64,6 +74,50 @@
             if (e.KeyCode == Keys.Escape)
             {
                 this.Close();
+            }
+        }
+
+        private void ResponseTxt_KeyDown(object sender, KeyEventArgs e)
+        {
+            this.keyDown = true;
+
+            this.pressedKey = e.KeyCode;
+        }
+
+        private void ResponseTxt_KeyUp(object sender, KeyEventArgs e)
+        {
+            this.keyDown = false;
+        }
+
+        private void PayloadTxt_MouseWheel(object sender, MouseEventArgs e)
+        {
+            if (this.keyDown && (this.pressedKey == Keys.ControlKey))
+            {
+                if (e.Delta < 0)
+                {
+                    if (this.config.TextViewerFrmFontSize > 1)
+                    {
+                        this.SetFontSize(--this.config.TextViewerFrmFontSize);
+                    }
+                }
+                else
+                {
+                    if (this.config.TextViewerFrmFontSize < 25)
+                    {
+                        this.SetFontSize(++this.config.TextViewerFrmFontSize);
+                    }
+                }
+            }
+        }
+
+        private void SetFontSize(int size)
+        {
+            if (size > 0)
+            {
+                this.config.TextViewerFrmFontSize = size;
+
+                this.TextTxt.Font = new Font(
+                    this.TextTxt.Font.FontFamily, this.config.TextViewerFrmFontSize);
             }
         }
     }

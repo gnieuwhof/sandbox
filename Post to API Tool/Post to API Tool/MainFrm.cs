@@ -37,7 +37,7 @@
 
             InitializeComponent();
 
-            this.PayloadTxt.MouseWheel += PayloadTxt_MouseWheel;
+            this.PayloadTxt.MouseWheel += this.PayloadTxt_MouseWheel;
 
             this.EnableControls(false);
 
@@ -53,7 +53,8 @@
 
                 this.httpClient = new HttpClient();
 
-                _ = this.UpdateTokenHeaderIfNecessary(true);
+                _ = this.UpdateTokenHeaderIfNecessary(
+                    setControlsEnabled: true, focusPayloadTxtControl: true);
             }
         }
 
@@ -84,9 +85,9 @@
                 this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
             }
 
-            if (this.config.FontSize > 0)
+            if (this.config.MainFrmFontSize > 0)
             {
-                this.SetFontSize(this.config.FontSize);
+                this.SetFontSize(this.config.MainFrmFontSize);
             }
         }
 
@@ -149,7 +150,7 @@
 
                 content = await response.Content.ReadAsStringAsync();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 MessageBox.Show($"An Exception was thrown while calling {uri}.", Program.PROGRAM_TITLE,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -207,11 +208,12 @@
             }
         }
 
-        private async Task UpdateTokenHeaderIfNecessary(bool setControlsEnabled)
+        private async Task UpdateTokenHeaderIfNecessary(
+            bool setControlsEnabled, bool focusPayloadTxtControl = false)
         {
             bool renewToken = true;
 
-            if(this.tokenAquiredTime != default)
+            if (this.tokenAquiredTime != default)
             {
                 TimeSpan age = DateTime.Now.Subtract(this.tokenAquiredTime);
                 renewToken = (age > TimeSpan.FromMinutes(42));
@@ -228,9 +230,14 @@
                     clientId, secret, tenantId, scope);
             }
 
-            if(setControlsEnabled)
+            if (setControlsEnabled)
             {
                 this.EnableControls(true);
+            }
+
+            if (focusPayloadTxtControl)
+            {
+                this.PayloadTxt.Focus();
             }
         }
 
@@ -329,20 +336,20 @@
 
         private void PayloadTxt_MouseWheel(object sender, MouseEventArgs e)
         {
-            if(this.keyDown && (this.pressedKey == Keys.ControlKey))
+            if (this.keyDown && (this.pressedKey == Keys.ControlKey))
             {
-                if(e.Delta < 0)
+                if (e.Delta < 0)
                 {
-                    if(this.config.FontSize > 1)
+                    if (this.config.MainFrmFontSize > 1)
                     {
-                        this.SetFontSize(--this.config.FontSize);
+                        this.SetFontSize(--this.config.MainFrmFontSize);
                     }
                 }
                 else
                 {
-                    if (this.config.FontSize < 25)
+                    if (this.config.MainFrmFontSize < 25)
                     {
-                        this.SetFontSize(++this.config.FontSize);
+                        this.SetFontSize(++this.config.MainFrmFontSize);
                     }
                 }
             }
@@ -350,10 +357,10 @@
 
         private void SetFontSize(int size)
         {
-            this.config.FontSize = size;
+            this.config.MainFrmFontSize = size;
 
             this.PayloadTxt.Font = new Font(
-                this.PayloadTxt.Font.FontFamily, this.config.FontSize);
+                this.PayloadTxt.Font.FontFamily, this.config.MainFrmFontSize);
         }
     }
 }

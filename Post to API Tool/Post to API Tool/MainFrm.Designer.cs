@@ -51,7 +51,7 @@ namespace Post_to_API_Tool
             this.StatusStrip.Location = new System.Drawing.Point(0, 431);
             this.StatusStrip.Name = "StatusStrip";
             this.StatusStrip.Size = new System.Drawing.Size(782, 22);
-            this.StatusStrip.TabIndex = 0;
+            this.StatusStrip.TabIndex = 9;
             this.StatusStrip.Text = "StatusStrip";
             // 
             // ToolStripStatusLabel
@@ -69,7 +69,7 @@ namespace Post_to_API_Tool
             this.PayloadTxt.Name = "PayloadTxt";
             this.PayloadTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.PayloadTxt.Size = new System.Drawing.Size(758, 316);
-            this.PayloadTxt.TabIndex = 1;
+            this.PayloadTxt.TabIndex = 4;
             this.PayloadTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyDown);
             this.PayloadTxt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyUp);
             // 
@@ -80,7 +80,7 @@ namespace Post_to_API_Tool
             this.ControllerCmb.Location = new System.Drawing.Point(115, 12);
             this.ControllerCmb.Name = "ControllerCmb";
             this.ControllerCmb.Size = new System.Drawing.Size(200, 28);
-            this.ControllerCmb.TabIndex = 2;
+            this.ControllerCmb.TabIndex = 1;
             this.ControllerCmb.SelectedIndexChanged += new System.EventHandler(this.ControllerCmb_SelectedIndexChanged);
             // 
             // EndpointCmb
@@ -99,7 +99,7 @@ namespace Post_to_API_Tool
             this.ControllerLbl.Location = new System.Drawing.Point(12, 15);
             this.ControllerLbl.Name = "ControllerLbl";
             this.ControllerLbl.Size = new System.Drawing.Size(87, 20);
-            this.ControllerLbl.TabIndex = 4;
+            this.ControllerLbl.TabIndex = 0;
             this.ControllerLbl.Text = "Controller:";
             // 
             // EndpointLbl
@@ -109,7 +109,7 @@ namespace Post_to_API_Tool
             this.EndpointLbl.Location = new System.Drawing.Point(331, 15);
             this.EndpointLbl.Name = "EndpointLbl";
             this.EndpointLbl.Size = new System.Drawing.Size(79, 20);
-            this.EndpointLbl.TabIndex = 5;
+            this.EndpointLbl.TabIndex = 2;
             this.EndpointLbl.Text = "Endpoint:";
             // 
             // CallAPIBtn
@@ -119,7 +119,7 @@ namespace Post_to_API_Tool
             this.CallAPIBtn.Location = new System.Drawing.Point(620, 378);
             this.CallAPIBtn.Name = "CallAPIBtn";
             this.CallAPIBtn.Size = new System.Drawing.Size(150, 40);
-            this.CallAPIBtn.TabIndex = 6;
+            this.CallAPIBtn.TabIndex = 8;
             this.CallAPIBtn.Text = "&Call API...";
             this.CallAPIBtn.UseVisualStyleBackColor = true;
             this.CallAPIBtn.Click += new System.EventHandler(this.CallAPIBtn_Click);
@@ -143,7 +143,7 @@ namespace Post_to_API_Tool
             this.TokenAquireTimeLbl.Location = new System.Drawing.Point(12, 373);
             this.TokenAquireTimeLbl.Name = "TokenAquireTimeLbl";
             this.TokenAquireTimeLbl.Size = new System.Drawing.Size(230, 20);
-            this.TokenAquireTimeLbl.TabIndex = 8;
+            this.TokenAquireTimeLbl.TabIndex = 5;
             this.TokenAquireTimeLbl.Text = "Token aquired time:  00:00:00";
             // 
             // ShowTokenLbl
@@ -156,7 +156,7 @@ namespace Post_to_API_Tool
             this.ShowTokenLbl.Location = new System.Drawing.Point(289, 372);
             this.ShowTokenLbl.Name = "ShowTokenLbl";
             this.ShowTokenLbl.Size = new System.Drawing.Size(93, 20);
-            this.ShowTokenLbl.TabIndex = 9;
+            this.ShowTokenLbl.TabIndex = 6;
             this.ShowTokenLbl.Text = "show token";
             this.ShowTokenLbl.Click += new System.EventHandler(this.ShowTokenLbl_Click);
             // 
