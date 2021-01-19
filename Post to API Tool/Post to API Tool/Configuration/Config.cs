@@ -2,7 +2,7 @@
 {
     public class Config
     {
-        public string ApiUrl { get; set; }
+        public string[] Hosts { get; set; }
 
         public string TenantID { get; set; }
 
@@ -13,6 +13,8 @@
         public string Secret { get; set; }
 
         public Controller[] Controllers { get; set; }
+
+        public string SelectedHost { get; set; }
 
         public string SelectedController { get; set; }
 

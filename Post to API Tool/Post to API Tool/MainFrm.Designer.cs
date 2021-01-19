@@ -40,6 +40,8 @@ namespace Post_to_API_Tool
             this.StatusCodeLbl = new System.Windows.Forms.Label();
             this.TokenAcquireTimeLbl = new System.Windows.Forms.Label();
             this.ShowTokenLbl = new System.Windows.Forms.Label();
+            this.HostLbl = new System.Windows.Forms.Label();
+            this.HostCmb = new System.Windows.Forms.ComboBox();
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,8 +52,8 @@ namespace Post_to_API_Tool
             this.ToolStripStatusLabel});
             this.StatusStrip.Location = new System.Drawing.Point(0, 431);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(782, 22);
-            this.StatusStrip.TabIndex = 9;
+            this.StatusStrip.Size = new System.Drawing.Size(982, 22);
+            this.StatusStrip.TabIndex = 11;
             this.StatusStrip.Text = "StatusStrip";
             // 
             // ToolStripStatusLabel
@@ -64,62 +66,66 @@ namespace Post_to_API_Tool
             this.PayloadTxt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.PayloadTxt.ForeColor = System.Drawing.Color.Navy;
             this.PayloadTxt.Location = new System.Drawing.Point(12, 51);
             this.PayloadTxt.Multiline = true;
             this.PayloadTxt.Name = "PayloadTxt";
             this.PayloadTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.PayloadTxt.Size = new System.Drawing.Size(758, 316);
-            this.PayloadTxt.TabIndex = 4;
+            this.PayloadTxt.Size = new System.Drawing.Size(958, 316);
+            this.PayloadTxt.TabIndex = 6;
             this.PayloadTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyDown);
             this.PayloadTxt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyUp);
             // 
             // ControllerCmb
             // 
-            this.ControllerCmb.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ControllerCmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ControllerCmb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ControllerCmb.FormattingEnabled = true;
-            this.ControllerCmb.Location = new System.Drawing.Point(115, 12);
+            this.ControllerCmb.Location = new System.Drawing.Point(433, 10);
             this.ControllerCmb.Name = "ControllerCmb";
-            this.ControllerCmb.Size = new System.Drawing.Size(200, 28);
-            this.ControllerCmb.TabIndex = 1;
+            this.ControllerCmb.Size = new System.Drawing.Size(200, 26);
+            this.ControllerCmb.TabIndex = 3;
             this.ControllerCmb.SelectedIndexChanged += new System.EventHandler(this.ControllerCmb_SelectedIndexChanged);
             // 
             // EndpointCmb
             // 
-            this.EndpointCmb.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EndpointCmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.EndpointCmb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.EndpointCmb.FormattingEnabled = true;
-            this.EndpointCmb.Location = new System.Drawing.Point(426, 12);
+            this.EndpointCmb.Location = new System.Drawing.Point(744, 10);
             this.EndpointCmb.Name = "EndpointCmb";
-            this.EndpointCmb.Size = new System.Drawing.Size(200, 28);
-            this.EndpointCmb.TabIndex = 3;
+            this.EndpointCmb.Size = new System.Drawing.Size(200, 26);
+            this.EndpointCmb.TabIndex = 5;
             // 
             // ControllerLbl
             // 
             this.ControllerLbl.AutoSize = true;
-            this.ControllerLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ControllerLbl.Location = new System.Drawing.Point(12, 15);
+            this.ControllerLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ControllerLbl.Location = new System.Drawing.Point(340, 15);
             this.ControllerLbl.Name = "ControllerLbl";
-            this.ControllerLbl.Size = new System.Drawing.Size(87, 20);
-            this.ControllerLbl.TabIndex = 0;
+            this.ControllerLbl.Size = new System.Drawing.Size(77, 18);
+            this.ControllerLbl.TabIndex = 2;
             this.ControllerLbl.Text = "Controller:";
             // 
             // EndpointLbl
             // 
             this.EndpointLbl.AutoSize = true;
-            this.EndpointLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.EndpointLbl.Location = new System.Drawing.Point(331, 15);
+            this.EndpointLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.EndpointLbl.ForeColor = System.Drawing.SystemColors.WindowText;
+            this.EndpointLbl.Location = new System.Drawing.Point(659, 15);
             this.EndpointLbl.Name = "EndpointLbl";
-            this.EndpointLbl.Size = new System.Drawing.Size(79, 20);
-            this.EndpointLbl.TabIndex = 2;
+            this.EndpointLbl.Size = new System.Drawing.Size(70, 18);
+            this.EndpointLbl.TabIndex = 4;
             this.EndpointLbl.Text = "Endpoint:";
             // 
             // CallAPIBtn
             // 
             this.CallAPIBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.CallAPIBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.CallAPIBtn.Location = new System.Drawing.Point(620, 378);
+            this.CallAPIBtn.Location = new System.Drawing.Point(820, 378);
             this.CallAPIBtn.Name = "CallAPIBtn";
             this.CallAPIBtn.Size = new System.Drawing.Size(150, 40);
-            this.CallAPIBtn.TabIndex = 8;
+            this.CallAPIBtn.TabIndex = 10;
             this.CallAPIBtn.Text = "&Call API...";
             this.CallAPIBtn.UseVisualStyleBackColor = true;
             this.CallAPIBtn.Click += new System.EventHandler(this.CallAPIBtn_Click);
@@ -132,18 +138,18 @@ namespace Post_to_API_Tool
             this.StatusCodeLbl.Location = new System.Drawing.Point(12, 398);
             this.StatusCodeLbl.Name = "StatusCodeLbl";
             this.StatusCodeLbl.Size = new System.Drawing.Size(106, 20);
-            this.StatusCodeLbl.TabIndex = 7;
+            this.StatusCodeLbl.TabIndex = 9;
             this.StatusCodeLbl.Text = "Status Code:";
             // 
-            // TokenAquireTimeLbl
+            // TokenAcquireTimeLbl
             // 
             this.TokenAcquireTimeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.TokenAcquireTimeLbl.AutoSize = true;
             this.TokenAcquireTimeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TokenAcquireTimeLbl.Location = new System.Drawing.Point(12, 373);
-            this.TokenAcquireTimeLbl.Name = "TokenAquireTimeLbl";
+            this.TokenAcquireTimeLbl.Name = "TokenAcquireTimeLbl";
             this.TokenAcquireTimeLbl.Size = new System.Drawing.Size(230, 20);
-            this.TokenAcquireTimeLbl.TabIndex = 5;
+            this.TokenAcquireTimeLbl.TabIndex = 7;
             this.TokenAcquireTimeLbl.Text = "Token aquired time:  00:00:00";
             // 
             // ShowTokenLbl
@@ -156,15 +162,38 @@ namespace Post_to_API_Tool
             this.ShowTokenLbl.Location = new System.Drawing.Point(289, 372);
             this.ShowTokenLbl.Name = "ShowTokenLbl";
             this.ShowTokenLbl.Size = new System.Drawing.Size(93, 20);
-            this.ShowTokenLbl.TabIndex = 6;
+            this.ShowTokenLbl.TabIndex = 8;
             this.ShowTokenLbl.Text = "show token";
             this.ShowTokenLbl.Click += new System.EventHandler(this.ShowTokenLbl_Click);
+            // 
+            // HostLbl
+            // 
+            this.HostLbl.AutoSize = true;
+            this.HostLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HostLbl.Location = new System.Drawing.Point(8, 15);
+            this.HostLbl.Name = "HostLbl";
+            this.HostLbl.Size = new System.Drawing.Size(44, 18);
+            this.HostLbl.TabIndex = 0;
+            this.HostLbl.Text = "Host:";
+            // 
+            // HostCmb
+            // 
+            this.HostCmb.BackColor = System.Drawing.SystemColors.Window;
+            this.HostCmb.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.HostCmb.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.HostCmb.FormattingEnabled = true;
+            this.HostCmb.Location = new System.Drawing.Point(64, 10);
+            this.HostCmb.Name = "HostCmb";
+            this.HostCmb.Size = new System.Drawing.Size(250, 26);
+            this.HostCmb.TabIndex = 1;
             // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(782, 453);
+            this.ClientSize = new System.Drawing.Size(982, 453);
+            this.Controls.Add(this.HostCmb);
+            this.Controls.Add(this.HostLbl);
             this.Controls.Add(this.ShowTokenLbl);
             this.Controls.Add(this.TokenAcquireTimeLbl);
             this.Controls.Add(this.StatusCodeLbl);
@@ -175,7 +204,7 @@ namespace Post_to_API_Tool
             this.Controls.Add(this.ControllerCmb);
             this.Controls.Add(this.PayloadTxt);
             this.Controls.Add(this.StatusStrip);
-            this.MinimumSize = new System.Drawing.Size(700, 300);
+            this.MinimumSize = new System.Drawing.Size(1000, 300);
             this.Name = "MainFrm";
             this.ShowIcon = false;
             this.Text = "Post to API Tool";
@@ -200,6 +229,8 @@ namespace Post_to_API_Tool
         private System.Windows.Forms.ToolStripStatusLabel ToolStripStatusLabel;
         private System.Windows.Forms.Label TokenAcquireTimeLbl;
         private System.Windows.Forms.Label ShowTokenLbl;
+        private System.Windows.Forms.Label HostLbl;
+        private System.Windows.Forms.ComboBox HostCmb;
     }
 }
 

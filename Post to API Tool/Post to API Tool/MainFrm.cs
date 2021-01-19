@@ -70,6 +70,14 @@
                 this.Height = this.config.MainFrmHeight;
             }
 
+            this.HostCmb.Items.AddRange(this.config.Hosts);
+            this.HostCmb.SelectedIndex = 0;
+
+            if(this.HostCmb.Items.Contains(this.config.SelectedHost ?? ""))
+            {
+                this.HostCmb.SelectedItem = this.config.SelectedHost;
+            }
+
             IEnumerable<string> controllers =
                 this.config.Controllers.Select(c => c.Path);
             this.ControllerCmb.Items.AddRange(controllers.ToArray());
@@ -139,7 +147,7 @@
                 this.PayloadTxt.Text = txt;
 
                 string path = $"{this.ControllerCmb.SelectedItem}/{this.EndpointCmb.SelectedItem}";
-                uri = new Uri(new Uri(this.config.ApiUrl), path);
+                uri = new Uri(new Uri($"{this.HostCmb.SelectedItem}"), path);
                 string message = txt;
 
                 await this.UpdateTokenHeaderIfNecessary(false);
@@ -313,6 +321,7 @@
         {
             if (this.config != null)
             {
+                this.config.SelectedHost = $"{this.HostCmb.SelectedItem}";
                 this.config.SelectedController = $"{this.ControllerCmb.SelectedItem}";
                 this.config.SelectedEndpoint = $"{this.EndpointCmb.SelectedItem}";
 
