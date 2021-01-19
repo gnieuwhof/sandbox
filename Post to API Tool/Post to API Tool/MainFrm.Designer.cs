@@ -42,6 +42,9 @@ namespace Post_to_API_Tool
             this.ShowTokenLbl = new System.Windows.Forms.Label();
             this.HostLbl = new System.Windows.Forms.Label();
             this.HostCmb = new System.Windows.Forms.ComboBox();
+            this.BytesReceivedLbl = new System.Windows.Forms.Label();
+            this.ShowResponeLbl = new System.Windows.Forms.Label();
+            this.AutoOpenResponseChk = new System.Windows.Forms.CheckBox();
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -187,11 +190,51 @@ namespace Post_to_API_Tool
             this.HostCmb.Size = new System.Drawing.Size(250, 26);
             this.HostCmb.TabIndex = 1;
             // 
+            // BytesReceivedLbl
+            // 
+            this.BytesReceivedLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BytesReceivedLbl.AutoSize = true;
+            this.BytesReceivedLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.BytesReceivedLbl.Location = new System.Drawing.Point(458, 373);
+            this.BytesReceivedLbl.Name = "BytesReceivedLbl";
+            this.BytesReceivedLbl.Size = new System.Drawing.Size(125, 20);
+            this.BytesReceivedLbl.TabIndex = 12;
+            this.BytesReceivedLbl.Text = "Bytes received:";
+            // 
+            // ShowResponeLbl
+            // 
+            this.ShowResponeLbl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.ShowResponeLbl.AutoSize = true;
+            this.ShowResponeLbl.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ShowResponeLbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Underline, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ShowResponeLbl.ForeColor = System.Drawing.Color.Blue;
+            this.ShowResponeLbl.Location = new System.Drawing.Point(675, 373);
+            this.ShowResponeLbl.Name = "ShowResponeLbl";
+            this.ShowResponeLbl.Size = new System.Drawing.Size(113, 20);
+            this.ShowResponeLbl.TabIndex = 13;
+            this.ShowResponeLbl.Text = "show respone";
+            this.ShowResponeLbl.Click += new System.EventHandler(this.ShowResponeLbl_Click);
+            // 
+            // AutoOpenResponseChk
+            // 
+            this.AutoOpenResponseChk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AutoOpenResponseChk.AutoSize = true;
+            this.AutoOpenResponseChk.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoOpenResponseChk.Location = new System.Drawing.Point(462, 397);
+            this.AutoOpenResponseChk.Name = "AutoOpenResponseChk";
+            this.AutoOpenResponseChk.Size = new System.Drawing.Size(243, 24);
+            this.AutoOpenResponseChk.TabIndex = 14;
+            this.AutoOpenResponseChk.Text = "Auto-open Response Viewer";
+            this.AutoOpenResponseChk.UseVisualStyleBackColor = true;
+            // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 453);
+            this.Controls.Add(this.AutoOpenResponseChk);
+            this.Controls.Add(this.ShowResponeLbl);
+            this.Controls.Add(this.BytesReceivedLbl);
             this.Controls.Add(this.HostCmb);
             this.Controls.Add(this.HostLbl);
             this.Controls.Add(this.ShowTokenLbl);
@@ -231,6 +274,9 @@ namespace Post_to_API_Tool
         private System.Windows.Forms.Label ShowTokenLbl;
         private System.Windows.Forms.Label HostLbl;
         private System.Windows.Forms.ComboBox HostCmb;
+        private System.Windows.Forms.Label BytesReceivedLbl;
+        private System.Windows.Forms.Label ShowResponeLbl;
+        private System.Windows.Forms.CheckBox AutoOpenResponseChk;
     }
 }
 

@@ -1,5 +1,7 @@
 {
-  "ApiUrl": "https://",
+  "Hosts": [
+    "https://localhost:44321",
+  ],
   "TenantID": "",
   "ClientID": "",
   "Scope": "https://.crm4.dynamics.com",
@@ -24,12 +26,14 @@
       ]
     }
   ],
+  "SelectedHost": "https://api-dev.connect-it.com",
   "SelectedController": "cdsa.empire",
   "SelectedEndpoint": "AfspraakOpties",
+  "AutoOpenResponseViewer": false,
   "MainFrmWidth": 829,
   "MainFrmHeight": 583,
-  "ResponseViewerFrmWidth": 535,
-  "ResponseViewerFrmHeight": 536,
-  "MainFrmFontSize": 8,
-  "TextViewerFrmFontSize": 10
+  "ResponseViewerFrmWidth": 675,
+  "ResponseViewerFrmHeight": 479,
+  "MainFrmFontSize": 10,
+  "TextViewerFrmFontSize": 9
 }

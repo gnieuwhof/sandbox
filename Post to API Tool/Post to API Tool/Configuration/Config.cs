@@ -20,6 +20,8 @@
 
         public string SelectedEndpoint { get; set; }
 
+        public bool AutoOpenResponseViewer { get; set; }
+
         public int MainFrmWidth { get; set; }
 
         public int MainFrmHeight { get; set; }

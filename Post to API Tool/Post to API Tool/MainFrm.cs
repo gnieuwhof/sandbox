@@ -20,6 +20,7 @@
         private const string END_PAYLOAD_MARK = "--END_PAYLOAD";
         private const string STATUS_CODE_PREFIX = "Status Code:";
         private const string TOKEN_ACQUIRED_TIME_PREFIX = "Token acquired time:";
+        private const string BYTES_RECEIVED_PREFIX = "Bytes received:";
 
         private readonly HttpClient httpClient;
         private readonly string configFilePath;
@@ -29,6 +30,8 @@
         private DateTime tokenAcquiredTime;
         private bool keyDown;
         private Keys pressedKey;
+
+        private string response; 
 
 
         public MainFrm(string configFilePath)
@@ -93,6 +96,8 @@
                 this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
             }
 
+            this.AutoOpenResponseChk.Checked = this.config.AutoOpenResponseViewer;
+
             if (this.config.MainFrmFontSize > 0)
             {
                 this.SetFontSize(this.config.MainFrmFontSize);
@@ -133,12 +138,13 @@
 
         private async void CallAPIBtn_Click(object sender, EventArgs e)
         {
-            string content = string.Empty;
+            this.response = string.Empty;
             Uri uri = null;
             try
             {
                 this.EnableControls(false);
                 this.StatusCodeLbl.Text = STATUS_CODE_PREFIX;
+                this.BytesReceivedLbl.Text = BYTES_RECEIVED_PREFIX;
 
                 string txt = this.PreparePayload(this.PayloadTxt.Text);
 
@@ -158,7 +164,9 @@
 
                 this.StatusCodeLbl.Text = $"{STATUS_CODE_PREFIX} {response.StatusCode}";
 
-                content = await response.Content.ReadAsStringAsync();
+                this.response = await response.Content.ReadAsStringAsync();
+
+                this.BytesReceivedLbl.Text = $"{BYTES_RECEIVED_PREFIX} {this.response.Length}";
             }
             catch (Exception ex)
             {
@@ -176,9 +184,9 @@
                 this.EnableControls(true);
             }
 
-            if (!string.IsNullOrEmpty(content))
+            if (this.AutoOpenResponseChk.Checked && !string.IsNullOrEmpty(this.response))
             {
-                using (var pop = new TextViewerFrm("Response Viewer", this.config, content))
+                using (var pop = new TextViewerFrm("Response Viewer", this.config, this.response))
                 {
                     pop.ShowDialog();
                 }
@@ -324,6 +332,7 @@
                 this.config.SelectedHost = $"{this.HostCmb.SelectedItem}";
                 this.config.SelectedController = $"{this.ControllerCmb.SelectedItem}";
                 this.config.SelectedEndpoint = $"{this.EndpointCmb.SelectedItem}";
+                this.config.AutoOpenResponseViewer = this.AutoOpenResponseChk.Checked;
 
                 if (this.WindowState != FormWindowState.Maximized)
                 {
@@ -390,6 +399,17 @@
 
             this.PayloadTxt.Font = new Font(
                 this.PayloadTxt.Font.FontFamily, this.config.MainFrmFontSize);
+        }
+
+        private void ShowResponeLbl_Click(object sender, EventArgs e)
+        {
+            if (!string.IsNullOrEmpty(this.response))
+            {
+                using (var pop = new TextViewerFrm("Response Viewer", this.config, this.response))
+                {
+                    pop.ShowDialog();
+                }
+            }
         }
     }
 }
