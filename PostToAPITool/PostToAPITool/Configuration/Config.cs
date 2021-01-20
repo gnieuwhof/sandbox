@@ -1,4 +1,4 @@
-﻿namespace Post_to_API_Tool.Configuration
+﻿namespace PostToAPITool.Configuration
 {
     public class Config
     {

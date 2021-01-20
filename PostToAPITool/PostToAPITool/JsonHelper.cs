@@ -1,4 +1,4 @@
-﻿namespace Post_to_API_Tool
+﻿namespace PostToAPITool
 {
     using Newtonsoft.Json;
 

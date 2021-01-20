@@ -1,5 +1,5 @@
 ﻿
-namespace Post_to_API_Tool
+namespace PostToAPITool
 {
     partial class MainFrm
     {

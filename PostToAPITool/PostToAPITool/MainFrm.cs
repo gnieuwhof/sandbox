@@ -1,7 +1,7 @@
-﻿namespace Post_to_API_Tool
+﻿namespace PostToAPITool
 {
     using Newtonsoft.Json;
-    using Post_to_API_Tool.Configuration;
+    using PostToAPITool.Configuration;
     using System;
     using System.Collections.Generic;
     using System.Drawing;
