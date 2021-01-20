@@ -11,6 +11,7 @@
     using System.Net.Http;
     using System.Net.Http.Headers;
     using System.Text;
+    using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Forms;
 
@@ -54,7 +55,10 @@
             {
                 this.ApplyConfig();
 
-                this.httpClient = new HttpClient();
+                this.httpClient = new HttpClient
+                {
+                    Timeout = Timeout.InfiniteTimeSpan
+                };
 
                 _ = this.UpdateTokenHeaderIfNecessary(
                     setControlsEnabled: true, focusPayloadTxtControl: true);
