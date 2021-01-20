@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Post to API Tool", "Post to API Tool\Post to API Tool.csproj", "{5C48284C-395C-43CD-9A3C-31B3038F0322}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PostToAPITool", "PostToAPITool\PostToAPITool.csproj", "{5C48284C-395C-43CD-9A3C-31B3038F0322}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
