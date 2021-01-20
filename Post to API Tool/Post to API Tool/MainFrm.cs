@@ -117,7 +117,9 @@
                     var serializer = new JsonSerializer();
                     this.config = (Config)serializer.Deserialize(file, typeof(Config));
 
-                    return true;
+                    bool configIsValid = this.ValidateConfig();
+
+                    return configIsValid;
                 }
             }
             catch (Exception ex)
@@ -128,6 +130,71 @@
                 MessageBox.Show(message, Program.PROGRAM_TITLE,
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+
+            return false;
+        }
+
+        private bool ValidateConfig()
+        {
+            if (string.IsNullOrWhiteSpace(this.config.TenantID))
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No TenantID found in config.");
+            }
+            if (string.IsNullOrWhiteSpace(this.config.ClientID))
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No ClientID found in config.");
+            }
+            if (string.IsNullOrWhiteSpace(this.config.Secret))
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No Secret found in config.");
+            }
+            if (string.IsNullOrWhiteSpace(this.config.Scope))
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No Scope found in config.");
+            }
+            if (config.Hosts?.Any() != true)
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No hosts found in config.");
+            }
+            if (config.Controllers?.Any() != true)
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No controllers found in config.");
+            }
+            foreach(var controller in this.config.Controllers)
+            {
+                if (string.IsNullOrWhiteSpace(controller.Path))
+                {
+                    return this.ShowErrorMessageAndReturnFalse(
+                        "Controller without path found in config.");
+                }
+                if (controller.Endpoints?.Any() != true)
+                {
+                    return this.ShowErrorMessageAndReturnFalse(
+                        $"No endpoints for controller '{controller.Path}' found in config.");
+                }
+                foreach(var endpoint in controller.Endpoints)
+                {
+                    if (string.IsNullOrWhiteSpace(endpoint))
+                    {
+                        return this.ShowErrorMessageAndReturnFalse(
+                            $"Blank endpoint for controller '{controller.Path}' found in config.");
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        private bool ShowErrorMessageAndReturnFalse(string errorMessage)
+        {
+            MessageBox.Show(errorMessage, Program.PROGRAM_TITLE,
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             return false;
         }
