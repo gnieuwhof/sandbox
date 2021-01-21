@@ -51,6 +51,10 @@
                 return;
             }
 
+            string configFile = Path.GetFileName(configFilePath);
+
+            this.Text = $"{Program.PROGRAM_TITLE}    [config: {configFile}]";
+
             if (config != null)
             {
                 this.ApplyConfig();

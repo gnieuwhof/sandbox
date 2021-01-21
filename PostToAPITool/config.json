@@ -10,13 +10,14 @@
     {
       "Path": "cdsa.empire",
       "Endpoints": [
-        "Inspectie",
-        "AfspraakOpties",
-        "Onderhoudsverzoek",
-        "Onderhoudsorder",
         "Afspraak",
+        "AfspraakOpties",
+        "InformatieObject",
+        "Inspectie",
+        "Onderhoudsorder",
         "Onderhoudstaak",
-        "InformatieObject"
+        "Onderhoudsverzoek",
+        "OnderhoudsverzoekSluiten",
       ]
     },
     {
