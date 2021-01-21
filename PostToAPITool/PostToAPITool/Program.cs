@@ -1,9 +1,6 @@
 ﻿namespace PostToAPITool
 {
-    using Newtonsoft.Json;
-    using PostToAPITool.Configuration;
     using System;
-    using System.IO;
     using System.Windows.Forms;
 
     static class Program
