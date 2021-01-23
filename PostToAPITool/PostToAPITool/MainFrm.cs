@@ -220,6 +220,8 @@
                 this.EnableControls(false);
                 this.StatusCodeLbl.Text = STATUS_CODE_PREFIX;
                 this.BytesReceivedLbl.Text = BYTES_RECEIVED_PREFIX;
+                this.ToolStripProgressBar.Style = ProgressBarStyle.Marquee;
+                this.ToolStripProgressBar.MarqueeAnimationSpeed = 50;
 
                 string txt = this.PreparePayload(this.PayloadTxt.Text);
 
@@ -257,6 +259,7 @@
             finally
             {
                 this.EnableControls(true);
+                this.ToolStripProgressBar.Style = ProgressBarStyle.Blocks;
             }
 
             if (this.AutoOpenResponseChk.Checked && !string.IsNullOrEmpty(this.response))

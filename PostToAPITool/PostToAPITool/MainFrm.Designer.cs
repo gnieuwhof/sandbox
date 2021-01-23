@@ -31,6 +31,7 @@ namespace PostToAPITool
         {
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.ToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.ToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
             this.PayloadTxt = new System.Windows.Forms.TextBox();
             this.ControllerCmb = new System.Windows.Forms.ComboBox();
             this.EndpointCmb = new System.Windows.Forms.ComboBox();
@@ -52,17 +53,26 @@ namespace PostToAPITool
             // 
             this.StatusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.StatusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ToolStripStatusLabel});
-            this.StatusStrip.Location = new System.Drawing.Point(0, 431);
+            this.ToolStripStatusLabel,
+            this.ToolStripProgressBar});
+            this.StatusStrip.LayoutStyle = System.Windows.Forms.ToolStripLayoutStyle.HorizontalStackWithOverflow;
+            this.StatusStrip.Location = new System.Drawing.Point(0, 429);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(982, 22);
+            this.StatusStrip.Size = new System.Drawing.Size(982, 24);
             this.StatusStrip.TabIndex = 11;
             this.StatusStrip.Text = "StatusStrip";
             // 
             // ToolStripStatusLabel
             // 
             this.ToolStripStatusLabel.Name = "ToolStripStatusLabel";
-            this.ToolStripStatusLabel.Size = new System.Drawing.Size(0, 16);
+            this.ToolStripStatusLabel.Size = new System.Drawing.Size(0, 18);
+            // 
+            // ToolStripProgressBar
+            // 
+            this.ToolStripProgressBar.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.ToolStripProgressBar.Name = "ToolStripProgressBar";
+            this.ToolStripProgressBar.Size = new System.Drawing.Size(175, 16);
+            this.ToolStripProgressBar.Step = 0;
             // 
             // PayloadTxt
             // 
@@ -277,6 +287,7 @@ namespace PostToAPITool
         private System.Windows.Forms.Label BytesReceivedLbl;
         private System.Windows.Forms.Label ShowResponeLbl;
         private System.Windows.Forms.CheckBox AutoOpenResponseChk;
+        private System.Windows.Forms.ToolStripProgressBar ToolStripProgressBar;
     }
 }
 
