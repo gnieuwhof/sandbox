@@ -51,6 +51,7 @@ namespace PostToAPITool
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.TextTxt.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.TextTxt.Font = new System.Drawing.Font("Lucida Console", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.TextTxt.Location = new System.Drawing.Point(12, 12);
             this.TextTxt.Multiline = true;
             this.TextTxt.Name = "TextTxt";
