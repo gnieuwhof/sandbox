@@ -247,8 +247,17 @@
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An Exception was thrown while calling {uri}.", Program.PROGRAM_TITLE,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                if(ex.InnerException is WebException webException)
+                {
+                    if(webException.Status == WebExceptionStatus.ReceiveFailure)
+                    {
+                        var inner = this.GetMostInnerException(ex);
+
+                        this.SetStatus("EXCEPTION: " + inner.Message);
+
+                        return;
+                    }
+                }
 
                 using (var pop = new TextViewerFrm("Exception Viewer", this.config, ex.ToString()))
                 {
@@ -269,6 +278,18 @@
                     pop.ShowDialog();
                 }
             }
+        }
+
+        private Exception GetMostInnerException(Exception ex)
+        {
+            Exception result = ex;
+
+            if(ex.InnerException != null)
+            {
+                result = this.GetMostInnerException(ex.InnerException);
+            }
+
+            return result;
         }
 
         private string PreparePayload(string payload)
