@@ -249,13 +249,17 @@
             {
                 if(ex.InnerException is WebException webException)
                 {
-                    if(webException.Status == WebExceptionStatus.ReceiveFailure)
+                    switch(webException.Status)
                     {
-                        var inner = this.GetMostInnerException(ex);
+                        case WebExceptionStatus.ConnectFailure:
+                        case WebExceptionStatus.ReceiveFailure:
+                        {
+                            var inner = this.GetMostInnerException(ex);
 
-                        this.SetStatus("EXCEPTION: " + inner.Message);
+                            this.SetStatus("EXCEPTION: " + inner.Message);
 
-                        return;
+                            return;
+                        }
                     }
                 }
 
