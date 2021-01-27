@@ -32,7 +32,7 @@
         private bool keyDown;
         private Keys pressedKey;
 
-        private string response; 
+        private string response;
 
 
         public MainFrm(string configFilePath)
@@ -84,7 +84,7 @@
             this.HostCmb.Items.AddRange(this.config.Hosts);
             this.HostCmb.SelectedIndex = 0;
 
-            if(this.HostCmb.Items.Contains(this.config.SelectedHost ?? ""))
+            if (this.HostCmb.Items.Contains(this.config.SelectedHost ?? ""))
             {
                 this.HostCmb.SelectedItem = this.config.SelectedHost;
             }
@@ -170,7 +170,7 @@
                 return this.ShowErrorMessageAndReturnFalse(
                     "No controllers found in config.");
             }
-            foreach(var controller in this.config.Controllers)
+            foreach (var controller in this.config.Controllers)
             {
                 if (string.IsNullOrWhiteSpace(controller.Path))
                 {
@@ -182,7 +182,7 @@
                     return this.ShowErrorMessageAndReturnFalse(
                         $"No endpoints for controller '{controller.Path}' found in config.");
                 }
-                foreach(var endpoint in controller.Endpoints)
+                foreach (var endpoint in controller.Endpoints)
                 {
                     if (string.IsNullOrWhiteSpace(endpoint))
                     {
@@ -247,19 +247,20 @@
             }
             catch (Exception ex)
             {
-                if(ex.InnerException is WebException webException)
+                if (ex.InnerException is WebException webException)
                 {
-                    switch(webException.Status)
+                    switch (webException.Status)
                     {
                         case WebExceptionStatus.ConnectFailure:
                         case WebExceptionStatus.ReceiveFailure:
-                        {
-                            var inner = this.GetMostInnerException(ex);
+                        case WebExceptionStatus.ConnectionClosed:
+                            {
+                                var inner = this.GetMostInnerException(ex);
 
-                            this.SetStatus("EXCEPTION: " + inner.Message);
+                                this.SetStatus("EXCEPTION: " + inner.Message);
 
-                            return;
-                        }
+                                return;
+                            }
                     }
                 }
 
@@ -288,7 +289,7 @@
         {
             Exception result = ex;
 
-            if(ex.InnerException != null)
+            if (ex.InnerException != null)
             {
                 result = this.GetMostInnerException(ex.InnerException);
             }
@@ -349,10 +350,10 @@
 
                 try
                 {
-                await this.GetAuthenticationHeader(
-                    clientId, secret, tenantId, scope);
+                    await this.GetAuthenticationHeader(
+                        clientId, secret, tenantId, scope);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show($"An Exception was thrown while acquiring the token.", Program.PROGRAM_TITLE,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
