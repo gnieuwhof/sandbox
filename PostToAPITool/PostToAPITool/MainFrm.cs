@@ -205,6 +205,7 @@
 
         private void EnableControls(bool enable)
         {
+            this.HostCmb.Enabled = enable;
             this.ControllerCmb.Enabled = enable;
             this.EndpointCmb.Enabled = enable;
             this.PayloadTxt.Enabled = enable;
@@ -244,6 +245,8 @@
                 this.response = await response.Content.ReadAsStringAsync();
 
                 this.BytesReceivedLbl.Text = $"{BYTES_RECEIVED_PREFIX} {this.response.Length}";
+
+                this.PayloadTxt.BackColor = Color.FromArgb(196, 255, 196);
             }
             catch (Exception ex)
             {
@@ -256,6 +259,8 @@
                         case WebExceptionStatus.ConnectionClosed:
                         case WebExceptionStatus.KeepAliveFailure:
                             {
+                                this.PayloadTxt.BackColor = Color.LightPink;
+
                                 var inner = this.GetMostInnerException(ex);
 
                                 this.SetStatus("EXCEPTION: " + inner.Message);
@@ -515,6 +520,11 @@
                     pop.ShowDialog();
                 }
             }
+        }
+
+        private void PayloadTxt_Enter(object sender, EventArgs e)
+        {
+            this.PayloadTxt.BackColor = Color.White;
         }
     }
 }

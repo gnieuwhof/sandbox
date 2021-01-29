@@ -87,6 +87,7 @@ namespace PostToAPITool
             this.PayloadTxt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.PayloadTxt.Size = new System.Drawing.Size(958, 316);
             this.PayloadTxt.TabIndex = 6;
+            this.PayloadTxt.Enter += new System.EventHandler(this.PayloadTxt_Enter);
             this.PayloadTxt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyDown);
             this.PayloadTxt.KeyUp += new System.Windows.Forms.KeyEventHandler(this.PayloadTxt_KeyUp);
             // 
