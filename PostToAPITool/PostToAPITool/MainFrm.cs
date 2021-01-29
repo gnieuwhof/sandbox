@@ -246,10 +246,14 @@
 
                 this.BytesReceivedLbl.Text = $"{BYTES_RECEIVED_PREFIX} {this.response.Length}";
 
-                this.PayloadTxt.BackColor = Color.FromArgb(196, 255, 196);
+                this.PayloadTxt.BackColor = response.IsSuccessStatusCode
+                    ? Color.FromArgb(196, 255, 196)
+                    : Color.FromArgb(255, 255, 196);
             }
             catch (Exception ex)
             {
+                this.PayloadTxt.BackColor = Color.LightPink;
+
                 if (ex.InnerException is WebException webException)
                 {
                     switch (webException.Status)
@@ -259,8 +263,6 @@
                         case WebExceptionStatus.ConnectionClosed:
                         case WebExceptionStatus.KeepAliveFailure:
                             {
-                                this.PayloadTxt.BackColor = Color.LightPink;
-
                                 var inner = this.GetMostInnerException(ex);
 
                                 this.SetStatus("EXCEPTION: " + inner.Message);
