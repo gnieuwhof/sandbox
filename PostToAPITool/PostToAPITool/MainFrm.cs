@@ -110,6 +110,25 @@
             {
                 this.SetFontSize(this.config.MainFrmFontSize);
             }
+
+            try
+            {
+                var backColor = (Color)new ColorConverter().ConvertFromString(this.config.BackColor);
+                this.PayloadTxt.BackColor = backColor;
+            }
+            catch
+            {
+                this.config.BackColor = "#FFFFFF";
+            }
+            try
+            {
+                var foreColor = (Color)new ColorConverter().ConvertFromString(this.config.TextColor);
+                this.PayloadTxt.ForeColor = foreColor;
+            }
+            catch
+            {
+                this.config.TextColor = "#000000";
+            }
         }
 
         private bool LoadConfigFile(string path)
