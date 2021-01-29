@@ -218,6 +218,7 @@
             Uri uri = null;
             try
             {
+                this.StatusStrip.BackColor = SystemColors.Control;
                 this.EnableControls(false);
                 this.StatusCodeLbl.Text = STATUS_CODE_PREFIX;
                 this.BytesReceivedLbl.Text = BYTES_RECEIVED_PREFIX;
@@ -246,13 +247,13 @@
 
                 this.BytesReceivedLbl.Text = $"{BYTES_RECEIVED_PREFIX} {this.response.Length}";
 
-                this.PayloadTxt.BackColor = response.IsSuccessStatusCode
+                this.StatusStrip.BackColor = response.IsSuccessStatusCode
                     ? Color.FromArgb(196, 255, 196)
                     : Color.FromArgb(255, 255, 196);
             }
             catch (Exception ex)
             {
-                this.PayloadTxt.BackColor = Color.LightPink;
+                this.StatusStrip.BackColor = Color.LightPink;
 
                 if (ex.InnerException is WebException webException)
                 {
@@ -526,7 +527,7 @@
 
         private void PayloadTxt_Enter(object sender, EventArgs e)
         {
-            this.PayloadTxt.BackColor = Color.White;
+            this.StatusStrip.BackColor = SystemColors.Control;
         }
     }
 }
