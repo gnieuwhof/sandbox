@@ -254,6 +254,7 @@
                         case WebExceptionStatus.ConnectFailure:
                         case WebExceptionStatus.ReceiveFailure:
                         case WebExceptionStatus.ConnectionClosed:
+                        case WebExceptionStatus.KeepAliveFailure:
                             {
                                 var inner = this.GetMostInnerException(ex);
 
