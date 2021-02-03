@@ -32,7 +32,7 @@
         private bool keyDown;
         private Keys pressedKey;
 
-        private string response; 
+        private string response;
 
 
         public MainFrm(string configFilePath)
@@ -84,7 +84,7 @@
             this.HostCmb.Items.AddRange(this.config.Hosts);
             this.HostCmb.SelectedIndex = 0;
 
-            if(this.HostCmb.Items.Contains(this.config.SelectedHost ?? ""))
+            if (this.HostCmb.Items.Contains(this.config.SelectedHost ?? ""))
             {
                 this.HostCmb.SelectedItem = this.config.SelectedHost;
             }
@@ -109,6 +109,25 @@
             if (this.config.MainFrmFontSize > 0)
             {
                 this.SetFontSize(this.config.MainFrmFontSize);
+            }
+
+            try
+            {
+                var backColor = (Color)new ColorConverter().ConvertFromString(this.config.BackColor);
+                this.PayloadTxt.BackColor = backColor;
+            }
+            catch
+            {
+                this.config.BackColor = "#FFFFFF";
+            }
+            try
+            {
+                var foreColor = (Color)new ColorConverter().ConvertFromString(this.config.TextColor);
+                this.PayloadTxt.ForeColor = foreColor;
+            }
+            catch
+            {
+                this.config.TextColor = "#000000";
             }
         }
 
@@ -170,7 +189,7 @@
                 return this.ShowErrorMessageAndReturnFalse(
                     "No controllers found in config.");
             }
-            foreach(var controller in this.config.Controllers)
+            foreach (var controller in this.config.Controllers)
             {
                 if (string.IsNullOrWhiteSpace(controller.Path))
                 {
@@ -182,7 +201,7 @@
                     return this.ShowErrorMessageAndReturnFalse(
                         $"No endpoints for controller '{controller.Path}' found in config.");
                 }
-                foreach(var endpoint in controller.Endpoints)
+                foreach (var endpoint in controller.Endpoints)
                 {
                     if (string.IsNullOrWhiteSpace(endpoint))
                     {
@@ -205,6 +224,7 @@
 
         private void EnableControls(bool enable)
         {
+            this.HostCmb.Enabled = enable;
             this.ControllerCmb.Enabled = enable;
             this.EndpointCmb.Enabled = enable;
             this.PayloadTxt.Enabled = enable;
@@ -217,6 +237,7 @@
             Uri uri = null;
             try
             {
+                this.StatusStrip.BackColor = SystemColors.Control;
                 this.EnableControls(false);
                 this.StatusCodeLbl.Text = STATUS_CODE_PREFIX;
                 this.BytesReceivedLbl.Text = BYTES_RECEIVED_PREFIX;
@@ -244,11 +265,32 @@
                 this.response = await response.Content.ReadAsStringAsync();
 
                 this.BytesReceivedLbl.Text = $"{BYTES_RECEIVED_PREFIX} {this.response.Length}";
+
+                this.StatusStrip.BackColor = response.IsSuccessStatusCode
+                    ? Color.FromArgb(196, 255, 196)
+                    : Color.FromArgb(255, 255, 196);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An Exception was thrown while calling {uri}.", Program.PROGRAM_TITLE,
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.StatusStrip.BackColor = Color.LightPink;
+
+                if (ex.InnerException is WebException webException)
+                {
+                    switch (webException.Status)
+                    {
+                        case WebExceptionStatus.ConnectFailure:
+                        case WebExceptionStatus.ReceiveFailure:
+                        case WebExceptionStatus.ConnectionClosed:
+                        case WebExceptionStatus.KeepAliveFailure:
+                            {
+                                var inner = this.GetMostInnerException(ex);
+
+                                this.SetStatus("EXCEPTION: " + inner.Message);
+
+                                return;
+                            }
+                    }
+                }
 
                 using (var pop = new TextViewerFrm("Exception Viewer", this.config, ex.ToString()))
                 {
@@ -269,6 +311,18 @@
                     pop.ShowDialog();
                 }
             }
+        }
+
+        private Exception GetMostInnerException(Exception ex)
+        {
+            Exception result = ex;
+
+            if (ex.InnerException != null)
+            {
+                result = this.GetMostInnerException(ex.InnerException);
+            }
+
+            return result;
         }
 
         private string PreparePayload(string payload)
@@ -324,10 +378,10 @@
 
                 try
                 {
-                await this.GetAuthenticationHeader(
-                    clientId, secret, tenantId, scope);
+                    await this.GetAuthenticationHeader(
+                        clientId, secret, tenantId, scope);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     MessageBox.Show($"An Exception was thrown while acquiring the token.", Program.PROGRAM_TITLE,
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -488,6 +542,11 @@
                     pop.ShowDialog();
                 }
             }
+        }
+
+        private void PayloadTxt_Enter(object sender, EventArgs e)
+        {
+            this.StatusStrip.BackColor = SystemColors.Control;
         }
     }
 }

@@ -33,5 +33,9 @@
         public int MainFrmFontSize { get; set; }
 
         public int TextViewerFrmFontSize { get; set; }
+
+        public string BackColor { get; set; }
+
+        public string TextColor { get; set; }
     }
 }
