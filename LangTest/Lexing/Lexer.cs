@@ -31,7 +31,7 @@
         {
             error = null;
 
-            int size = Math.Max(4, this.Src.Text.Length / 2);
+            int size = Math.Max(4, this.Src.Text.Length / 4);
             this.tokens = new Token[size];
 
             this.index = 0;
