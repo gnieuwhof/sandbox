@@ -35,13 +35,24 @@
         {
             error = null;
 
-            while ((error == null) && !this.Src.ReachedEnd())
+            while (true)
             {
-                char current = this.Src.Current;
-
                 Token token = default;
                 token.Line = this.Src.Line;
                 token.Character = this.Src.Character;
+
+                if (this.Src.ReachedEnd())
+                {
+                    token.Type = TokenType.ContentEnd;
+                    this.Add(token);
+                    break;
+                }
+                if (error != null)
+                {
+                    break;
+                }
+
+                char current = this.Src.Current;
 
                 if ((current == '_') || char.IsLetter(current))
                 {
