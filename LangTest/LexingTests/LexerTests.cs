@@ -19,14 +19,5 @@
             Assert.Throws<ArgumentNullException>(() =>
                 new Lexer(string.Empty, null));
         }
-
-        [Fact]
-        public void AddNullTokenTest()
-        {
-            var lexer = new Lexer(string.Empty, string.Empty);
-
-            Assert.Throws<ArgumentNullException>(() =>
-                lexer.Add(null));
-        }
     }
 }

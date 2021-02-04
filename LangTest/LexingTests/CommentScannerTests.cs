@@ -7,11 +7,13 @@
 
     public class CommentScannerTests
     {
+        private Token token = default;
+
         [Fact]
         public void ScanSingleLineNullTest()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                CommentScanner.ScanSingleLine( null));
+                CommentScanner.ScanSingleLine(null, ref this.token));
         }
 
         [Fact]
@@ -20,7 +22,7 @@
             var lexer = Lexer.CreateState("/X");
 
             Assert.Throws<InvalidOperationException>(() =>
-                CommentScanner.ScanSingleLine( lexer));
+                CommentScanner.ScanSingleLine(lexer, ref this.token));
         }
 
         [Fact]
@@ -28,7 +30,7 @@
         {
             var lexer = Lexer.CreateState("//X");
 
-            bool result = CommentScanner.ScanSingleLine( lexer);
+            bool result = CommentScanner.ScanSingleLine(lexer, ref this.token);
 
             Assert.True(result);
         }
@@ -40,11 +42,11 @@
 
             var lexer = Lexer.CreateState(comment + Environment.NewLine);
 
-            bool result = CommentScanner.ScanSingleLine(lexer);
+            bool result = CommentScanner.ScanSingleLine(lexer, ref this.token);
 
             Assert.True(result);
 
-            Assert.Equal(comment, lexer.LastToken.Value);
+            Assert.Equal(comment, this.token.Value);
         }
 
         [Fact]
@@ -52,7 +54,7 @@
         {
             var lexer = Lexer.CreateState("/**/");
 
-            bool result = CommentScanner.ScanMultiLine( lexer);
+            bool result = CommentScanner.ScanMultiLine(lexer, ref this.token);
 
             Assert.True(result);
         }
@@ -64,7 +66,7 @@
             {
                 var lexer = Lexer.CreateState(text);
 
-                bool result = CommentScanner.ScanMultiLine( lexer);
+                bool result = CommentScanner.ScanMultiLine(lexer, ref this.token);
 
                 Assert.False(result);
             }
@@ -75,7 +77,7 @@
         {
             var lexer = Lexer.CreateState("/**/");
 
-            _ = CommentScanner.ScanMultiLine( lexer);
+            _ = CommentScanner.ScanMultiLine(lexer, ref this.token);
 
             Assert.Equal(3, lexer.Src.Index);
         }
@@ -85,7 +87,7 @@
         {
             var lexer = Lexer.CreateState("/*/");
 
-            _ = CommentScanner.ScanMultiLine( lexer);
+            _ = CommentScanner.ScanMultiLine(lexer, ref this.token);
 
             Assert.Equal(3, lexer.Src.Index);
         }

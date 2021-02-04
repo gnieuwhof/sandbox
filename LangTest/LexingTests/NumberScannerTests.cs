@@ -7,11 +7,13 @@
 
     public class NumberScannerTests
     {
+        private Token token = default;
+
         [Fact]
         public void ScanNullTest()
         {
             Assert.Throws<ArgumentNullException>(() =>
-                NumberScanner.Scan(null));
+                NumberScanner.Scan(null, ref this.token));
         }
 
         [Fact]
@@ -19,7 +21,7 @@
         {
             var lexer = Lexer.CreateState("123");
 
-            bool result = NumberScanner.Scan(lexer);
+            bool result = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.True(result);
         }
@@ -29,9 +31,9 @@
         {
             var lexer = Lexer.CreateState("123");
 
-            _ = NumberScanner.Scan(lexer);
+            _ = NumberScanner.Scan(lexer, ref this.token);
 
-            Assert.Equal(TokenType.Int, lexer.LastToken.Type);
+            Assert.Equal(TokenType.Int, this.token.Type);
         }
 
         [Fact]
@@ -39,7 +41,7 @@
         {
             var lexer = Lexer.CreateState("1.23");
 
-            bool result = NumberScanner.Scan(lexer);
+            bool result = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.True(result);
         }
@@ -49,9 +51,9 @@
         {
             var lexer = Lexer.CreateState("1.23");
 
-            _ = NumberScanner.Scan(lexer);
+            _ = NumberScanner.Scan(lexer, ref this.token);
 
-            Assert.Equal(TokenType.Float, lexer.LastToken.Type);
+            Assert.Equal(TokenType.Float, this.token.Type);
         }
 
         [Fact]
@@ -59,7 +61,7 @@
         {
             var lexer = Lexer.CreateState(".1");
 
-            bool result = NumberScanner.Scan(lexer);
+            bool result = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.True(result);
         }
@@ -69,7 +71,7 @@
         {
             var lexer = Lexer.CreateState("1.");
 
-            bool result = NumberScanner.Scan(lexer);
+            bool result = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.False(result);
         }
@@ -79,7 +81,7 @@
         {
             var lexer = Lexer.CreateState("1.2.3");
 
-            bool result = NumberScanner.Scan(lexer);
+            bool result = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.False(result);
         }
@@ -89,7 +91,7 @@
         {
             var lexer = Lexer.CreateState("123");
 
-            _ = NumberScanner.Scan(lexer);
+            _ = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.Equal(2, lexer.Src.Index);
         }
@@ -99,7 +101,7 @@
         {
             var lexer = Lexer.CreateState("1.2.3");
 
-            _ = NumberScanner.Scan(lexer);
+            _ = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.Equal(3, lexer.Src.Index);
         }
@@ -109,7 +111,7 @@
         {
             var lexer = Lexer.CreateState("1.");
 
-            _ = NumberScanner.Scan(lexer);
+            _ = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.Equal(1, lexer.Src.Index);
         }
@@ -119,7 +121,7 @@
         {
             var lexer = Lexer.CreateState("1. ");
 
-            _ = NumberScanner.Scan(lexer);
+            _ = NumberScanner.Scan(lexer, ref this.token);
 
             Assert.Equal(1, lexer.Src.Index);
         }

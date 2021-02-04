@@ -39,6 +39,10 @@
                     foreach(Token token in t)
                     {
                         Console.WriteLine(token);
+                        if(token.Type == TokenType.ContentEnd)
+                        {
+                            break;
+                        }
                     }
                 }
             }

@@ -3,12 +3,12 @@
     using Lexing.Scanners;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
     public class Lexer
     {
         private readonly string origin;
-        private readonly List<Token> tokens;
+        private Token[] tokens;
+        private int index;
 
         private bool scanError = false;
 
@@ -17,9 +17,6 @@
 
         public Source Src { get; set; }
 
-        public Token LastToken =>
-            this.tokens.LastOrDefault();
-
 
         public Lexer(string origin, string text)
         {
@@ -27,7 +24,6 @@
                 throw new ArgumentNullException(nameof(origin));
 
             this.Src = new Source(text);
-            this.tokens = new List<Token>();
         }
 
 
@@ -35,138 +31,157 @@
         {
             error = null;
 
-            while (true)
+            int size = Math.Max(4, this.Src.Text.Length / 2);
+            this.tokens = new Token[size];
+
+            this.index = 0;
+            while (error == null)
             {
-                Token token = default;
-                token.Line = this.Src.Line;
-                token.Character = this.Src.Character;
-
-                if (this.Src.ReachedEnd())
+                if (this.tokens.Length == this.index)
                 {
-                    token.Type = TokenType.ContentEnd;
-                    this.Add(token);
-                    break;
-                }
-                if (error != null)
-                {
-                    break;
+                    // Double the array
+                    var temp = new Token[this.tokens.Length * 2];
+                    Array.Copy(this.tokens, temp, this.index);
+                    this.tokens = temp;
                 }
 
-                char current = this.Src.Current;
+                ref Token token = ref this.tokens[this.index];
 
-                if ((current == '_') || char.IsLetter(current))
-                {
-                    KeywordIdentifierScanner.Scan(this, ref token);
-                    this.Add(token);
-                    continue;
-                }
+                this.Lex(ref token, ref error);
 
-                switch (current)
-                {
-                    case '!':
-                        OperatorScanner.ScanExclamation(this, ref token);
-                        break;
-
-                    case '&':
-                        OperatorScanner.ScanAmpersand(this, ref token);
-                        break;
-
-                    case '(':
-                    case ')':
-                    case '*':
-                    case '+':
-                    case ',':
-                    case '-':
-                    case ';':
-                    case '?':
-                    case '[':
-                    case ']':
-                    case '{':
-                    case '}':
-                        token.Type = GetTokenType(current);
-                        break;
-
-                    case '|':
-                        OperatorScanner.ScanPipeline(this, ref token);
-                        break;
-
-                    case '0':
-                    case '1':
-                    case '2':
-                    case '3':
-                    case '4':
-                    case '5':
-                    case '6':
-                    case '7':
-                    case '8':
-                    case '9':
-                        this.Scan(NumberScanner.Scan, ref token, ref error);
-                        break;
-
-                    case '.':
-                        char? next = this.Src.Peek();
-                        if (char.IsDigit(next ?? 'X'))
-                        {
-                            this.Scan(NumberScanner.Scan, ref token, ref error);
-                        }
-                        else
-                        {
-                            token.Type = GetTokenType(current);
-                        }
-                        break;
-
-                    case '/':
-                        this.ScanSlash(ref token, ref error);
-                        break;
-
-                    case '=':
-                        OperatorScanner.ScanEquals(this, ref token);
-                        break;
-
-                    case '<':
-                        OperatorScanner.ScanLessThan(this, ref token);
-                        break;
-
-                    case '>':
-                        OperatorScanner.ScanGreaterThan(this, ref token);
-                        break;
-
-                    case '"':
-                        this.Scan(TextScanner.ScanString, ref token, ref error);
-                        break;
-
-                    case '\'':
-                        this.Scan(TextScanner.ScanCharacter, ref token, ref error);
-                        break;
-
-                    case ' ':
-                    case '\t':
-                        WhiteSpaceScanner.Scan(this, ref token);
-                        break;
-
-                    case '\r':
-                    case '\n':
-                        TextScanner.ScanNewLine(this, ref token);
-                        break;
-
-                    default:
-                        error = this.GetError();
-                        break;
-                }
-
-                this.Add(token);
+                this.Update(ref token);
 
                 this.Src.Advance();
+
+                if (token.Type == TokenType.ContentEnd)
+                {
+                    break;
+                }
+
+                ++this.index;
             }
 
             return this.tokens;
+        }
+
+        private void Lex(ref Token token, ref LexicalError error)
+        {
+            token.Line = this.Src.Line;
+            token.Character = this.Src.Character;
+
+            if (this.Src.ReachedEnd())
+            {
+                token.Type = TokenType.ContentEnd;
+                return;
+            }
+
+            char current = this.Src.Current;
+
+            if ((current == '_') || char.IsLetter(current))
+            {
+                KeywordIdentifierScanner.Scan(this, ref token);
+                return;
+            }
+
+            switch (current)
+            {
+                case '!':
+                    OperatorScanner.ScanExclamation(this, ref token);
+                    break;
+
+                case '&':
+                    OperatorScanner.ScanAmpersand(this, ref token);
+                    break;
+
+                case '(':
+                case ')':
+                case '*':
+                case '+':
+                case ',':
+                case '-':
+                case ';':
+                case '?':
+                case '[':
+                case ']':
+                case '{':
+                case '}':
+                    token.Type = GetTokenType(current);
+                    break;
+
+                case '|':
+                    OperatorScanner.ScanPipeline(this, ref token);
+                    break;
+
+                case '0':
+                case '1':
+                case '2':
+                case '3':
+                case '4':
+                case '5':
+                case '6':
+                case '7':
+                case '8':
+                case '9':
+                    this.Scan(NumberScanner.Scan, ref token, ref error);
+                    break;
+
+                case '.':
+                    char? next = this.Src.Peek();
+                    if (char.IsDigit(next ?? 'X'))
+                    {
+                        this.Scan(NumberScanner.Scan, ref token, ref error);
+                    }
+                    else
+                    {
+                        token.Type = GetTokenType(current);
+                    }
+                    break;
+
+                case '/':
+                    this.ScanSlash(ref token, ref error);
+                    break;
+
+                case '=':
+                    OperatorScanner.ScanEquals(this, ref token);
+                    break;
+
+                case '<':
+                    OperatorScanner.ScanLessThan(this, ref token);
+                    break;
+
+                case '>':
+                    OperatorScanner.ScanGreaterThan(this, ref token);
+                    break;
+
+                case '"':
+                    this.Scan(TextScanner.ScanString, ref token, ref error);
+                    break;
+
+                case '\'':
+                    this.Scan(TextScanner.ScanCharacter, ref token, ref error);
+                    break;
+
+                case ' ':
+                case '\t':
+                    WhiteSpaceScanner.Scan(this, ref token);
+                    break;
+
+                case '\r':
+                case '\n':
+                    TextScanner.ScanNewLine(this, ref token);
+                    break;
+
+                default:
+                    error = this.GetError();
+                    break;
+            }
         }
 
         private static TokenType GetTokenType(char c)
         {
             UInt16 intVal = Convert.ToUInt16(c);
 
-            if(Enum.TryParse<TokenType>($"{intVal}", out TokenType tokenType))
+            if (Enum.TryParse<TokenType>($"{intVal}", out TokenType tokenType))
             {
                 return tokenType;
             }
@@ -186,7 +201,7 @@
             }
         }
 
-        public void Add(Token token)
+        public void Update(ref Token token)
         {
             if (token.Type == TokenType.NewLine)
             {
@@ -206,8 +221,6 @@
                     this.Src.Character = position;
                 }
             }
-
-            this.tokens.Add(token);
         }
 
         private static void GetPositionOffset(string text,
@@ -254,9 +267,9 @@
                 ? "unexpected end"
                 : $"unexpected character '{this.Src.Current}'";
 
-            if (this.scanError && tokens.Any())
+            if (this.scanError && (this.index < this.tokens.Length))
             {
-                error += $" ({tokens.Last().Type})";
+                error += $" ({this.tokens[index].Type})";
             }
 
             IEnumerable<string> lines = this.Src.GetLastLines(3);

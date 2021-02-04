@@ -7,6 +7,8 @@
 
     public class IdentifierScannerTests
     {
+        private Token token = default;
+
         [Fact]
         public void EnsureFirstCorrectCharTestTest()
         {
@@ -16,7 +18,7 @@
             {
                 var lexer = Lexer.CreateState(val);
 
-                KeywordIdentifierScanner.Scan(lexer);
+                KeywordIdentifierScanner.Scan(lexer, ref this.token);
             }
         }
 
@@ -26,7 +28,7 @@
             var lexer = Lexer.CreateState("$");
 
             Assert.Throws<InvalidOperationException>(() =>
-                KeywordIdentifierScanner.Scan(lexer));
+                KeywordIdentifierScanner.Scan(lexer, ref this.token));
         }
     }
 }
