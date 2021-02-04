@@ -79,7 +79,8 @@
             return lines;
         }
 
-        private static string PrefixIfShorterThan(string line, string prefix, int length)
+        private static string PrefixIfShorterThan(
+            string line, string prefix, int length)
         {
             if (line == null)
                 throw new ArgumentNullException(nameof(line));
@@ -98,12 +99,15 @@
 
             string errorLine = this.Lines.Last();
 
-            for (int i = 0; i < this.Location.Character - 1; ++i)
+            if (errorLine.Length > 0)
             {
-                char chr = errorLine[i];
-                characterIndicator += (new[] { '\t', '\\' }.Contains( chr ))
-                    ? ". "
-                    : ".";
+                for (int i = 0; i < this.Location.Character - 1; ++i)
+                {
+                    char chr = errorLine[i];
+                    characterIndicator += (new[] { '\t', '\\' }.Contains(chr))
+                        ? ". "
+                        : ".";
+                }
             }
 
             characterIndicator += '^';

@@ -4,7 +4,7 @@
 
     public static class CommentScanner
     {
-        public static bool ScanSingleLine(Lexer lexer)
+        public static bool ScanSingleLine(Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -13,7 +13,6 @@
             Scanner.EnsureNext(lexer, '/');
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
             string result = string.Empty;
 
             while (!src.ReachedEnd())
@@ -37,14 +36,13 @@
                 src.Advance();
             }
 
-            var token = new Token(pos/*src.Line, src.Character*/, TokenType.SingleComment, result);
-
-            lexer.Add(token);
+            token.Type = TokenType.SingleComment;
+            token.Value = result;
 
             return true;
         }
 
-        public static bool ScanMultiLine(Lexer lexer)
+        public static bool ScanMultiLine(Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -53,7 +51,6 @@
             Scanner.EnsureNext(lexer, '*');
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
             string result = string.Empty;
             bool inComment = true;
             char previous = ' ';
@@ -79,9 +76,8 @@
                 previous = current;
             }
 
-            var token = new Token(pos, TokenType.MultiComment, result);
-
-            lexer.Add(token);
+            token.Type = TokenType.MultiComment;
+            token.Value = result;
 
             return !inComment;
         }

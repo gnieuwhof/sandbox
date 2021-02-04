@@ -34,7 +34,7 @@
         CloseBrace = 125,
 
         // The first 255 are reserved for ASCII.
-        BOGUS = 256,
+        ASCII_END = 256,
 
         Char,
         Float,

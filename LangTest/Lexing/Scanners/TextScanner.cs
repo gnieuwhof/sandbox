@@ -5,7 +5,7 @@
 
     public static class TextScanner
     {
-        public static bool ScanString( Lexer lexer)
+        public static bool ScanString( Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -15,7 +15,6 @@
             string result = string.Empty;
             bool inString = false;
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
 
             while (!src.ReachedEnd())
             {
@@ -41,14 +40,13 @@
                 src.Advance();
             }
 
-            Token token = new Token(pos, TokenType.String, result);
-
-            lexer.Add(token);
+            token.Type = TokenType.String;
+            token.Value = result;
 
             return !inString;
         }
 
-        public static bool ScanCharacter( Lexer lexer)
+        public static bool ScanCharacter( Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -56,8 +54,6 @@
             Scanner.EnsureCurrent(lexer, '\'');
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
- 
             string result = string.Empty;
             bool inCharacter = false;
             bool escape = false;
@@ -108,14 +104,13 @@
                 src.Advance();
             }
 
-            Token token = new Token(pos, TokenType.Char, result);
-
-            lexer.Add(token);
+            token.Type = TokenType.Char;
+            token.Value = result;
 
             return !inCharacter;
         }
 
-        public static bool ScanNewLine(Lexer lexer)
+        public static bool ScanNewLine(Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -123,8 +118,6 @@
             Scanner.EnsureCurrent(lexer, '\r', '\n');
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
-
             string result = string.Empty;
 
             while (!src.ReachedEnd())
@@ -143,9 +136,8 @@
 
             src.Reverse();
 
-            var token = new Token(pos, TokenType.NewLine, result);
-
-            lexer.Add(token);
+            token.Type = TokenType.NewLine;
+            token.Value = result;
 
             return true;
         }

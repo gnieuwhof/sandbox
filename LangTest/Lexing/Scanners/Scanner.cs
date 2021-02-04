@@ -5,27 +5,25 @@
 
     public static class Scanner
     {
-        public static Token GetToken(Lexer lexer,
+        public static TokenType GetTokenType(Lexer lexer,
             char nextExpected, TokenType then, TokenType @else)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
-
             char? next = src.Peek();
 
-            Token token = (next == nextExpected)
-                ? new Token(pos, then)
-                : new Token(pos, @else);
+            TokenType tokenType = (next == nextExpected)
+                ? then
+                : @else;
 
             if (next == nextExpected)
             {
                 src.Advance();
             }
 
-            return token;
+            return tokenType;
         }
 
         public static void EnsureCurrent(Lexer lexer, params char[] characters)

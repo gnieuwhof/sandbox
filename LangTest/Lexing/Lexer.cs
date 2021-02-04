@@ -12,7 +12,7 @@
 
         private bool scanError = false;
 
-        private delegate bool Scanner(Lexer lexer);
+        private delegate bool Scanner(Lexer lexer, ref Token token);
 
 
         public Source Src { get; set; }
@@ -38,22 +38,26 @@
             while ((error == null) && !this.Src.ReachedEnd())
             {
                 char current = this.Src.Current;
-                Position pos = this.Src.GetPosition();
 
-                if ((current == '_') || char.IsLetterOrDigit(current))
+                Token token = default;
+                token.Line = this.Src.Line;
+                token.Character = this.Src.Character;
+
+                if ((current == '_') || char.IsLetter(current))
                 {
-                    KeywordIdentifierScanner.Scan(this);
+                    KeywordIdentifierScanner.Scan(this, ref token);
+                    this.Add(token);
                     continue;
                 }
 
                 switch (current)
                 {
                     case '!':
-                        OperatorScanner.ScanExclamation(this);
+                        OperatorScanner.ScanExclamation(this, ref token);
                         break;
 
                     case '&':
-                        OperatorScanner.ScanAmpersand(this);
+                        OperatorScanner.ScanAmpersand(this, ref token);
                         break;
 
                     case '(':
@@ -68,11 +72,11 @@
                     case ']':
                     case '{':
                     case '}':
-                        this.Add(new Token(pos, current));
+                        token.Type = GetTokenType(current);
                         break;
 
                     case '|':
-                        OperatorScanner.ScanPipeline(this);
+                        OperatorScanner.ScanPipeline(this, ref token);
                         break;
 
                     case '0':
@@ -85,53 +89,53 @@
                     case '7':
                     case '8':
                     case '9':
-                        this.Scan(NumberScanner.Scan, ref error);
+                        this.Scan(NumberScanner.Scan, ref token, ref error);
                         break;
 
                     case '.':
                         char? next = this.Src.Peek();
                         if (char.IsDigit(next ?? 'X'))
                         {
-                            this.Scan(NumberScanner.Scan, ref error);
+                            this.Scan(NumberScanner.Scan, ref token, ref error);
                         }
                         else
                         {
-                            this.Add(new Token(pos, current));
+                            token.Type = GetTokenType(current);
                         }
                         break;
 
                     case '/':
-                        this.ScanSlash(ref error);
+                        this.ScanSlash(ref token, ref error);
                         break;
 
                     case '=':
-                        OperatorScanner.ScanEquals(this);
+                        OperatorScanner.ScanEquals(this, ref token);
                         break;
 
                     case '<':
-                        OperatorScanner.ScanLessThan(this);
+                        OperatorScanner.ScanLessThan(this, ref token);
                         break;
 
                     case '>':
-                        OperatorScanner.ScanGreaterThan(this);
+                        OperatorScanner.ScanGreaterThan(this, ref token);
                         break;
 
                     case '"':
-                        this.Scan(TextScanner.ScanString, ref error);
+                        this.Scan(TextScanner.ScanString, ref token, ref error);
                         break;
 
                     case '\'':
-                        this.Scan(TextScanner.ScanCharacter, ref error);
+                        this.Scan(TextScanner.ScanCharacter, ref token, ref error);
                         break;
 
                     case ' ':
                     case '\t':
-                        WhiteSpaceScanner.Scan(this);
+                        WhiteSpaceScanner.Scan(this, ref token);
                         break;
 
                     case '\r':
                     case '\n':
-                        TextScanner.ScanNewLine(this);
+                        TextScanner.ScanNewLine(this, ref token);
                         break;
 
                     default:
@@ -139,15 +143,30 @@
                         break;
                 }
 
+                this.Add(token);
+
                 this.Src.Advance();
             }
 
             return this.tokens;
         }
 
-        private void Scan(Scanner scanner, ref LexicalError error)
+        private static TokenType GetTokenType(char c)
         {
-            bool success = scanner(this);
+            UInt16 intVal = Convert.ToUInt16(c);
+
+            if(Enum.TryParse<TokenType>($"{intVal}", out TokenType tokenType))
+            {
+                return tokenType;
+            }
+
+            return TokenType.Invalid;
+        }
+
+        private void Scan(Scanner scanner,
+            ref Token token, ref LexicalError error)
+        {
+            bool success = scanner(this, ref token);
 
             if (!success)
             {
@@ -158,9 +177,6 @@
 
         public void Add(Token token)
         {
-            if (token == null)
-                throw new ArgumentNullException(nameof(token));
-
             if (token.Type == TokenType.NewLine)
             {
                 ++this.Src.Line;
@@ -190,6 +206,7 @@
             position = 1;
 
             var lexer = new Lexer(string.Empty, text);
+            Token token = default;
 
             while (!lexer.Src.ReachedEnd())
             {
@@ -200,7 +217,7 @@
                     case '\r':
                     case '\n':
                         {
-                            TextScanner.ScanNewLine(lexer);
+                            TextScanner.ScanNewLine(lexer, ref token);
                             ++lineCountOffset;
                             position = 1;
                             break;
@@ -239,24 +256,20 @@
             return lexicalError;
         }
 
-        private void ScanSlash(ref LexicalError error)
+        private void ScanSlash(ref Token token, ref LexicalError error)
         {
             char? next = this.Src.Peek();
             if (next == '/')
             {
-                CommentScanner.ScanSingleLine(this);
+                CommentScanner.ScanSingleLine(this, ref token);
             }
             else if (next == '*')
             {
-                this.Scan(CommentScanner.ScanMultiLine, ref error);
+                this.Scan(CommentScanner.ScanMultiLine, ref token, ref error);
             }
             else
             {
-                Position pos = this.Src.GetPosition();
-
-                Token token = new Token(pos, TokenType.Slash);
-
-                this.Add(token);
+                token.Type = TokenType.Slash;
             }
         }
 
@@ -266,6 +279,7 @@
             {
                 Src = new Source(text)
             };
+
             lexer.Src.Advance(position);
 
             return lexer;

@@ -4,7 +4,7 @@
 
     public static class NumberScanner
     {
-        public static bool Scan( Lexer lexer)
+        public static bool Scan( Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -13,7 +13,6 @@
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
             string result = string.Empty;
             bool dotEncountered = false;
             bool success = true;
@@ -55,11 +54,12 @@
                 src.Reverse();
             }
 
-            Token token = dotEncountered
-                ? new Token(pos, TokenType.Float, result)
-                : new Token(pos, TokenType.Int, result);
+            TokenType tokenType = dotEncountered
+                ? TokenType.Float
+                : TokenType.Int;
 
-            lexer.Add(token);
+            token.Type = tokenType;
+            token.Value = result;
 
             return success;
         }

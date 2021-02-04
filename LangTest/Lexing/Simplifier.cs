@@ -7,7 +7,7 @@
         public static IEnumerable<Token> Filter(IEnumerable<Token> tokens)
         {
             bool inSeparator = false;
-            TokenType previousType = TokenType.BOGUS;
+            TokenType previousType = default;
 
             int line = 0;
             int character = 0;
@@ -57,9 +57,12 @@
 
                     if (yieldResult)
                     {
-                        Position pos = new Position(line, character);
+                        Token separatorToken = default;
+                        separatorToken.Line = line;
+                        separatorToken.Character = character;
+                        separatorToken.Type = TokenType.Separator;
 
-                        yield return new Token(pos, TokenType.Separator);
+                        yield return separatorToken;
                     }
                 }
 

@@ -1,42 +1,14 @@
 ﻿namespace Lexing
 {
-    using System;
-
-    public class Token
+    public struct Token
     {
-        public readonly TokenType Type;
+        public TokenType Type;
 
-        public readonly string Value;
+        public string Value;
 
-        public readonly int Line;
+        public int Line;
 
-        public readonly int Character;
-
-
-        public Token(Position pos, TokenType type, string val)
-        {
-            this.Line = pos.Line;
-            this.Character = pos.Character;
-            this.Type = type;
-            this.Value = val;
-        }
-
-        public Token(Position pos, TokenType type)
-            : this(pos, type, null)
-        {
-        }
-
-        public Token(Position pos, char c)
-        {
-            this.Line = pos.Line;
-            this.Character = pos.Character;
-
-            UInt16 intVal = Convert.ToUInt16(c);
-
-            TokenType tokenType = (TokenType)Enum.Parse(typeof(TokenType), $"{intVal}");
-
-            this.Type = tokenType;
-        }
+        public int Character;
 
 
         public override string ToString()

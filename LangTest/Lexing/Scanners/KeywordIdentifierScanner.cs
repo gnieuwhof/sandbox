@@ -4,7 +4,7 @@
 
     public class KeywordIdentifierScanner
     {
-        public static bool Scan( Lexer lexer)
+        public static bool Scan( Lexer lexer, ref Token token)
         {
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
@@ -13,7 +13,6 @@
                 "Character must be an underscore or letter.");
 
             Source src = lexer.Src;
-            Position pos = src.GetPosition();
             string result = string.Empty;
 
             while (!src.ReachedEnd())
@@ -30,18 +29,15 @@
                 src.Advance();
             }
 
-            Token token;
-
-            if(Keywords.TryGetTokenType(result, out TokenType tokenType))
+            if (Keywords.TryGetTokenType(result, out TokenType tokenType))
             {
-                token = new Token(pos, tokenType);
+                token.Type = tokenType;
             }
             else
             {
-                token = new Token(pos, TokenType.Identifier, result);
+                token.Type = TokenType.Identifier;
+                token.Value = result;
             }
-
-            lexer.Add(token);
 
             return true;
         }
