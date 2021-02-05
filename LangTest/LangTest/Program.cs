@@ -2,6 +2,7 @@
 {
     using Lexing;
     using System;
+    using System.Diagnostics;
     using System.IO;
     using System.Linq;
 
@@ -23,9 +24,15 @@
                     Console.WriteLine(input);
                 }
 
+                var stopwatch = new Stopwatch();
+
+                stopwatch.Start();
+
                 var lexer = new Lexer(source, input);
 
                 var tokens = lexer.GetTokens(out LexicalError error);
+
+                stopwatch.Stop();
 
                 Console.WriteLine();
 
@@ -45,6 +52,9 @@
                         }
                     }
                 }
+
+                Console.WriteLine();
+                Console.WriteLine($"Lexing time: {stopwatch.ElapsedMilliseconds} ms");
             }
         }
     }
