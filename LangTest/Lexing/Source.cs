@@ -19,7 +19,12 @@
         {
             get
             {
-                return this.Text[i];
+                if (i < this.Text.Length)
+                {
+                    return this.Text[i];
+                }
+
+                return InvalidChar;
             }
         }
 
@@ -65,7 +70,7 @@
         public IEnumerable<string> GetLastLines(int amount)
         {
             var lines = new List<string>();
-            int index = this.Length - 1;
+            int index = this.Index;
 
             string line = string.Empty;
 
@@ -97,7 +102,10 @@
                     continue;
                 }
 
-                line += chr;
+                if (chr != InvalidChar)
+                {
+                    line += chr;
+                }
 
                 --index;
             }

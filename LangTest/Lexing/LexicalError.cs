@@ -49,8 +49,8 @@
         {
             var lines = new List<string>();
 
-            int maxPrefixLength = $"{this.Location.Line}".Length;
-            string prefixLineSeparator = ":    ";
+            int maxPrefixLength = $"{this.Location.Line}".Length + "0".Length;
+            string prefixLineSeparator = ":";
 
             int lineCount = this.Lines.Count();
             for (int i = 0, index = lineCount - 1; i < lineCount; ++i, --index)

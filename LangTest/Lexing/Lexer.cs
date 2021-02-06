@@ -278,7 +278,7 @@
                 error += $" ({this.tokens[index].Type})";
             }
 
-            IEnumerable<string> lines = this.Src.GetLastLines(3);
+            IEnumerable<string> lines = this.Src.GetLastLines(4);
 
             var lexicalError = new LexicalError(error, lines,
                 new Location(this.origin, this.Src.Line, character));
