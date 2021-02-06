@@ -30,7 +30,7 @@
 
                 var lexer = new Lexer(source, input);
 
-                var tokens = lexer.GetTokens(out LexicalError error);
+                var tokens = lexer.GetTokens(true, out LexicalError error);
 
                 stopwatch.Stop();
 
@@ -42,8 +42,7 @@
                 }
                 else
                 {
-                    var t = tokens;// Simplifier.Filter(tokens).ToList();
-                    foreach(Token token in t)
+                    foreach(Token token in tokens)
                     {
                         Console.WriteLine(token);
                         if(token.Type == TokenType.ContentEnd)

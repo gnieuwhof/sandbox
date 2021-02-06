@@ -30,7 +30,7 @@
         }
 
 
-        public IEnumerable<Token> GetTokens(out LexicalError error)
+        public IEnumerable<Token> GetTokens(bool simplified, out LexicalError error)
         {
             error = null;
 
@@ -61,7 +61,26 @@
                     break;
                 }
 
-                ++this.index;
+                if (simplified)
+                {
+                    switch (token.Type)
+                    {
+                        case TokenType.WhiteSpace:
+                        case TokenType.SingleComment:
+                        case TokenType.MultiComment:
+                        case TokenType.NewLine:
+                            token.Value = null;
+                            break;
+
+                        default:
+                            ++this.index;
+                                break;
+                    }
+                }
+                else
+                {
+                    ++this.index;
+                }
             }
 
             return this.tokens;

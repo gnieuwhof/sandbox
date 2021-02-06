@@ -75,8 +75,6 @@
         ContinueKeyword,
         UsingKeyword,
 
-        Separator,
-
         ContentEnd,
         Invalid = UInt16.MaxValue
     }
