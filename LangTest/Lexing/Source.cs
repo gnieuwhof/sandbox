@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Text;
 
     public class Source
     {
@@ -72,7 +73,7 @@
             var lines = new List<string>();
             int index = this.Index;
 
-            string line = string.Empty;
+            var builder = new StringBuilder();
 
             while ((index >= 0) && (amount > 0))
             {
@@ -91,11 +92,14 @@
                         }
                     }
 
+
+                    string line = builder.ToString();
+
                     line = Reverse(line);
 
                     lines.Add(line);
 
-                    line = string.Empty;
+                    builder.Clear();
 
                     --amount;
 
@@ -104,7 +108,7 @@
 
                 if (chr != InvalidChar)
                 {
-                    line += chr;
+                    builder.Append(chr);
                 }
 
                 --index;
@@ -112,6 +116,8 @@
 
             if ((index == -1) && (amount > 0))
             {
+                string line = builder.ToString();
+
                 line = Reverse(line);
 
                 lines.Add(line);
