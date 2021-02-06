@@ -8,8 +8,10 @@
         public static TokenType GetTokenType(Lexer lexer,
             char nextExpected, TokenType then, TokenType @else)
         {
+#if DEBUG
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
+#endif
 
             Source src = lexer.Src;
             char? next = src.Peek();

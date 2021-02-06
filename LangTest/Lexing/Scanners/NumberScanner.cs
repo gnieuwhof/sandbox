@@ -6,11 +6,13 @@
     {
         public static bool Scan( Lexer lexer, ref Token token)
         {
+#if DEBUG
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
 
             Scanner.EnsureCurrent(lexer,
                 '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.');
+#endif
 
             Source src = lexer.Src;
             string result = string.Empty;

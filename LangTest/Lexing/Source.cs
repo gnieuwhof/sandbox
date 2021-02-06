@@ -130,12 +130,5 @@
 
             return InvalidChar;
         }
-
-        public Position GetPosition()
-        {
-            var position = new Position(this.Line, this.Character);
-
-            return position;
-        }
     }
 }

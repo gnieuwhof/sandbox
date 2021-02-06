@@ -6,10 +6,12 @@
     {
         public static bool Scan(Lexer lexer, ref Token token)
         {
+#if DEBUG
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
 
             Scanner.EnsureCurrent(lexer, ' ', '\t');
+#endif
 
             Source src = lexer.Src;
             string result = string.Empty;

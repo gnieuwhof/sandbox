@@ -2,19 +2,23 @@
 {
     using System;
     using System.Linq;
+    using System.Text;
 
     public static class TextScanner
     {
         public static bool ScanString( Lexer lexer, ref Token token)
         {
+#if DEBUG
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
 
             Scanner.EnsureCurrent(lexer, '"');
+#endif
 
-            string result = string.Empty;
             bool inString = false;
             Source src = lexer.Src;
+            StringBuilder builder = lexer.Builder;
+            builder.Clear();
 
             while (!src.ReachedEnd())
             {
@@ -34,24 +38,26 @@
                 }
                 else
                 {
-                    result += current;
+                    builder.Append(current);
                 }
 
                 src.Advance();
             }
 
             token.Type = TokenType.String;
-            token.Value = result;
+            token.Value = builder.ToString();
 
             return !inString;
         }
 
         public static bool ScanCharacter( Lexer lexer, ref Token token)
         {
+#if DEBUG
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
 
             Scanner.EnsureCurrent(lexer, '\'');
+#endif
 
             Source src = lexer.Src;
             string result = string.Empty;
@@ -112,10 +118,12 @@
 
         public static bool ScanNewLine(Lexer lexer, ref Token token)
         {
+#if DEBUG
             if (lexer == null)
                 throw new ArgumentNullException(nameof(lexer));
 
             Scanner.EnsureCurrent(lexer, '\r', '\n');
+#endif
 
             Source src = lexer.Src;
             string result = string.Empty;

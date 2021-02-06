@@ -3,6 +3,7 @@
     using Lexing.Scanners;
     using System;
     using System.Collections.Generic;
+    using System.Text;
 
     public class Lexer
     {
@@ -13,6 +14,8 @@
         private bool scanError = false;
 
         private delegate bool Scanner(Lexer lexer, ref Token token);
+
+        public StringBuilder Builder { get; } = new StringBuilder();
 
 
         public Source Src { get; set; }
@@ -31,7 +34,7 @@
         {
             error = null;
 
-            int size = Math.Max(4, this.Src.Text.Length / 4);
+            int size = Math.Max(256, this.Src.Text.Length / 4);
             this.tokens = new Token[size];
 
             this.index = 0;
@@ -210,8 +213,9 @@
             }
             else if (token.Type == TokenType.MultiComment)
             {
-                string comment = (token.Value.Length >= 4)
-                    ? token.Value.Substring(2, token.Value.Length - "/**/".Length)
+                int minLength = "/**/".Length;
+                string comment = (token.Value.Length > minLength)
+                    ? token.Value.Substring(2, token.Value.Length - minLength)
                     : string.Empty;
 
                 GetPositionOffset(comment, out int lineCountOffset, out int position);
