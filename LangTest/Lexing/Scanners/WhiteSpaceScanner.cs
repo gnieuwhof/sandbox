@@ -4,7 +4,7 @@
 
     public static class WhiteSpaceScanner
     {
-        public static bool Scan(Lexer lexer, ref Token token)
+        public static void Scan(Lexer lexer, ref Token token)
         {
 #if DEBUG
             if (lexer == null)
@@ -14,7 +14,7 @@
 #endif
 
             Source src = lexer.Src;
-            string result = string.Empty;
+            string value = string.Empty;
 
             while (!src.ReachedEnd())
             {
@@ -26,15 +26,13 @@
                     break;
                 }
 
-                result += current;
+                value += current;
 
                 src.Advance();
             }
 
             token.Type = TokenType.WhiteSpace;
-            token.Value = result;
-
-            return true;
+            token.Value = value;
         }
     }
 }

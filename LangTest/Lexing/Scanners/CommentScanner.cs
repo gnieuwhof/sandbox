@@ -25,7 +25,7 @@
 
                 if(builder.Length >= "//".Length)
                 {
-                    char? next = src.Peek();
+                    char next = src.Peek();
 
                     if((next == '\r') || (next == '\n'))
                     {

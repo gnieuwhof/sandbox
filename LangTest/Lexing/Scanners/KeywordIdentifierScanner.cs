@@ -5,7 +5,7 @@
 
     public class KeywordIdentifierScanner
     {
-        public static bool Scan( Lexer lexer, ref Token token)
+        public static void Scan( Lexer lexer, ref Token token)
         {
 #if DEBUG
             if (lexer == null)
@@ -23,29 +23,31 @@
             {
                 char current = src.Current;
 
-                if((current != '_') && !char.IsLetterOrDigit(current))
+                if((current == '_') || char.IsLetterOrDigit(current))
                 {
-                    break;
+                    builder.Append(current);
+
+                    src.Advance();
+
+                    continue;
                 }
 
-                builder.Append(current);
+                src.Reverse();
 
-                src.Advance();
+                break;
             }
 
-            string result = builder.ToString();
+            string value = builder.ToString();
 
-            if (Keywords.TryGetTokenType(result, out TokenType tokenType))
+            if (Keywords.TryGetTokenType(value, out TokenType tokenType))
             {
                 token.Type = tokenType;
             }
             else
             {
                 token.Type = TokenType.Identifier;
-                token.Value = result;
+                token.Value = value;
             }
-
-            return true;
         }
     }
 }

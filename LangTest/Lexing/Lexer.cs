@@ -108,6 +108,8 @@
                 case ']':
                 case '{':
                 case '}':
+                case '^':
+                case ':':
                     token.Type = GetTokenType(current);
                     break;
 
@@ -129,8 +131,8 @@
                     break;
 
                 case '.':
-                    char? next = this.Src.Peek();
-                    if (char.IsDigit(next ?? 'X'))
+                    char next = this.Src.Peek();
+                    if (char.IsDigit(next))
                     {
                         this.Scan(NumberScanner.Scan, ref token, ref error);
                     }
@@ -286,7 +288,7 @@
 
         private void ScanSlash(ref Token token, ref LexicalError error)
         {
-            char? next = this.Src.Peek();
+            char next = this.Src.Peek();
             if (next == '/')
             {
                 CommentScanner.ScanSingleLine(this, ref token);

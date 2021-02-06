@@ -126,18 +126,18 @@
 #endif
 
             Source src = lexer.Src;
-            string result = string.Empty;
+            string value = string.Empty;
 
             while (!src.ReachedEnd())
             {
                 char current = src.Current;
 
-                if((result != string.Empty) && (current != '\n'))
+                if((value != string.Empty) && (current != '\n'))
                 {
                     break;
                 }
                 
-                result += current;
+                value += current;
 
                 src.Advance();
             }
@@ -145,7 +145,7 @@
             src.Reverse();
 
             token.Type = TokenType.NewLine;
-            token.Value = result;
+            token.Value = value;
 
             return true;
         }

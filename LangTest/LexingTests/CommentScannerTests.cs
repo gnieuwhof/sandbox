@@ -50,6 +50,20 @@
         }
 
         [Fact]
+        public void ScanMultiLineNewLineTest()
+        {
+            string comment = "/*" + Environment.NewLine + "*/";
+
+            var lexer = Lexer.CreateState(comment);
+
+            bool result = CommentScanner.ScanMultiLine(lexer, ref this.token);
+
+            Assert.True(result);
+
+            Assert.Equal(comment, this.token.Value);
+        }
+
+        [Fact]
         public void ScanMultiLineTrueTest()
         {
             var lexer = Lexer.CreateState("/**/");
@@ -90,6 +104,26 @@
             _ = CommentScanner.ScanMultiLine(lexer, ref this.token);
 
             Assert.Equal(3, lexer.Src.Index);
+        }
+
+        [Fact]
+        public void MultiLineNewLinePositionTest()
+        {
+            var lexer = Lexer.CreateState("/*" + Environment.NewLine + "*/");
+
+            _ = CommentScanner.ScanMultiLine(lexer, ref this.token);
+
+            Assert.Equal(5, lexer.Src.Index);
+        }
+
+        [Fact]
+        public void MultiLineNewLineErrorPositionTest()
+        {
+            var lexer = Lexer.CreateState("/*" + Environment.NewLine + "/");
+
+            _ = CommentScanner.ScanMultiLine(lexer, ref this.token);
+
+            Assert.Equal(5, lexer.Src.Index);
         }
     }
 }

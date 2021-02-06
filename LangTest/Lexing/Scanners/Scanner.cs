@@ -14,7 +14,7 @@
 #endif
 
             Source src = lexer.Src;
-            char? next = src.Peek();
+            char next = src.Peek();
 
             TokenType tokenType = (next == nextExpected)
                 ? then
@@ -60,13 +60,13 @@
                 throw new ArgumentNullException(nameof(lexer));
 
             Source src = lexer.Src;
-            char? next = src.Peek();
+            char next = src.Peek();
 
             InnerEnsureCharIn(next, characters);
         }
 
         private static void InnerEnsureCharIn(
-            char? chr, char[] characters)
+            char chr, char[] characters)
         {
             if (characters == null)
                 throw new ArgumentNullException(nameof(characters));
@@ -77,7 +77,7 @@
                     $"{nameof(characters)} must contain at least one element.");
             }
 
-            if (!chr.HasValue || !characters.Contains(chr.Value))
+            if (!characters.Contains(chr))
             {
                 throw new InvalidOperationException();
             }

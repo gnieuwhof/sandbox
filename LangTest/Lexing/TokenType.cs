@@ -18,6 +18,7 @@
         Period = 46,
         Slash = 47,
 
+        Colon = 58,
         Semicolon = 59,
 
         LessThan = 60,
@@ -28,6 +29,7 @@
         OpenBracket = 91,
 
         CloseBracket = 93,
+        Caret = 94,
 
         OpenBrace  = 123,
         Pipeline = 124,

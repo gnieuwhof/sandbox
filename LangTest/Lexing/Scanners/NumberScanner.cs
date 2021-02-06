@@ -15,14 +15,14 @@
 #endif
 
             Source src = lexer.Src;
-            string result = string.Empty;
+            string value = string.Empty;
             bool dotEncountered = false;
             bool success = true;
 
             while (!src.ReachedEnd())
             {
                 char current = src.Current;
-                char? next = src.Peek();
+                char next = src.Peek();
 
                 if (dotEncountered && (next == '.'))
                 {
@@ -35,7 +35,7 @@
                 {
                     dotEncountered = true;
 
-                    if (!char.IsDigit(next ?? 'X'))
+                    if (!char.IsDigit(next))
                     {
                         success = false;
                         break;
@@ -46,7 +46,7 @@
                     break;
                 }
 
-                result += current;
+                value += current;
 
                 src.Advance();
             }
@@ -61,7 +61,7 @@
                 : TokenType.Int;
 
             token.Type = tokenType;
-            token.Value = result;
+            token.Value = value;
 
             return success;
         }
