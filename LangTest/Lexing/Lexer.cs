@@ -18,7 +18,7 @@
         public StringBuilder Builder { get; } = new StringBuilder();
 
 
-        public Source Src { get; set; }
+        public Source Src { get; private set; }
 
 
         public Lexer(string origin, string text)
@@ -40,7 +40,7 @@
             this.index = 0;
             while (error == null)
             {
-                if (this.tokens.Length == this.index)
+                if (this.tokens.Length <= this.index)
                 {
                     // Double the array
                     var temp = new Token[this.tokens.Length * 2];
@@ -54,12 +54,14 @@
 
                 this.Update(ref token);
 
-                this.Src.Advance();
-
                 if (token.Type == TokenType.ContentEnd)
                 {
+                    this.Src.Reverse();
+
                     break;
                 }
+
+                this.Src.Advance();
 
                 if (simplified)
                 {

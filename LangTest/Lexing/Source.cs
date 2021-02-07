@@ -43,12 +43,12 @@
         {
             get
             {
-                if (!this.ReachedEnd())
+                if (!this.ReachedEnd() && this.Index >= 0)
                 {
                     return this.Text[this.Index];
                 }
 
-                throw new InvalidOperationException();
+                return InvalidChar;
             }
         }
 

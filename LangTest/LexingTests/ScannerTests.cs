@@ -17,14 +17,14 @@
         [Fact]
         public void AssertCurrentCharactersNullTest()
         {
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<ArgumentNullException>(() =>
                 Scanner.EnsureCurrent(new Lexer(string.Empty, string.Empty), null));
         }
 
         [Fact]
         public void AssertCurrentNoCharactersTest()
         {
-            Assert.Throws<InvalidOperationException>(() =>
+            Assert.Throws<ArgumentException>(() =>
                 Scanner.EnsureCurrent(new Lexer(string.Empty, string.Empty), new char[0]));
         }
 
