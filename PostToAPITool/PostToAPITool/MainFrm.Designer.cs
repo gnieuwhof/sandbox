@@ -46,6 +46,7 @@ namespace PostToAPITool
             this.BytesReceivedLbl = new System.Windows.Forms.Label();
             this.ShowResponeLbl = new System.Windows.Forms.Label();
             this.AutoOpenResponseChk = new System.Windows.Forms.CheckBox();
+            this.AutoFormatChk = new System.Windows.Forms.CheckBox();
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -239,11 +240,25 @@ namespace PostToAPITool
             this.AutoOpenResponseChk.Text = "Auto-open Response Viewer";
             this.AutoOpenResponseChk.UseVisualStyleBackColor = true;
             // 
+            // AutoFormatChk
+            // 
+            this.AutoFormatChk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AutoFormatChk.AutoSize = true;
+            this.AutoFormatChk.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.AutoFormatChk.Location = new System.Drawing.Point(293, 397);
+            this.AutoFormatChk.Name = "AutoFormatChk";
+            this.AutoFormatChk.Size = new System.Drawing.Size(119, 24);
+            this.AutoFormatChk.TabIndex = 15;
+            this.AutoFormatChk.Text = "Auto-format";
+            this.AutoFormatChk.UseVisualStyleBackColor = true;
+            this.AutoFormatChk.CheckedChanged += new System.EventHandler(this.AutoFormatChk_CheckedChanged);
+            // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(982, 453);
+            this.Controls.Add(this.AutoFormatChk);
             this.Controls.Add(this.AutoOpenResponseChk);
             this.Controls.Add(this.ShowResponeLbl);
             this.Controls.Add(this.BytesReceivedLbl);
@@ -290,6 +305,7 @@ namespace PostToAPITool
         private System.Windows.Forms.Label ShowResponeLbl;
         private System.Windows.Forms.CheckBox AutoOpenResponseChk;
         private System.Windows.Forms.ToolStripProgressBar ToolStripProgressBar;
+        private System.Windows.Forms.CheckBox AutoFormatChk;
     }
 }
 

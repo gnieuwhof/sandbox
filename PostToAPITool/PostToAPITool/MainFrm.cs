@@ -129,6 +129,8 @@
             {
                 this.config.TextColor = "#000000";
             }
+
+            this.AutoFormatChk.Checked = this.config.AutoFormat;
         }
 
         private bool LoadConfigFile(string path)
@@ -246,7 +248,10 @@
 
                 string txt = this.PreparePayload(this.PayloadTxt.Text);
 
-                txt = JsonHelper.FormatIfJson(txt);
+                if (this.AutoFormatChk.Checked)
+                {
+                    txt = JsonHelper.FormatIfJson(txt);
+                }
 
                 this.PayloadTxt.Text = txt;
 
@@ -459,12 +464,18 @@
 
         private void MainFrm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            this.SaveConfig();
+        }
+
+        private void SaveConfig()
+        {
             if (this.config != null)
             {
                 this.config.SelectedHost = $"{this.HostCmb.SelectedItem}";
                 this.config.SelectedController = $"{this.ControllerCmb.SelectedItem}";
                 this.config.SelectedEndpoint = $"{this.EndpointCmb.SelectedItem}";
                 this.config.AutoOpenResponseViewer = this.AutoOpenResponseChk.Checked;
+                this.config.AutoFormat = this.AutoFormatChk.Checked;
 
                 if (this.WindowState != FormWindowState.Maximized)
                 {
@@ -547,6 +558,11 @@
         private void PayloadTxt_Enter(object sender, EventArgs e)
         {
             this.StatusStrip.BackColor = SystemColors.Control;
+        }
+
+        private void AutoFormatChk_CheckedChanged(object sender, EventArgs e)
+        {
+            this.SaveConfig();
         }
     }
 }

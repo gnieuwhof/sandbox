@@ -24,9 +24,12 @@
 
             this.ApplyConfig();
 
-            string txt = JsonHelper.FormatIfJson(response);
+            if (this.config.AutoFormat)
+            {
+                response = JsonHelper.FormatIfJson(response);
+            }
 
-            this.TextTxt.Text = txt;
+            this.TextTxt.Text = response;
         }
 
         private void ApplyConfig()

@@ -37,5 +37,7 @@
         public string BackColor { get; set; }
 
         public string TextColor { get; set; }
+
+        public bool AutoFormat { get; set; }
     }
 }
