@@ -53,8 +53,6 @@
 
             string configFile = Path.GetFileName(configFilePath);
 
-            this.Text = $"{Program.PROGRAM_TITLE}    [config: {configFile}]";
-
             if (config != null)
             {
                 this.ApplyConfig();
@@ -67,6 +65,8 @@
                 _ = this.UpdateTokenHeaderIfNecessary(
                     setControlsEnabled: true, focusPayloadTxtControl: true);
             }
+
+            this.Text = $"{Program.PROGRAM_TITLE}    [config: {configFile}]    |    {config?.Scope}";
         }
 
         private void ApplyConfig()
