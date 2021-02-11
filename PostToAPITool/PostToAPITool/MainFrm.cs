@@ -66,7 +66,18 @@
                     setControlsEnabled: true, focusPayloadTxtControl: true);
             }
 
-            this.Text = $"{Program.PROGRAM_TITLE}    [config: {configFile}]    |    {config?.Scope}";
+            string grant = null;
+
+            if(!string.IsNullOrWhiteSpace(config.ClientID))
+            {
+                grant = "Client/Secret";
+            }
+            else if(!string.IsNullOrWhiteSpace(config.Username))
+            {
+                grant = $"Username/Password ({config.Username})";
+            }
+
+            this.Text = $"{Program.PROGRAM_TITLE}    [config: {configFile}]    |    {config?.Scope}   |   {grant}";
         }
 
         private void ApplyConfig()
@@ -166,16 +177,26 @@
                 return this.ShowErrorMessageAndReturnFalse(
                     "No TenantID found in config.");
             }
-            if (string.IsNullOrWhiteSpace(this.config.ClientID))
+
+            if (string.IsNullOrWhiteSpace(this.config.ClientID) &&
+                string.IsNullOrWhiteSpace(this.config.Username))
             {
                 return this.ShowErrorMessageAndReturnFalse(
-                    "No ClientID found in config.");
+                    "No ClientID & no Username found in config.");
             }
-            if (string.IsNullOrWhiteSpace(this.config.Secret))
+            if (!string.IsNullOrWhiteSpace(this.config.ClientID) &&
+                string.IsNullOrWhiteSpace(this.config.Secret))
             {
                 return this.ShowErrorMessageAndReturnFalse(
                     "No Secret found in config.");
             }
+            if (!string.IsNullOrWhiteSpace(this.config.Username) &&
+                string.IsNullOrWhiteSpace(this.config.Password))
+            {
+                return this.ShowErrorMessageAndReturnFalse(
+                    "No Password found in config.");
+            }
+
             if (string.IsNullOrWhiteSpace(this.config.Scope))
             {
                 return this.ShowErrorMessageAndReturnFalse(
@@ -383,8 +404,21 @@
 
                 try
                 {
-                    await this.GetAuthenticationHeader(
-                        clientId, secret, tenantId, scope);
+                    if ((clientId != null) && (secret != null))
+                    {
+                        await this.GetAuthenticationHeader(
+                            clientId, secret, tenantId, scope);
+                    }
+                    else
+                    {
+                        await this.GetAuthenticationHeader(
+                            this.config.Scope,
+                            "51f81489-12ee-4a9e-aaae-a2591f45987d",
+                            this.config.Username,
+                            this.config.Password,
+                            tenantId
+                            );
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -414,7 +448,7 @@
         private async Task GetAuthenticationHeader(
             string clientId, string secret, string tenantId, string scope)
         {
-            this.SetStatus("Acquiring token...");
+            this.SetStatus("Acquiring client/secret token...");
             string loginUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/v2.0/token";
 
             string postData = $"client_id={clientId}" +
@@ -441,7 +475,47 @@
 
             this.tokenHeader = header;
             this.tokenAcquiredTime = DateTime.Now;
-            this.SetStatus("Token acquired");
+            this.SetStatus("Client/secret token acquired");
+            this.TokenAcquireTimeLbl.Text = $"{TOKEN_ACQUIRED_TIME_PREFIX} {DateTime.Now:HH:mm:ss}";
+        }
+
+        private async Task GetAuthenticationHeader(
+            string resource, string clientId, string username, string password, string tenantId)
+        {
+            this.SetStatus("Acquiring user/pass token...");
+            string loginUrl = $"https://login.microsoftonline.com/{tenantId}/oauth2/token";
+
+            string[] data = new[]
+            {
+                $"resource={resource}",
+                $"client_id={clientId}",
+                $"grant_type=password",
+                $"username={username}",
+                $"password={password}",
+                $"scope=openid"
+            };
+
+            string postData = string.Join("&", data);
+
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, loginUrl);
+            request.Content = new StringContent(postData, Encoding.UTF8);
+            request.Content.Headers.Remove("Content-Type");
+            request.Content.Headers.TryAddWithoutValidation("Content-Type", $"application/x-www-form-urlencoded");
+
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
+            HttpResponseMessage responseMessage = await this.httpClient.SendAsync(request);
+            string jsonResponse = await responseMessage.Content.ReadAsStringAsync();
+
+            var jsonContent = JsonConvert.DeserializeObject<Dictionary<string, string>>(jsonResponse);
+
+            string token = jsonContent["access_token"];
+
+            var header = new AuthenticationHeaderValue("Bearer", token);
+
+            this.tokenHeader = header;
+            this.tokenAcquiredTime = DateTime.Now;
+            this.SetStatus("User/pass token acquired");
             this.TokenAcquireTimeLbl.Text = $"{TOKEN_ACQUIRED_TIME_PREFIX} {DateTime.Now:HH:mm:ss}";
         }
 

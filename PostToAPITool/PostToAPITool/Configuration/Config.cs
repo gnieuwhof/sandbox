@@ -6,11 +6,15 @@
 
         public string TenantID { get; set; }
 
-        public string ClientID { get; set; }
-
         public string Scope { get; set; }
 
+        public string ClientID { get; set; }
+
         public string Secret { get; set; }
+
+        public string Username { get; set; }
+
+        public string Password { get; set; }
 
         public Controller[] Controllers { get; set; }
 
