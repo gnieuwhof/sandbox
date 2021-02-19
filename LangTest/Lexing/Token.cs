@@ -34,6 +34,10 @@
                 case TokenType.String:
                     val = $"\"{val}\"";
                     break;
+
+                case TokenType.Char:
+                    val = val == " " ? "' '" : val;
+                    break;
             }
 
             return (this.Value == null)

@@ -20,6 +20,8 @@
             StringBuilder builder = lexer.Builder;
             builder.Clear();
 
+            token.Type = TokenType.String;
+
             while (!src.ReachedEnd())
             {
                 char current = src.Current;
@@ -35,6 +37,10 @@
                         inString = false;
                         break;
                     }
+                }
+                else if ((current == '\n') || current == '\r')
+                {
+                    return false;
                 }
                 else
                 {
@@ -65,6 +71,8 @@
             bool escape = false;
             var escapeCharacters = new[] { 'n', 'r', 't', '\\' };
 
+            token.Type = TokenType.Char;
+
             while (!src.ReachedEnd())
             {
                 char current = src.Current;
@@ -74,6 +82,10 @@
                     if (!inCharacter)
                     {
                         inCharacter = true;
+                    }
+                    else if(result == string.Empty)
+                    {
+                        return false;
                     }
                     else
                     {
@@ -98,6 +110,10 @@
 
                     result += current;
                 }
+                else if((current == '\n') || current == '\r')
+                {
+                    return false;
+                }
                 else if(result == string.Empty)
                 {
                     result += current;
@@ -110,7 +126,6 @@
                 src.Advance();
             }
 
-            token.Type = TokenType.Char;
             token.Value = result;
 
             return !inCharacter;

@@ -71,10 +71,41 @@
         public IEnumerable<string> GetLastLines(int amount)
         {
             var lines = new List<string>();
-            int index = this.Index;
-
             var builder = new StringBuilder();
 
+            string postError = string.Empty;
+            int index = (this.Index + 1);
+
+            if ((this.Current != '\n') && (this.Current != '\r'))
+            {
+                while (index < this.Length)
+                {
+                    char chr = this[index];
+
+                    if ((chr != '\n') && (chr != '\r'))
+                    {
+                        builder.Append(chr);
+                    }
+                    else
+                    {
+                        break;
+                    }
+
+                    ++index;
+                }
+
+                postError = builder.ToString();
+
+                builder.Clear();
+            }
+
+            while((this.Current == '\n') || (this.Current == '\r'))
+            {
+                this.Reverse();
+            }
+
+            index = this.Index;
+            bool postAdded = false;
             while ((index >= 0) && (amount > 0))
             {
                 char chr = this[index];
@@ -96,6 +127,13 @@
                     string line = builder.ToString();
 
                     line = Reverse(line);
+
+                    if(!postAdded)
+                    {
+                        line += postError;
+
+                        postAdded = true;
+                    }
 
                     lines.Add(line);
 
@@ -119,6 +157,11 @@
                 string line = builder.ToString();
 
                 line = Reverse(line);
+
+                if(!postAdded)
+                {
+                    line += postError;
+                }
 
                 lines.Add(line);
             }
