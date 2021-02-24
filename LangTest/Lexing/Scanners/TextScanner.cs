@@ -1,6 +1,7 @@
 ﻿namespace Lexing.Scanners
 {
     using System;
+    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
@@ -68,8 +69,14 @@
             Source src = lexer.Src;
             string result = string.Empty;
             bool inCharacter = false;
-            bool escape = false;
-            var escapeCharacters = new[] { 'n', 'r', 't', '\\' };
+            bool escaped = false;
+            var escapeCharacters = new Dictionary<char, char>
+            {
+                { '\n', 'n' },
+                { '\r', 'r' },
+                { '\t', 't' },
+                { char.MaxValue, '\\' },
+            };
 
             token.Type = TokenType.Char;
 
@@ -93,29 +100,28 @@
                         break;
                     }
                 }
-                else if(escape)
+                else if(escaped)
                 {
-                    if(!escapeCharacters.Contains(current))
+                    if(!escapeCharacters.Values.Contains(current))
                     {
                         return false;
                     }
 
                     result += current;
 
-                    escape = false;
+                    escaped = false;
                 }
-                else if (current == '\\')
-                {
-                    escape = true;
-
-                    result += current;
-                }
-                else if((current == '\n') || current == '\r')
+                else if (escapeCharacters.Keys.Contains(current))
                 {
                     return false;
                 }
-                else if(result == string.Empty)
+                else if (result == string.Empty)
                 {
+                    if (current == '\\')
+                    {
+                        escaped = true;
+                    }
+
                     result += current;
                 }
                 else
@@ -128,7 +134,7 @@
 
             token.Value = result;
 
-            return !inCharacter;
+            return (!inCharacter && !escaped);
         }
 
         public static bool ScanNewLine(Lexer lexer, ref Token token)
