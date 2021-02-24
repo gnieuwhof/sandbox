@@ -1,7 +1,6 @@
 ﻿namespace Lexing.Scanners
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Text;
 
@@ -20,14 +19,9 @@
             Source src = lexer.Src;
             StringBuilder builder = lexer.Builder;
             bool escaped = false;
-            var escapeCharacters = new Dictionary<char, char>
-            {
-                { 'n', '\n' },
-                { 'r', '\r' },
-                { 't', char.MaxValue },
-                { '"', char.MaxValue },
-                { '\\', char.MaxValue },
-            };
+            var illegalCharacters = new[] { '\r', '\n' };
+            var escapeCharacters = new[] { 'r', 'n', 't', '"', '\\' };
+
             builder.Clear();
 
             token.Type = TokenType.String;
@@ -54,13 +48,13 @@
 
                     builder.Append(current);
                 }
-                else if (escapeCharacters.Values.Contains(current))
+                else if (illegalCharacters.Contains(current))
                 {
                     return false;
                 }
                 else
                 {
-                    if (escaped && escapeCharacters.Keys.Contains(current))
+                    if (escaped && escapeCharacters.Contains(current))
                     {
                         escaped = false;
                     }
@@ -98,14 +92,8 @@
             string result = string.Empty;
             bool inCharacter = false;
             bool escaped = false;
-            var escapeCharacters = new Dictionary<char, char>
-            {
-                { 'n', '\n' },
-                { 'r', '\r' },
-                { 't', '\t' },
-                { '\'', char.MaxValue },
-                { '\\', char.MaxValue },
-            };
+            var illegalCharacters = new[] { '\r', '\n', '\t' };
+            var escapeCharacters = new[] { 'r', 'n', 't', '\'', '\\' };
 
             token.Type = TokenType.Char;
 
@@ -131,7 +119,7 @@
                 }
                 else if (escaped)
                 {
-                    if (!escapeCharacters.Keys.Contains(current))
+                    if (!escapeCharacters.Contains(current))
                     {
                         return false;
                     }
@@ -140,7 +128,7 @@
 
                     escaped = false;
                 }
-                else if (escapeCharacters.Values.Contains(current))
+                else if (illegalCharacters.Contains(current))
                 {
                     return false;
                 }
