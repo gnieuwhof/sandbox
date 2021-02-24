@@ -7,7 +7,7 @@
 
     public static class TextScanner
     {
-        public static bool ScanString( Lexer lexer, ref Token token)
+        public static bool ScanString(Lexer lexer, ref Token token)
         {
 #if DEBUG
             if (lexer == null)
@@ -19,6 +19,15 @@
             bool inString = false;
             Source src = lexer.Src;
             StringBuilder builder = lexer.Builder;
+            bool escaped = false;
+            var escapeCharacters = new Dictionary<char, char>
+            {
+                { 'n', '\n' },
+                { 'r', '\r' },
+                { 't', char.MaxValue },
+                { '"', char.MaxValue },
+                { '\\', char.MaxValue },
+            };
             builder.Clear();
 
             token.Type = TokenType.String;
@@ -27,7 +36,7 @@
             {
                 char current = src.Current;
 
-                if (current == '"')
+                if ((current == '"') && !escaped)
                 {
                     if (!inString)
                     {
@@ -39,13 +48,32 @@
                         break;
                     }
                 }
-                else if ((current == '\n') || current == '\r')
+                else if ((current == '\\') && !escaped)
+                {
+                    escaped = true;
+
+                    builder.Append(current);
+                }
+                else if (escapeCharacters.Values.Contains(current))
                 {
                     return false;
                 }
                 else
                 {
-                    builder.Append(current);
+                    if (escaped && escapeCharacters.Keys.Contains(current))
+                    {
+                        escaped = false;
+                    }
+
+                    if (current != '\t')
+                    {
+                        builder.Append(current);
+                    }
+                    else
+                    {
+                        builder.Append('\\');
+                        builder.Append('t');
+                    }
                 }
 
                 src.Advance();
@@ -57,7 +85,7 @@
             return !inString;
         }
 
-        public static bool ScanCharacter( Lexer lexer, ref Token token)
+        public static bool ScanCharacter(Lexer lexer, ref Token token)
         {
 #if DEBUG
             if (lexer == null)
@@ -72,11 +100,11 @@
             bool escaped = false;
             var escapeCharacters = new Dictionary<char, char>
             {
-                { '\n', 'n' },
-                { '\r', 'r' },
-                { '\t', 't' },
-                { '\'', '\'' },
-                { char.MaxValue, '\\' },
+                { 'n', '\n' },
+                { 'r', '\r' },
+                { 't', '\t' },
+                { '\'', char.MaxValue },
+                { '\\', char.MaxValue },
             };
 
             token.Type = TokenType.Char;
@@ -91,7 +119,7 @@
                     {
                         inCharacter = true;
                     }
-                    else if(result == string.Empty)
+                    else if (result == string.Empty)
                     {
                         return false;
                     }
@@ -101,9 +129,9 @@
                         break;
                     }
                 }
-                else if(escaped)
+                else if (escaped)
                 {
-                    if(!escapeCharacters.Values.Contains(current))
+                    if (!escapeCharacters.Keys.Contains(current))
                     {
                         return false;
                     }
@@ -112,7 +140,7 @@
 
                     escaped = false;
                 }
-                else if (escapeCharacters.Keys.Contains(current))
+                else if (escapeCharacters.Values.Contains(current))
                 {
                     return false;
                 }
@@ -154,11 +182,11 @@
             {
                 char current = src.Current;
 
-                if((value != string.Empty) && (current != '\n'))
+                if ((value != string.Empty) && (current != '\n'))
                 {
                     break;
                 }
-                
+
                 value += current;
 
                 src.Advance();
