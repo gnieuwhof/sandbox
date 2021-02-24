@@ -75,6 +75,7 @@
                 { '\n', 'n' },
                 { '\r', 'r' },
                 { '\t', 't' },
+                { '\'', '\'' },
                 { char.MaxValue, '\\' },
             };
 
@@ -84,7 +85,7 @@
             {
                 char current = src.Current;
 
-                if (current == '\'')
+                if ((current == '\'') && !escaped)
                 {
                     if (!inCharacter)
                     {

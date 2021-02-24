@@ -305,6 +305,10 @@
             {
                 current = "\\r";
             }
+            else if (current == "\t")
+            {
+                current = "\\t";
+            }
 
             string currentChar = (current == "'")
                 ? "'"

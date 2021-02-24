@@ -9,7 +9,7 @@
         private Token token = default;
 
         [Fact]
-        public void NoCharacterInLiteralTest()
+        public void EmptyLiteralTest()
         {
             var lexer = Lexer.CreateState("''");
 
@@ -29,19 +29,9 @@
         }
 
         [Fact]
-        public void TabInLiteralTest()
+        public void UnescapedLiteralsTest()
         {
-            var lexer = Lexer.CreateState("'\t'");
-
-            bool result = TextScanner.ScanCharacter(lexer, ref this.token);
-
-            Assert.False(result);
-        }
-
-        [Fact]
-        public void UnescapedLiteralTest()
-        {
-            var unescaped = new[] { "'\n'", "'\r'", "'\t'", "'\\'" };
+            var unescaped = new[] { "'\n'", "'\r'", "'\t'", "'\\'", "'\''" };
 
             foreach (string input in unescaped)
             {
@@ -56,11 +46,16 @@
         [Fact]
         public void EscapedBackslashLiteralTest()
         {
-            var lexer = Lexer.CreateState("'\\\\'");
+            var escaped = new[] { "'\\''", "'\\n'", "'\\r'", "'\\t'", "'\\\\'" };
 
-            bool result = TextScanner.ScanCharacter(lexer, ref this.token);
+            foreach (string input in escaped)
+            {
+                var lexer = Lexer.CreateState(input);
 
-            Assert.True(result);
+                bool result = TextScanner.ScanCharacter(lexer, ref this.token);
+
+                Assert.True(result);
+            }
         }
 
         [Fact]
