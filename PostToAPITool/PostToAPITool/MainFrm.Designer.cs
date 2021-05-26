@@ -29,6 +29,7 @@ namespace PostToAPITool
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.StatusStrip = new System.Windows.Forms.StatusStrip();
             this.ToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.ToolStripProgressBar = new System.Windows.Forms.ToolStripProgressBar();
@@ -49,6 +50,7 @@ namespace PostToAPITool
             this.AutoFormatChk = new System.Windows.Forms.CheckBox();
             this.MethodLbl = new System.Windows.Forms.Label();
             this.MethodCmb = new System.Windows.Forms.ComboBox();
+            this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.StatusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -106,6 +108,7 @@ namespace PostToAPITool
             this.ControllerCmb.Name = "ControllerCmb";
             this.ControllerCmb.Size = new System.Drawing.Size(151, 23);
             this.ControllerCmb.TabIndex = 3;
+            this.ToolTip.SetToolTip(this.ControllerCmb, "Controller");
             this.ControllerCmb.SelectedIndexChanged += new System.EventHandler(this.ControllerCmb_SelectedIndexChanged);
             // 
             // EndpointCmb
@@ -118,6 +121,7 @@ namespace PostToAPITool
             this.EndpointCmb.Name = "EndpointCmb";
             this.EndpointCmb.Size = new System.Drawing.Size(151, 23);
             this.EndpointCmb.TabIndex = 5;
+            this.ToolTip.SetToolTip(this.EndpointCmb, "Endpoint");
             // 
             // ControllerLbl
             // 
@@ -129,6 +133,7 @@ namespace PostToAPITool
             this.ControllerLbl.Size = new System.Drawing.Size(18, 15);
             this.ControllerLbl.TabIndex = 2;
             this.ControllerLbl.Text = "C:";
+            this.ToolTip.SetToolTip(this.ControllerLbl, "Controller");
             // 
             // EndpointLbl
             // 
@@ -141,6 +146,7 @@ namespace PostToAPITool
             this.EndpointLbl.Size = new System.Drawing.Size(18, 15);
             this.EndpointLbl.TabIndex = 4;
             this.EndpointLbl.Text = "E:";
+            this.ToolTip.SetToolTip(this.EndpointLbl, "Endpoint");
             // 
             // CallAPIBtn
             // 
@@ -204,6 +210,7 @@ namespace PostToAPITool
             this.HostLbl.Size = new System.Drawing.Size(19, 15);
             this.HostLbl.TabIndex = 0;
             this.HostLbl.Text = "H:";
+            this.ToolTip.SetToolTip(this.HostLbl, "Host");
             // 
             // HostCmb
             // 
@@ -216,6 +223,7 @@ namespace PostToAPITool
             this.HostCmb.Name = "HostCmb";
             this.HostCmb.Size = new System.Drawing.Size(188, 23);
             this.HostCmb.TabIndex = 1;
+            this.ToolTip.SetToolTip(this.HostCmb, "Host");
             // 
             // BytesReceivedLbl
             // 
@@ -282,6 +290,7 @@ namespace PostToAPITool
             this.MethodLbl.Size = new System.Drawing.Size(21, 15);
             this.MethodLbl.TabIndex = 16;
             this.MethodLbl.Text = "M:";
+            this.ToolTip.SetToolTip(this.MethodLbl, "Method");
             // 
             // MethodCmb
             // 
@@ -293,6 +302,7 @@ namespace PostToAPITool
             this.MethodCmb.Name = "MethodCmb";
             this.MethodCmb.Size = new System.Drawing.Size(82, 23);
             this.MethodCmb.TabIndex = 17;
+            this.ToolTip.SetToolTip(this.MethodCmb, "Method");
             // 
             // MainFrm
             // 
@@ -352,6 +362,7 @@ namespace PostToAPITool
         private System.Windows.Forms.CheckBox AutoFormatChk;
         private System.Windows.Forms.Label MethodLbl;
         private System.Windows.Forms.ComboBox MethodCmb;
+        private System.Windows.Forms.ToolTip ToolTip;
     }
 }
 
