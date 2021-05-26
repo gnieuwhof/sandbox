@@ -6,7 +6,7 @@
 
     public static class TextScanner
     {
-        public static bool ScanString( Lexer lexer, ref Token token)
+        public static bool ScanString(Lexer lexer, ref Token token)
         {
 #if DEBUG
             if (lexer == null)
@@ -18,13 +18,19 @@
             bool inString = false;
             Source src = lexer.Src;
             StringBuilder builder = lexer.Builder;
+            bool escaped = false;
+            var illegalCharacters = new[] { '\r', '\n' };
+            var escapeCharacters = new[] { 'r', 'n', 't', '"', '\\' };
+
             builder.Clear();
+
+            token.Type = TokenType.String;
 
             while (!src.ReachedEnd())
             {
                 char current = src.Current;
 
-                if (current == '"')
+                if ((current == '"') && !escaped)
                 {
                     if (!inString)
                     {
@@ -36,9 +42,32 @@
                         break;
                     }
                 }
+                else if ((current == '\\') && !escaped)
+                {
+                    escaped = true;
+
+                    builder.Append(current);
+                }
+                else if (illegalCharacters.Contains(current))
+                {
+                    return false;
+                }
                 else
                 {
-                    builder.Append(current);
+                    if (escaped && escapeCharacters.Contains(current))
+                    {
+                        escaped = false;
+                    }
+
+                    if (current != '\t')
+                    {
+                        builder.Append(current);
+                    }
+                    else
+                    {
+                        builder.Append('\\');
+                        builder.Append('t');
+                    }
                 }
 
                 src.Advance();
@@ -50,7 +79,7 @@
             return !inString;
         }
 
-        public static bool ScanCharacter( Lexer lexer, ref Token token)
+        public static bool ScanCharacter(Lexer lexer, ref Token token)
         {
 #if DEBUG
             if (lexer == null)
@@ -62,18 +91,25 @@
             Source src = lexer.Src;
             string result = string.Empty;
             bool inCharacter = false;
-            bool escape = false;
-            var escapeCharacters = new[] { 'n', 'r', 't', '\\' };
+            bool escaped = false;
+            var illegalCharacters = new[] { '\r', '\n', '\t' };
+            var escapeCharacters = new[] { 'r', 'n', 't', '\'', '\\' };
+
+            token.Type = TokenType.Char;
 
             while (!src.ReachedEnd())
             {
                 char current = src.Current;
 
-                if (current == '\'')
+                if ((current == '\'') && !escaped)
                 {
                     if (!inCharacter)
                     {
                         inCharacter = true;
+                    }
+                    else if (result == string.Empty)
+                    {
+                        return false;
                     }
                     else
                     {
@@ -81,25 +117,28 @@
                         break;
                     }
                 }
-                else if(escape)
+                else if (escaped)
                 {
-                    if(!escapeCharacters.Contains(current))
+                    if (!escapeCharacters.Contains(current))
                     {
                         return false;
                     }
 
                     result += current;
 
-                    escape = false;
+                    escaped = false;
                 }
-                else if (current == '\\')
+                else if (illegalCharacters.Contains(current))
                 {
-                    escape = true;
+                    return false;
+                }
+                else if (result == string.Empty)
+                {
+                    if (current == '\\')
+                    {
+                        escaped = true;
+                    }
 
-                    result += current;
-                }
-                else if(result == string.Empty)
-                {
                     result += current;
                 }
                 else
@@ -110,10 +149,9 @@
                 src.Advance();
             }
 
-            token.Type = TokenType.Char;
             token.Value = result;
 
-            return !inCharacter;
+            return (!inCharacter && !escaped);
         }
 
         public static bool ScanNewLine(Lexer lexer, ref Token token)
@@ -132,11 +170,11 @@
             {
                 char current = src.Current;
 
-                if((value != string.Empty) && (current != '\n'))
+                if ((value != string.Empty) && (current != '\n'))
                 {
                     break;
                 }
-                
+
                 value += current;
 
                 src.Advance();

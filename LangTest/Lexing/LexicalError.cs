@@ -59,8 +59,7 @@
 
                 string prefix = $"{this.Location.Line - index}";
 
-                line = line.Replace("\\", "\\\\");
-                line = line.Replace("\t", "\\t");
+                line = line.Replace("\t", "    ");
 
                 prefix = PrefixIfShorterThan(prefix, "0", maxPrefixLength);
 
@@ -104,8 +103,8 @@
                 for (int i = 0; i < this.Location.Character - 1; ++i)
                 {
                     char chr = errorLine[i];
-                    characterIndicator += (new[] { '\t', '\\' }.Contains(chr))
-                        ? ". "
+                    characterIndicator += (chr == '\t')
+                        ? ".___"
                         : ".";
                 }
             }

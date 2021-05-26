@@ -61,6 +61,11 @@
                     break;
                 }
 
+                if(error != null)
+                {
+                    break;
+                }
+
                 this.Src.Advance();
 
                 if (simplified)
@@ -76,7 +81,7 @@
 
                         default:
                             ++this.index;
-                                break;
+                            break;
                     }
                 }
                 else
@@ -290,13 +295,36 @@
                 --character;
             }
 
+            string current = $"{this.Src.Current}";
+
+            if (current == "\n")
+            {
+                current = "\\n";
+            }
+            else if (current == "\r")
+            {
+                current = "\\r";
+            }
+            else if (current == "\t")
+            {
+                current = "\\t";
+            }
+
+            string currentChar = (current == "'")
+                ? "'"
+                : $"'{current}'";
+
             string error = this.Src.ReachedEnd()
                 ? "unexpected end"
-                : $"unexpected character '{this.Src.Current}'";
+                : $"unexpected character {currentChar}";
 
             if (this.scanError && (this.index < this.tokens.Length))
             {
-                error += $" ({this.tokens[index].Type})";
+                TokenType tokenType = this.tokens[index].Type;
+                if(tokenType != 0)
+                {
+                    error += $" ({tokenType})";
+                }
             }
 
             IEnumerable<string> lines = this.Src.GetLastLines(4);
