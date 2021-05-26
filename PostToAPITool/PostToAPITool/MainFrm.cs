@@ -297,7 +297,7 @@
                 await this.UpdateTokenHeaderIfNecessary(false);
 
                 this.SetStatus($"Calling: {uri}");
-                HttpResponseMessage response = await Post(message, uri, this.tokenHeader);
+                HttpResponseMessage response = await CallAsync(message, uri, this.tokenHeader);
                 this.SetStatus($"Response received from: {uri}");
 
                 this.StatusCodeLbl.Text = $"{STATUS_CODE_PREFIX} {response.StatusCode}";
@@ -538,14 +538,33 @@
             this.ToolStripStatusLabel.Text = $"[{DateTime.Now:HH:mm:ss}] {status}";
         }
 
-        private async Task<HttpResponseMessage> Post(string json,
+        private async Task<HttpResponseMessage> CallAsync(string json,
             Uri url, AuthenticationHeaderValue authHeader)
         {
             httpClient.DefaultRequestHeaders.Authorization = authHeader;
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage result = await this.httpClient.PatchAsync(url, content);
+            HttpResponseMessage result;
+
+            string request = $"{new Uri(url, this.PayloadTxt.Text)}";
+
+            switch (this.MethodCmb.SelectedItem)
+            {
+                case "GET":
+                    result = await this.httpClient.GetAsync(request);
+                    break;
+                case "PATCH":
+                    result = await this.httpClient.PatchAsync(url, content);
+                    break;
+                case "DELETE":
+                    result = await this.httpClient.DeleteAsync(request);
+                    break;
+                default:
+                case "POST":
+                    result = await this.httpClient.PostAsync(url, content);
+                    break;
+            }
 
             return result;
         }
@@ -562,6 +581,7 @@
                 this.config.SelectedHost = $"{this.HostCmb.SelectedItem}";
                 this.config.SelectedController = $"{this.ControllerCmb.SelectedItem}";
                 this.config.SelectedEndpoint = $"{this.EndpointCmb.SelectedItem}";
+                this.config.SelectedMethod = $"{this.MethodCmb.SelectedItem}";
                 this.config.AutoOpenResponseViewer = this.AutoOpenResponseChk.Checked;
                 this.config.AutoFormat = this.AutoFormatChk.Checked;
 
