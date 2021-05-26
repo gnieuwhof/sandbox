@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\Controller.cs" />
+    <Compile Include="HttpClientExtensions.cs" />
     <Compile Include="JsonHelper.cs" />
     <Compile Include="MainFrm.cs">
       <SubType>Form</SubType>

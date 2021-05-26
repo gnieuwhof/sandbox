@@ -115,6 +115,20 @@
                 this.EndpointCmb.SelectedItem = this.config.SelectedEndpoint;
             }
 
+            this.MethodCmb.Items.Add("GET");
+            this.MethodCmb.Items.Add("POST");
+            this.MethodCmb.Items.Add("PATCH");
+            this.MethodCmb.Items.Add("DELETE");
+
+            if(this.MethodCmb.Items.Contains(this.config.SelectedMethod ?? ""))
+            {
+                this.MethodCmb.SelectedItem = this.config.SelectedMethod;
+            }
+            else
+            {
+                this.MethodCmb.SelectedItem = "POST";
+            }
+
             this.AutoOpenResponseChk.Checked = this.config.AutoOpenResponseViewer;
 
             if (this.config.MainFrmFontSize > 0)
@@ -531,7 +545,7 @@
 
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-            HttpResponseMessage result = await this.httpClient.PostAsync(url, content);
+            HttpResponseMessage result = await this.httpClient.PatchAsync(url, content);
 
             return result;
         }

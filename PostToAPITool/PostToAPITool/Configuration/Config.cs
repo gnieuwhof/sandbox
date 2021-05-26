@@ -24,6 +24,8 @@
 
         public string SelectedEndpoint { get; set; }
 
+        public string SelectedMethod { get; set; }
+
         public bool AutoOpenResponseViewer { get; set; }
 
         public int MainFrmWidth { get; set; }
