@@ -117,6 +117,7 @@
 
             this.MethodCmb.Items.Add("GET");
             this.MethodCmb.Items.Add("POST");
+            this.MethodCmb.Items.Add("PUT");
             this.MethodCmb.Items.Add("PATCH");
             this.MethodCmb.Items.Add("DELETE");
 
@@ -557,6 +558,9 @@
             {
                 case "GET":
                     result = await this.httpClient.GetAsync(request);
+                    break;
+                case "PUT":
+                    result = await this.httpClient.PutAsync(url, content);
                     break;
                 case "PATCH":
                     result = await this.httpClient.PatchAsync(url, content);
