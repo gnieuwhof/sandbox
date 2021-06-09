@@ -291,6 +291,10 @@
                 this.PayloadTxt.Text = txt;
 
                 string path = $"{this.ControllerCmb.SelectedItem}/{this.EndpointCmb.SelectedItem}";
+                if(!path.EndsWith("/"))
+                {
+                    path = $"{path}/";
+                }
                 uri = new Uri(new Uri($"{this.HostCmb.SelectedItem}"), path);
                 string message = txt;
 
