@@ -284,7 +284,7 @@
 
                 string txt = this.PreparePayload(this.PayloadTxt.Text);
 
-                if (this.AutoFormatChk.Checked)
+                if (this.AutoFormatChk.Checked && ((string)this.MethodCmb.SelectedItem != "GET"))
                 {
                     txt = JsonHelper.FormatIfJson(txt);
                 }
