@@ -1,5 +1,46 @@
 <?php
 
+$harry = array(
+	array("A", 10),
+	null,
+	array(null, 50),
+	array("D", 80),
+);
+
+echo "<pre>";
+print_r($harry);
+echo "</pre>";
+
+set_empty($harry, "Pannenkoek!");
+
+function set_empty(&$arr, $replace_with)
+{
+	$index = 0;
+	foreach($arr as $elem)
+	{
+		if(is_array($elem))
+		{
+			// Nested, voor 50.
+			set_empty($arr[$index], $replace_with);
+		}
+		else if(is_null($elem) || $elem == "")
+		{
+			// Eerste level, na A => 10.
+			$arr[$index] = $replace_with;
+		}
+		
+		++$index;
+	}
+	
+	return $arr;
+}
+
+echo "<pre>";
+print_r($harry);
+echo "</pre>";
+
+exit;
+
 $billy = array(
 	array("D", 10),
 	array("E", 20),
