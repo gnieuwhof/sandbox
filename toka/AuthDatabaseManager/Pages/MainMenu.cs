@@ -1,0 +1,89 @@
+﻿namespace AuthDatabaseManager.Pages
+{
+    using AuthDatabaseManager.Models;
+    using System;
+    using System.Collections.Generic;
+
+    public class MainMenu : Page
+    {
+        private readonly Database database;
+
+        private List<(char?, object)> Options
+        {
+            get
+            {
+                Database db = this.database;
+
+                return new()
+                {
+                    ('1', new ModelPage<PrivateKey>(db, new PrivateKeys(db))),
+                    ('2', new ModelPage<Registration>(db, new Registrations(db))),
+                    ('3', new ModelPage<Secret>(db, new Secrets(db))),
+                    (null, LINE),
+                    ('q', new Quit()),
+                };
+            }
+        }
+
+
+        public override string Title => "Main Menu";
+
+
+        public MainMenu(Database database)
+        {
+            this.database = database ??
+                throw new ArgumentNullException(nameof(database));
+        }
+
+
+        public override Page Show()
+        {
+            PrintMenu();
+
+            Console.WriteLine();
+
+            while (true)
+            {
+                Console.Write("Option:");
+
+                string input = Console.ReadLine();
+
+                foreach ((char?, object) kv in Options)
+                {
+                    char? key = kv.Item1;
+                    object item = kv.Item2;
+
+                    if (input == $"{key}")
+                    {
+                        if (item is Page page)
+                        {
+                            return page;
+                        }
+                    }
+                }
+
+                Write.Warning("No valid option entered.");
+            }
+        }
+
+        private void PrintMenu()
+        {
+            foreach ((char?, object) kv in Options)
+            {
+                object item = kv.Item2;
+
+                if (item is Line)
+                {
+                    string line = Helper.GetLine(Options);
+                    Console.WriteLine(line);
+                    continue;
+                }
+
+                char? key = kv.Item1;
+                string name = Helper.GetName(item);
+
+                Console.WriteLine($"{key} {name}");
+            }
+        }
+    }
+}

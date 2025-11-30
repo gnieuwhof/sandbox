@@ -1,0 +1,84 @@
+﻿namespace AuthDatabaseManager.Input
+{
+    using AuthDatabaseManager.Models;
+    using System;
+
+    public class InputVal<T> : InputBase
+    {
+        private readonly Database database;
+
+        public string StringType { get; }
+
+        public T Value { get; set; }
+
+
+        public InputVal(Database database,
+            string description, InputType? inputType = null
+            )
+            : base(description)
+        {
+            this.database = database ??
+                throw new ArgumentNullException(nameof(database));
+
+            if (!inputType.HasValue)
+            {
+                Type type = typeof(T);
+
+                if (type == typeof(DateTime))
+                {
+                    inputType = InputType.DateInput;
+                }
+
+                if (type == typeof(string))
+                {
+                    inputType = InputType.StringInput;
+                }
+
+                if (type.IsSubclassOf(typeof(Model)))
+                {
+                    inputType = InputType.ModelInput;
+                }
+            }
+
+            if (!inputType.HasValue)
+            {
+                throw new InvalidOperationException("Cannot determine input type.");
+            }
+
+            this.Type = inputType.Value;
+        }
+
+
+        public override string GetValue()
+        {
+            if (this.Value is DateTime dt)
+            {
+                return dt.ToString("yyyy-MM-dd");
+            }
+
+            if (this.Value is Model model)
+            {
+                return string.Join(' ', model.Row(this.database));
+            }
+
+            return $"{this.Value}";
+        }
+
+        public override void SetValue(object val)
+        {
+            if (val == null)
+            {
+                this.Value = default;
+                return;
+            }
+
+            if (val is T t)
+            {
+                this.Value = t;
+                return;
+            }
+
+            throw new ArgumentException("Invalid type");
+        }
+    }
+}
