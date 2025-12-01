@@ -3,7 +3,7 @@
     using AuthDatabaseManager.Input;
     using System;
 
-    public class PrivateKeys : CreatePage
+    public class PrivateKeys : ReturnBase
     {
         private readonly Database database;
 

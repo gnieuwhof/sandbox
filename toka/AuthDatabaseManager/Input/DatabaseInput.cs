@@ -1,6 +1,8 @@
 ﻿namespace AuthDatabaseManager.Input
 {
+    using AuthDatabaseManager.Pages;
     using System;
+    using System.Collections.Generic;
 
     public static class DatabaseInput
     {
@@ -30,14 +32,18 @@
                 ClearScreen(title);
 
                 Console.WriteLine("Create Record?");
+
+                var lines = new List<string>();
                 foreach (InputBase input in inputs)
                 {
                     string inputValue = input.GetValue();
 
-                    Console.WriteLine($"- {input.Description} {inputValue}");
+                    lines.Add($"- {input.Description} {inputValue}");
                 }
 
-                Console.WriteLine();
+                string line = Helper.GetLine(lines);
+                Write.Lines(lines);
+                Console.WriteLine(line);
                 Console.WriteLine("Enter: Y, Cancel: c, Retry: r (otherwise)");
 
                 string ans = Console.ReadLine();

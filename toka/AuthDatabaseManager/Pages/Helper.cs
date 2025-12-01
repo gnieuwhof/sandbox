@@ -1,7 +1,9 @@
 ﻿namespace AuthDatabaseManager.Pages
 {
+    using AuthDatabaseManager.Models;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public static class Helper
     {
@@ -40,6 +42,17 @@
             return name;
         }
 
+        public static Row GetLine(IEnumerable<Row> rows)
+        {
+            IEnumerable<string> lines = rows.Select(r => r.Line);
+
+            string line = GetLine(lines);
+
+            var result = new Row(line);
+
+            return result;
+        }
+
         public static string GetLine(IEnumerable<string> items)
         {
             int longest = 0;
@@ -54,17 +67,17 @@
             return line;
         }
 
-        public static IEnumerable<string> Align(
-            IEnumerable<IEnumerable<string>> grid)
+        public static IEnumerable<Row> Align(
+            IEnumerable<Row> grid)
         {
-            var result = new List<string>();
+            var result = new List<Row>();
 
             var lenghts = new List<int>();
 
             foreach (var row in grid)
             {
                 int c = 0;
-                foreach (string column in row)
+                foreach (string column in row.Columns)
                 {
                     int longest = 0;
                     if (c < lenghts.Count)
@@ -89,7 +102,7 @@
             foreach (var row in grid)
             {
                 int c = 0;
-                foreach (string column in row)
+                foreach (string column in row.Columns)
                 {
                     int longest = lenghts[c];
                     int length = column?.Length ?? 0;
@@ -98,11 +111,38 @@
                     ++c;
                 }
 
-                result.Add(string.Join("  ", aligned));
+                result.Add(new Row(row.Color, aligned.ToArray()));
                 aligned.Clear();
             }
 
             return result;
+        }
+
+        public static string GetName(Model model)
+        {
+            _ = model ??
+                throw new ArgumentNullException(nameof(model));
+
+            string name = model.GetType().Name;
+
+            var chars = new List<char>();
+
+            bool prevIsLower = false;
+            foreach (char c in name)
+            {
+                bool currIsLower = char.IsLower(c);
+
+                if (prevIsLower && !currIsLower)
+                {
+                    chars.Add(' ');
+                }
+
+                chars.Add(c);
+
+                prevIsLower = currIsLower;
+            }
+
+            return new string(chars.ToArray());
         }
     }
 }

@@ -8,12 +8,12 @@
     public class ModelPage<T> : Page where T : Model, new()
     {
         private readonly Database database;
-        private readonly CreatePage createPage;
+        private readonly ReturnBase createPage;
 
         public override string Title { get; }
 
 
-        public ModelPage(Database database, CreatePage createPage)
+        public ModelPage(Database database, ReturnBase createPage)
         {
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));
@@ -36,27 +36,27 @@
 
             var grid = this.database.GetGrid(records);
 
-            var list = new List<IEnumerable<string>>();
+            var list = new List<Row>();
 
             T record = records.FirstOrDefault();
 
             if (record != null)
             {
-                list.Add(record.Columns);
+                list.Add(new Row(record.Columns));
             }
 
             list.AddRange(grid);
 
-            IEnumerable<string> aligned = Helper.Align(list);
+            IEnumerable<Row> aligned = Helper.Align(list);
 
-            List<string> lines = aligned.ToList();
+            List<Row> lines = aligned.ToList();
 
             if (!records.Any())
             {
-                lines.Add("(there are no records to show)");
+                lines.Add(new Row("(there are no records to show)"));
             }
 
-            string line = Helper.GetLine(lines);
+            Row line = Helper.GetLine(lines);
             lines.Add(line);
 
             Write.Lines(lines);
@@ -81,11 +81,9 @@
                 {
                     var deletePage = new DeleteModel(this.database, selected);
 
-                    Console.Clear();
-                    Console.WriteLine($"--- {deletePage.Title} ---");
-                    Console.WriteLine();
-                    deletePage.Show();
-                    return this;
+                    deletePage.ReturnPage = this;
+
+                    return deletePage;
                 }
             }
 

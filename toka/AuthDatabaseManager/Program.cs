@@ -5,6 +5,10 @@
 
     public static class Program
     {
+        private const string TITLE = "AUTH DATABASE MANAGER";
+        private static readonly Version VERSION = new Version(1, 21);
+
+
         private static void Main()
         {
             var database = Database.Init("database.db3");
@@ -17,6 +21,7 @@
 
                 if (page is not Quit)
                 {
+                    Console.WriteLine($"{TITLE} v{VERSION}");
                     Console.WriteLine($"--- {page.Title} ---");
                     Console.WriteLine();
                 }

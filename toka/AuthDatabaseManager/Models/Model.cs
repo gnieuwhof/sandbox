@@ -21,9 +21,9 @@
 
         public abstract string[] Columns { get; }
 
-        public abstract IEnumerable<string> Row(Database database);
+        public abstract Row Row(Database database);
 
-        public abstract IEnumerable<IEnumerable<string>> Record();
+        public abstract IEnumerable<Row> Record();
 
         public abstract string CollectionName { get; }
 

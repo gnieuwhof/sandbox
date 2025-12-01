@@ -3,7 +3,7 @@
     using AuthDatabaseManager.Input;
     using System;
 
-    public class Registrations : CreatePage
+    public class Registrations : ReturnBase
     {
         private readonly Database database;
 

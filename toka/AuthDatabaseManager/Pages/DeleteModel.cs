@@ -3,7 +3,7 @@
     using AuthDatabaseManager.Models;
     using System;
 
-    public class DeleteModel : Page
+    public class DeleteModel : ReturnBase
     {
         private readonly Database database;
         private readonly Model record;
@@ -19,7 +19,7 @@
             this.record = record ??
                 throw new ArgumentNullException(nameof(record));
 
-            string modelName = record.GetType().Name;
+            string modelName = Helper.GetName(record);
             this.Title = $"Selected {modelName}";
         }
 
@@ -30,18 +30,23 @@
 
             var result = Helper.Align(details);
             Write.Lines(result);
-
-            Console.WriteLine();
-            Write.Warning("Delete record (y/N)");
+            Row line = Helper.GetLine(result);
+            Console.WriteLine(line);
+            string modelName = Helper.GetName(this.record);
+            Write.Warning($"Delete {modelName} (y/N)");
 
             string input = Console.ReadLine();
 
             if (input == "y")
             {
                 this.database.Delete(this.record);
+
+                Console.WriteLine($"{modelName} deleted.");
+                Console.WriteLine("(any key to continue)");
+                Console.ReadKey();
             }
 
-            return null;
+            return this.ReturnPage;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿namespace AuthDatabaseManager.Pages
 {
+    using AuthDatabaseManager.Models;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -9,6 +10,13 @@
         public static void Lines(IEnumerable<string> lines)
         {
             Color(Console.ForegroundColor, lines.ToArray());
+        }
+        public static void Lines(IEnumerable<Row> rows)
+        {
+            foreach (Row row in rows)
+            {
+                Color(row.Color, row.Line);
+            }
         }
 
         public static void Warning(string warning)

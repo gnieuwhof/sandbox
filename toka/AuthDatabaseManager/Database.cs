@@ -185,10 +185,9 @@
             return result;
         }
 
-        public IEnumerable<IEnumerable<string>> GetGrid(
-            IEnumerable<Model> records, bool prefixNumbers = true)
+        public IEnumerable<Row> GetGrid(IEnumerable<Model> records)
         {
-            var grid = new List<List<string>>();
+            var grid = new List<Row>();
 
             int index = 0;
             foreach (object record in records)
@@ -196,16 +195,15 @@
                 ++index;
                 if (record is Model model)
                 {
-                    var row = new List<string>();
+                    var columns = new List<string>();
 
-                    if (prefixNumbers)
-                    {
-                        row.Add($"{index}");
-                    }
+                    columns.Add($"{index}");
 
-                    row.AddRange(model.Row(this));
+                    var modelRow = model.Row(this);
 
-                    grid.Add(row);
+                    columns.AddRange(modelRow.Columns);
+
+                    grid.Add(new Row(modelRow.Color, columns.ToArray()));
                 }
             }
 

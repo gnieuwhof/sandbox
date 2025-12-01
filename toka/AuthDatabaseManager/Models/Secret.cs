@@ -19,25 +19,47 @@
         public override string[] Columns =>
             new[] { "", "Name:", "Expires:", "Hint:", "Registration:" };
 
-        public override IEnumerable<string> Row(Database database)
+        public override string CollectionName => "Secrets";
+
+
+        public override Row Row(Database database)
         {
             Registration registration = database.Registration(FkRegistration);
 
-            return new[] { Name, $"{Expires:yyyy-MM-dd}", Hint, registration.Name };
+            ConsoleColor color = GetColor(this.Expires);
+
+            return new Row(color, Name, $"{Expires:yyyy-MM-dd}", Hint, registration.Name);
         }
 
-        public override string CollectionName => "Secrets";
-
-        public override IEnumerable<IEnumerable<string>> Record()
+        public override IEnumerable<Row> Record()
         {
+            ConsoleColor color = GetColor(this.Expires);
+
             var result = new[]
             {
-                new[]{ "Name:", this.Name },
-                new[]{ "Hint:", this.Hint },
-                new[]{ "Expires:", $"{this.Expires:yyyy-MM-dd}" },
+                new Row( "Name:", this.Name ),
+                new Row( "Hint:", this.Hint ),
+                new Row( color, "Expires:", $"{this.Expires:yyyy-MM-dd}" ),
             };
 
             return result;
+        }
+
+        private static ConsoleColor GetColor(DateTime expires)
+        {
+            ConsoleColor color = ConsoleColor.Gray;
+
+            DateTime nowDate = DateTime.UtcNow.Date;
+            if (expires.Date < nowDate)
+            {
+                color = ConsoleColor.Red;
+            }
+            else if ((expires - nowDate).TotalDays <= 31)
+            {
+                color = ConsoleColor.Yellow;
+            }
+
+            return color;
         }
     }
 }

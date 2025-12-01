@@ -9,19 +9,20 @@
 
 
         public override string[] Columns =>
-            new[] { "", "Name:", "Scopes:" };
+            new[] { "", "Client ID:", "Name:", "Scopes:" };
 
-        public override IEnumerable<string> Row(Database database) =>
-            new[] { Name, Scopes };
+        public override Row Row(Database database) =>
+            new Row($"{ID}", Name, Scopes);
 
         public override string CollectionName => "Registrations";
 
-        public override IEnumerable<IEnumerable<string>> Record()
+        public override IEnumerable<Row> Record()
         {
             var result = new[]
             {
-                new[]{ "Name:", this.Name },
-                new[]{ "Scopes:", this.Scopes },
+                new Row( "Client ID:", $"{this.ID}"),
+                new Row( "Name:", this.Name ),
+                new Row( "Scopes:", this.Scopes ),
             };
 
             return result;

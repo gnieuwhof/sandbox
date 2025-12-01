@@ -4,7 +4,7 @@
     using AuthDatabaseManager.Models;
     using System;
 
-    public class Secrets : CreatePage
+    public class Secrets : ReturnBase
     {
         private readonly Database database;
 

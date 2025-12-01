@@ -16,7 +16,7 @@
 
             IEnumerable<Model> records = database.GetTableFromType(modelType);
 
-            if(!records.Any())
+            if (!records.Any())
             {
                 Write.Warning("There are no records to select.");
                 Console.WriteLine("any key to continue");
@@ -26,11 +26,11 @@
             }
 
             var grid = database.GetGrid(records);
-            IEnumerable<string> aligned = Helper.Align(grid);
+            IEnumerable<Row> aligned = Helper.Align(grid);
 
-            List<string> lines = aligned.ToList();
+            List<Row> lines = aligned.ToList();
 
-            string line = Helper.GetLine(aligned);
+            Row line = Helper.GetLine(aligned);
             lines.Add(line);
 
             Console.WriteLine($"{input.Description}");
