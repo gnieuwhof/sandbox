@@ -25,7 +25,7 @@
                 longest = Math.Max(name?.Length ?? 0, longest);
             }
 
-            string line = new string('-', longest + 2);
+            string line = new string('-', longest + 3);
 
             return line;
         }

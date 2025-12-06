@@ -20,6 +20,9 @@
                     ('2', new ModelPage<Registration>(db, new Registrations(db))),
                     ('3', new ModelPage<Secret>(db, new Secrets(db))),
                     (null, LINE),
+                    ('i', new InfoPage(this)),
+                    ('t', new ToolsPage(this)),
+                    (null, LINE),
                     ('q', new Quit()),
                 };
             }
@@ -47,6 +50,8 @@
                 Console.Write("Option:");
 
                 string input = Console.ReadLine();
+
+                input = input.Trim();
 
                 foreach ((char?, object) kv in Options)
                 {

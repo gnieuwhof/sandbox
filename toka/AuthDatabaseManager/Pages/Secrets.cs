@@ -26,7 +26,7 @@
             return result;
         }
 
-        private void CreateRecord()
+        private Page CreateRecord()
         {
             var name = new InputVal<string>(this.database, "Name:");
             var registration = new InputVal<Registration>(
@@ -55,6 +55,8 @@
                 Console.WriteLine("(any key to continue)");
                 Console.ReadKey();
             }
+
+            return null;
         }
     }
 }

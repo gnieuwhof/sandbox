@@ -41,6 +41,7 @@
             {
                 this.database.Delete(this.record);
 
+                Console.WriteLine();
                 Console.WriteLine($"{modelName} deleted.");
                 Console.WriteLine("(any key to continue)");
                 Console.ReadKey();

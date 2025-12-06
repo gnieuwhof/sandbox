@@ -14,13 +14,13 @@
         public abstract Page Show();
 
 
-        protected Page ExceptionRetry(Page returnPage, Action action)
+        protected Page ExceptionRetry(Page returnPage, Func<Page> action)
         {
             while (true)
             {
                 try
                 {
-                    action?.Invoke();
+                    returnPage = action?.Invoke() ?? returnPage;
 
                     break;
                 }

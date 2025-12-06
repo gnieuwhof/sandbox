@@ -7,8 +7,6 @@
     {
         private readonly Database database;
 
-        public string StringType { get; }
-
         public T Value { get; set; }
 
 

@@ -25,7 +25,7 @@
             return result;
         }
 
-        private void CreateRecord()
+        private Page CreateRecord()
         {
             var name = new InputVal<string>(this.database, "Name:");
             var pemPath = new InputVal<string>(this.database,
@@ -54,6 +54,8 @@
                 Console.WriteLine("(any key to continue)");
                 Console.ReadKey();
             }
+
+            return null;
         }
     }
 }
