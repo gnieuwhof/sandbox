@@ -36,6 +36,11 @@
                 {
                     inputType = InputType.ModelInput;
                 }
+
+                if (type == typeof(int))
+                {
+                    inputType = InputType.IntInput;
+                }
             }
 
             if (!inputType.HasValue)
@@ -49,17 +54,33 @@
 
         public override string GetValue()
         {
-            if (this.Value is DateTime dt)
+            string result = GetString(this.Value);
+
+            return result;
+        }
+
+        public override string GetDefault()
+        {
+            string result = GetString(this.Default);
+
+            return result;
+        }
+
+        private string GetString(object obj)
+        {
+            if (obj is DateTime dt)
             {
                 return dt.ToString("yyyy-MM-dd");
             }
 
-            if (this.Value is Model model)
+            if (obj is Model model)
             {
-                return string.Join(' ', model.Row(this.database));
+                string result = string.Join(' ', model.Row(this.database));
+
+                return $"({result})";
             }
 
-            return $"{this.Value}";
+            return $"{obj}";
         }
 
         public override void SetValue(object val)

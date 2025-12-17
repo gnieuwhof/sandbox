@@ -25,7 +25,10 @@
                 return null;
             }
 
-            var grid = database.GetGrid(records);
+            var instance = new Bogus();
+
+            var grid = instance.GetGrid(database, records);
+
             IEnumerable<Row> aligned = Helper.Align(grid);
 
             List<Row> lines = aligned.ToList();
@@ -35,6 +38,7 @@
 
             Console.WriteLine($"{input.Description}");
             Write.Lines(lines);
+            Console.WriteLine();
 
             Model selected = Model.SelectRecord(records);
 

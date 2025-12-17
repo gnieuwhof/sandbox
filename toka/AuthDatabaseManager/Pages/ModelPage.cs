@@ -2,91 +2,40 @@
 {
     using AuthDatabaseManager.Models;
     using System;
-    using System.Collections.Generic;
-    using System.Linq;
 
-    public class ModelPage<T> : Page where T : Model, new()
+    public abstract class ModelPage<T> : Page where T : Model, new()
     {
-        private readonly Database database;
-        private readonly ReturnBase createPage;
+        protected readonly Database database;
 
         public override string Title { get; }
 
 
-        public ModelPage(Database database, ReturnBase createPage)
+        public ModelPage(Database database)
         {
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));
 
-            this.createPage = createPage ??
-                throw new ArgumentNullException(nameof(createPage));
-
-
-            this.createPage.ReturnPage = this;
-
             T instance = Activator.CreateInstance<T>();
 
             Title = instance.CollectionName;
+
+            if (typeof(T) == typeof(PrivateKey))
+            {
+                this.Subtitle = "Private Keys are used to sign the tokens";
+            }
+            else if (typeof(T) == typeof(Registration))
+            {
+                this.Subtitle = "Registrations a what the token gives access to";
+            }
+            else if (typeof(T) == typeof(Secret))
+            {
+                this.Subtitle = "Secrets are used to get a token";
+            }
         }
 
 
         public override Page Show()
         {
-            T[] records = this.database.GetTable<T>();
-
-            var grid = this.database.GetGrid(records);
-
-            var list = new List<Row>();
-
-            T record = records.FirstOrDefault();
-
-            if (record != null)
-            {
-                list.Add(new Row(record.Columns));
-            }
-
-            list.AddRange(grid);
-
-            IEnumerable<Row> aligned = Helper.Align(list);
-
-            List<Row> lines = aligned.ToList();
-
-            if (!records.Any())
-            {
-                lines.Add(new Row("(there are no records to show)"));
-            }
-
-            Row line = Helper.GetLine(lines);
-            lines.Add(line);
-
-            Write.Lines(lines);
-
-            string legend = "Back B, Create: c";
-            if (records.Any())
-            {
-                legend = $"{legend}, Delete d";
-            }
-            Console.WriteLine(legend);
-            string input = Console.ReadLine();
-
-            if (input == "c")
-            {
-                return this.createPage;
-            }
-            else if (input == "d")
-            {
-                T selected = Model.SelectRecord(records);
-
-                if (selected != null)
-                {
-                    var deletePage = new DeleteModel(this.database, selected);
-
-                    deletePage.ReturnPage = this;
-
-                    return deletePage;
-                }
-            }
-
             return new MainMenu(this.database);
         }
     }

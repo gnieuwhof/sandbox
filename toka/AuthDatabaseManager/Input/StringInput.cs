@@ -4,15 +4,32 @@
 
     public static class StringInput
     {
-        public static string Get(string description)
+        public static string Get(string description, object defaultVal)
         {
-            Console.Write(description);
+            if (defaultVal != null)
+            {
+                description = $"{description} (default '{defaultVal}')";
+            }
+
+            Console.Write($"{description}:");
 
             string input = Console.ReadLine();
 
-            if (string.IsNullOrWhiteSpace(input))
+            if (input == "")
             {
-                input = null;
+                string val = null;
+
+                if (defaultVal != null)
+                {
+                    Console.Write($"Default ({defaultVal}) Y, Clear x:");
+                    input = Console.ReadLine();
+                    if (input != "x")
+                    {
+                        val = $"{defaultVal}";
+                    }
+                }
+
+                input = val;
             }
 
             return input;

@@ -1,5 +1,6 @@
 ﻿namespace AuthDatabaseManager.Models
 {
+    using AuthDatabaseManager.Input;
     using AuthDatabaseManager.Pages;
     using System;
     using System.Collections.Generic;
@@ -16,6 +17,8 @@
 
         public DateTime CreatedOn { get; set; }
 
+        public DateTime? ModifiedOn { get; set; }
+
         public bool Disabled { get; set; }
 
 
@@ -23,9 +26,21 @@
 
         public abstract Row Row(Database database);
 
-        public abstract IEnumerable<Row> Record();
+        public abstract IEnumerable<Row> Record(Database database);
+
+        public abstract IEnumerable<Row> Details(Database database);
 
         public abstract string CollectionName { get; }
+
+        public abstract InputBase[] CreateInputs(Database database);
+
+        public abstract int Create(Database database);
+
+        public abstract InputBase[] UpdateInputs(Database database);
+
+        public abstract void SetDefaults();
+
+        public abstract void SetValues();
 
 
         public static T SelectRecord<T>(IEnumerable<T> records)
@@ -59,6 +74,32 @@
 
                 Write.Warning("No valid number entered.");
             }
+        }
+
+        public virtual IEnumerable<Row> GetGrid(
+            Database database, IEnumerable<Model> records)
+        {
+            var grid = new List<Row>();
+
+            int index = 0;
+            foreach (object record in records)
+            {
+                ++index;
+                if (record is Model model)
+                {
+                    var columns = new List<string>();
+
+                    columns.Add($"{index}");
+
+                    var modelRow = model.Row(database);
+
+                    columns.AddRange(modelRow.Columns);
+
+                    grid.Add(new Row(modelRow.Color, columns.ToArray()));
+                }
+            }
+
+            return grid;
         }
     }
 }

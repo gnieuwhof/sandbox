@@ -5,14 +5,19 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class ToolsPage : ReturnBase
+    public class ToolsPage : Page
     {
+        private readonly Database database;
+
+
         public override string Title => "Tools";
 
 
-        public ToolsPage(Page returnPage)
+        public ToolsPage(Page returnPage, Database database)
         {
             this.ReturnPage = returnPage;
+
+            this.database = database;
         }
 
 
@@ -20,7 +25,9 @@
         {
             Row[] tools = new[]
             {
-                new Row("1", "HEX 2 BASE64")
+                new Row("1", "HEX 2 BASE64"),
+                new Row("2", "Secrets Generator"),
+                new Row("3", "Passwords Generator")
             };
 
             var list = new List<Row>();
@@ -28,10 +35,8 @@
             IEnumerable<Row> aligned = Helper.Align(list);
 
             List<Row> lines = aligned.ToList();
-            Row line = Helper.GetLine(lines);
-            lines.Add(line);
-
             Write.Lines(lines);
+            Console.WriteLine();
 
             string legend = "Option (empty returns):";
 
@@ -43,6 +48,14 @@
                 if (input == "1")
                 {
                     return new Hex2Base64Page(this);
+                }
+                if (input == "2")
+                {
+                    return new SecretsGeneratorPage(this, this.database);
+                }
+                if (input == "3")
+                {
+                    return new PasswordsGeneratorPage(this, this.database);
                 }
 
                 if (string.IsNullOrWhiteSpace(input))

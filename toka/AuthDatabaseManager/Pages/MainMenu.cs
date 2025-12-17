@@ -16,12 +16,12 @@
 
                 return new()
                 {
-                    ('1', new ModelPage<PrivateKey>(db, new PrivateKeys(db))),
-                    ('2', new ModelPage<Registration>(db, new Registrations(db))),
-                    ('3', new ModelPage<Secret>(db, new Secrets(db))),
+                    ('1', new MainModelPage<PrivateKey>(db, new CreatePage(db, new PrivateKey()))),
+                    ('2', new MainModelPage<Registration>(db, new CreatePage(db, new Registration()))),
+                    ('3', new MainModelPage<Secret>(db, new CreatePage(db, new Secret()))),
                     (null, LINE),
                     ('i', new InfoPage(this)),
-                    ('t', new ToolsPage(this)),
+                    ('t', new ToolsPage(this, db)),
                     (null, LINE),
                     ('q', new Quit()),
                 };
@@ -87,7 +87,7 @@
                 char? key = kv.Item1;
                 string name = Helper.GetName(item);
 
-                Console.WriteLine($"{key} {name}");
+                Console.WriteLine($"{key}  {name}");
             }
         }
     }

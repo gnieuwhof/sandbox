@@ -9,7 +9,8 @@
             StringInput,
             FileInput,
             DateInput,
-            ModelInput
+            ModelInput,
+            IntInput
         }
 
 
@@ -18,6 +19,9 @@
         public string Description { get; }
 
         public object Default { get; set; }
+
+        public Func<object, (bool, string)> Validator { get; set; }
+
 
 
         public InputBase(string description)
@@ -28,6 +32,8 @@
 
 
         public abstract string GetValue();
+
+        public abstract string GetDefault();
 
         public abstract void SetValue(object val);
 

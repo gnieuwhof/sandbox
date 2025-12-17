@@ -54,21 +54,45 @@
 
         public Registration Registration(Guid id)
         {
-            Registration result = this.connection.Get<Registration>(id);
+            Registration result = this.connection
+                .Table<Registration>()
+                .Where(r => r.Disabled == false)
+                .FirstOrDefault(r => r.ID == id);
 
             return result;
         }
 
-        public T[] GetTable<T>() where T : Model, new()
+        private T[] GetTable<T>() where T : Model, new()
         {
             T[] result = this.connection.Table<T>().ToArray();
 
             return result;
         }
+
+        public T[] GetActiveRecords<T>() where T : Model, new()
+        {
+            T[] result = this.connection
+                .Table<T>()
+                .Where(r => r.Disabled == false)
+                .ToArray();
+
+            return result;
+        }
+
+        public T[] GetInactiveRecords<T>() where T : Model, new()
+        {
+            T[] result = this.connection
+                .Table<T>()
+                .Where(r => r.Disabled == true)
+                .ToArray();
+
+            return result;
+        }
+
         public IEnumerable<Model> GetTableFromType(Type modelType)
         {
             MethodInfo method = typeof(Database)
-                .GetMethod(nameof(Database.GetTable));
+                .GetMethod(nameof(Database.GetActiveRecords));
 
             MethodInfo generic = method.MakeGenericMethod(modelType);
 
@@ -82,6 +106,27 @@
         public int Delete(Model model)
         {
             return this.connection.Delete(model);
+        }
+
+        public int Enable(Model model)
+        {
+            model.Disabled = false;
+
+            return this.Update(model);
+        }
+
+        public int Disable(Model model)
+        {
+            model.Disabled = true;
+
+            return this.Update(model);
+        }
+
+        public int Update(Model model)
+        {
+            model.ModifiedOn = DateTime.UtcNow;
+
+            return this.connection.Update(model);
         }
 
         public PrivateKey PrivateKey(
@@ -115,7 +160,7 @@
             return privateKey;
         }
 
-        public Registration Registration(string name, string scope)
+        public Registration Registration(string name, string scope, int validFor)
         {
             DateTime utcNow = DateTime.UtcNow;
 
@@ -124,7 +169,8 @@
                 ID = Guid.NewGuid(),
                 CreatedOn = utcNow,
                 Name = name,
-                Scopes = scope
+                Scopes = scope,
+                ValidityPeriod = validFor
             };
 
             this.connection.Insert(registration);
@@ -185,29 +231,29 @@
             return result;
         }
 
-        public IEnumerable<Row> GetGrid(IEnumerable<Model> records)
-        {
-            var grid = new List<Row>();
+        //public IEnumerable<Row> GetGrid(IEnumerable<Model> records)
+        //{
+        //    var grid = new List<Row>();
 
-            int index = 0;
-            foreach (object record in records)
-            {
-                ++index;
-                if (record is Model model)
-                {
-                    var columns = new List<string>();
+        //    int index = 0;
+        //    foreach (object record in records)
+        //    {
+        //        ++index;
+        //        if (record is Model model)
+        //        {
+        //            var columns = new List<string>();
 
-                    columns.Add($"{index}");
+        //            columns.Add($"{index}");
 
-                    var modelRow = model.Row(this);
+        //            var modelRow = model.Row(this);
 
-                    columns.AddRange(modelRow.Columns);
+        //            columns.AddRange(modelRow.Columns);
 
-                    grid.Add(new Row(modelRow.Color, columns.ToArray()));
-                }
-            }
+        //            grid.Add(new Row(modelRow.Color, columns.ToArray()));
+        //        }
+        //    }
 
-            return grid;
-        }
+        //    return grid;
+        //}
     }
 }

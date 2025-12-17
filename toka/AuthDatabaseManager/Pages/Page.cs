@@ -11,6 +11,10 @@
 
         public abstract string Title { get; }
 
+        public string Subtitle { get; protected set; }
+
+        public Page ReturnPage { get; set; }
+
         public abstract Page Show();
 
 

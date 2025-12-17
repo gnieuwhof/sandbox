@@ -4,7 +4,7 @@
 
     public class Row
     {
-        public ConsoleColor Color { get; }
+        public ConsoleColor Color { get; set; }
 
         public string[] Columns { get; }
 

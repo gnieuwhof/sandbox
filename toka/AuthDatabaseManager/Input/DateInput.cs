@@ -14,7 +14,7 @@
             if (defaultDate.HasValue)
             {
                 defaultVal = defaultDate.Value.ToString(format);
-                defaultValue = $", or d for default: {defaultVal}";
+                defaultValue = $", default: {defaultVal}";
             }
 
             while (true)
@@ -23,11 +23,20 @@
 
                 string input = Console.ReadLine();
 
-                if (input == "d")
+                if (input == "")
                 {
-                    input = defaultVal;
+                    if (defaultVal != null)
+                    {
+                        Console.Write($"Default ({defaultVal}) Y, Clear x:");
+                        input = Console.ReadLine();
+                        if (input != "x")
+                        {
+                            input = defaultVal;
+                        }
+                    }
                 }
-                else if (input == "c")
+
+                if (input == "c")
                 {
                     return null;
                 }

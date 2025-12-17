@@ -3,7 +3,7 @@
     using AuthDatabaseManager.Input;
     using System;
 
-    public class Hex2Base64Page : ReturnBase
+    public class Hex2Base64Page : Page
     {
         public override string Title => "Convert HEX 2 BASE64";
 

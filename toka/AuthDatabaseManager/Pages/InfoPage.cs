@@ -2,7 +2,7 @@
 {
     using System;
 
-    public class InfoPage : ReturnBase
+    public class InfoPage : Page
     {
         public override string Title => "Info";
 
