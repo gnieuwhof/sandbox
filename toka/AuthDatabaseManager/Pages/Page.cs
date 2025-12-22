@@ -15,10 +15,18 @@
 
         public Page ReturnPage { get; set; }
 
+        public virtual void PreShow() { }
+
         public abstract Page Show();
 
 
-        protected Page ExceptionRetry(Page returnPage, Func<Page> action)
+        public Page(Page returnPage)
+        {
+            this.ReturnPage = returnPage;
+        }
+
+
+        protected static Page ExceptionRetry(Page returnPage, Func<Page> action)
         {
             while (true)
             {

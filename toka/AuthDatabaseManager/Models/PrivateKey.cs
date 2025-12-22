@@ -87,7 +87,11 @@
 
                     ConsoleColor color = modelRow.Color;
 
-                    if (record == current)
+                    if (model.Disabled)
+                    {
+                        color = ConsoleColor.DarkGray;
+                    }
+                    else if (record == current)
                     {
                         color = ConsoleColor.Green;
                     }
@@ -190,15 +194,25 @@
             this.ValidFrom = this.validFromInput.Value;
         }
 
-        public override int Create(Database database)
+        public override int Create(Database database, Guid id)
         {
             PrivateKey privateKey = database.PrivateKey(
+                id,
                 this.nameInput.Value,
                 this.pemPathInput.Value,
                 this.fingerprintInput.Value, this.validFromInput.Value
                 );
 
             return (privateKey == null) ? 0 : 1;
+        }
+
+        public override T[] PreShow<T>(T[] models)
+        {
+            var casted = models.Cast<PrivateKey>();
+
+            var ordered = casted.OrderBy(c => c.ValidFrom);
+
+            return ordered.Cast<T>().ToArray();
         }
     }
 }

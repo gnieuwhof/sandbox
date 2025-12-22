@@ -14,8 +14,8 @@
         public override string Title { get; }
 
 
-        public CreatePage(Database database, Model record)
-            : base(record)
+        public CreatePage(Page returnPage, Database database, Model record)
+            : base(returnPage, record)
         {
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));
@@ -32,6 +32,11 @@
 
         public override Page Show()
         {
+            Guid id = Guid.NewGuid();
+
+            Console.WriteLine($"ID: {id}");
+            Console.WriteLine();
+
             InputBase[] inputs = this.record.CreateInputs(this.database);
 
             while (true)
@@ -89,7 +94,7 @@
 
             try
             {
-                this.record.Create(this.database);
+                this.record.Create(this.database, id);
             }
             catch (Exception ex)
             {
@@ -106,10 +111,6 @@
                 // Retry.
                 return this;
             }
-
-            Write.Color(ConsoleColor.Green, $"{this.modelName} created.");
-            Console.WriteLine("(any key to continue)");
-            Console.ReadKey();
 
             return this.ReturnPage;
         }

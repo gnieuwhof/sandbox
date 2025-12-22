@@ -101,9 +101,10 @@
             this.ValidityPeriod = this.validityInput.Value;
         }
 
-        public override int Create(Database database)
+        public override int Create(Database database, Guid id)
         {
             Registration registration = database.Registration(
+                id,
                 this.nameInput.Value,
                 this.scopesInput.Value,
                 this.validityInput.Value

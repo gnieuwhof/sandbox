@@ -10,7 +10,7 @@
         protected readonly string modelName;
 
 
-        public RecordPage(Model record)
+        public RecordPage(Page returnPage, Model record) : base(returnPage)
         {
             this.record = record ??
                 throw new ArgumentNullException(nameof(record));

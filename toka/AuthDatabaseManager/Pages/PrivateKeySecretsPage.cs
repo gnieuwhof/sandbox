@@ -5,57 +5,52 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class MainModelPage<T> : ShowModelsPage<T> where T : Model, new()
+    public class PrivateKeySecretsPage : ShowModelsPage<Secret>
     {
-        private readonly Page createPage;
+        private readonly Model parent;
 
 
-        public MainModelPage(Page returnPage, Database database, Page createPage)
-            : base(returnPage, database)
+        public PrivateKeySecretsPage(
+            Page returnPage,
+            Database database,
+            Model parent,
+            Func<IEnumerable<Secret>> getRecords
+            )
+            : base(returnPage, database, getRecords)
         {
-            this.createPage = createPage ??
-                throw new ArgumentNullException(nameof(createPage));
-
-            this.createPage.ReturnPage = this;
-
-            this.GetRecords = this.GetActiveRecords;
+            this.parent = parent;
         }
 
-
-        private IEnumerable<T> GetActiveRecords()
-        {
-            T[] records = this.database.GetActiveRecords<T>();
-
-            return records;
-        }
 
         protected override Page AfterShow()
         {
             string legend = "Back B, Create: c";
-            if (records.Any())
+            if (this.records.Any())
             {
                 legend = $"{legend}, Disable d, Show s";
             }
-            legend += ", Inactive Records i:";
+            legend += ":";
 
             while (true)
             {
                 Console.Write(legend);
                 string input = Console.ReadLine();
 
+                Page page;
+
                 if (input == "c")
                 {
-                    return this.createPage;
+                    page = new CreatePage(this, this.database, new Secret(this.parent));
+
+                    return page;
                 }
                 else if (input == "d" || input == "s")
                 {
-                    T selected = Model.SelectRecord(
+                    var selected = (Secret)Model.SelectRecord(
                         records, defaultToFirst: (input != "d"));
 
                     if (selected != null)
                     {
-                        Page page;
-
                         if (input == "d")
                         {
                             page = new OperationModel(
@@ -70,9 +65,7 @@
                         }
                         else
                         {
-                            var details = new DetailsPage(this, this.database, selected);
-                            details.ReturnPage = this;
-                            page = details;
+                            page = new DetailsPage(this, this.database, selected);
                         }
 
                         return page;
@@ -80,13 +73,13 @@
                 }
                 else if (input == "i")
                 {
-                    Page inactivePage = new InactiveModelPage<T>(this, this.database);
+                    Page inactivePage = new InactiveModelPage<Secret>(this, this.database);
 
                     return inactivePage;
                 }
                 else
                 {
-                    return new MainMenu(this.database);
+                    return this.ReturnPage;
                 }
             }
         }

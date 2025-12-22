@@ -13,10 +13,8 @@
         public override string Title => "Tools";
 
 
-        public ToolsPage(Page returnPage, Database database)
+        public ToolsPage(Page returnPage, Database database) : base(returnPage)
         {
-            this.ReturnPage = returnPage;
-
             this.database = database;
         }
 

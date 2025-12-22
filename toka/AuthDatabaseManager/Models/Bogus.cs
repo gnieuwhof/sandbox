@@ -1,4 +1,5 @@
 ﻿using AuthDatabaseManager.Input;
+using System;
 using System.Collections.Generic;
 
 namespace AuthDatabaseManager.Models
@@ -39,7 +40,7 @@ namespace AuthDatabaseManager.Models
             throw new System.NotImplementedException();
         }
 
-        public override int Create(Database database)
+        public override int Create(Database database, Guid id)
         {
             throw new System.NotImplementedException();
         }

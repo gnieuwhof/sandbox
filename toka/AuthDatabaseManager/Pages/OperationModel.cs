@@ -6,23 +6,24 @@
     public class OperationModel : RecordPage
     {
         private readonly string operation;
-        private readonly string executed;
         private readonly Action<Model> action;
         private readonly ConsoleColor textColor;
         private readonly Database database;
+        private readonly Page performedReturnPage;
 
         public override string Title { get; }
 
 
         public OperationModel(
+            Page returnPage,
             Model record,
             string operation,
-            string executed,
             Action<Model> action,
             ConsoleColor textColor,
-            Database database
+            Database database,
+            Page performedReturnPage
             )
-            : base(record)
+            : base(returnPage, record)
         {
             string modelName = Helper.GetName(record);
 
@@ -32,9 +33,6 @@
             this.operation = operation ??
                 throw new ArgumentNullException(nameof(operation));
 
-            this.executed = executed ??
-                throw new ArgumentNullException(nameof(executed));
-
             this.action = action ??
                 throw new ArgumentNullException(nameof(action));
 
@@ -42,6 +40,8 @@
 
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));
+
+            this.performedReturnPage = performedReturnPage;
         }
 
         public override Page Show()
@@ -61,11 +61,7 @@
             {
                 this.action.Invoke(this.record);
 
-                Console.WriteLine();
-                string executed = this.executed.ToLower();
-                Write.Color(this.textColor, $"{modelName} {executed}.");
-                Console.WriteLine("(any key to continue)");
-                Console.ReadKey();
+                return this.performedReturnPage;
             }
 
             return this.ReturnPage;

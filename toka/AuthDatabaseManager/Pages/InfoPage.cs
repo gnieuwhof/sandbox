@@ -7,9 +7,8 @@
         public override string Title => "Info";
 
 
-        public InfoPage(Page returnPage)
+        public InfoPage(Page returnPage) : base(returnPage)
         {
-            this.ReturnPage = returnPage;
         }
 
 

@@ -8,9 +8,8 @@
         public override string Title => "Convert HEX 2 BASE64";
 
 
-        public Hex2Base64Page(Page returnPage)
+        public Hex2Base64Page(Page returnPage) : base(returnPage)
         {
-            this.ReturnPage = returnPage;
         }
 
 
@@ -34,7 +33,7 @@
                 Console.WriteLine("0xA5 0x60 0x0D 0x23 0x94 0x7A 0x0E 0xD5 0x52 0x6B 0x01 0xAC 0x53 0xD8 0xAB 0x5A");
                 Console.WriteLine();
                 Console.WriteLine("(c to Cancel)");
-                var hexInput = new InputString("Input:");
+                var hexInput = new InputString("Input");
 
                 string input = hexInput.GetValue();
 

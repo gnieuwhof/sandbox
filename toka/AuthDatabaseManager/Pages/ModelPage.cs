@@ -10,7 +10,7 @@
         public override string Title { get; }
 
 
-        public ModelPage(Database database)
+        public ModelPage(Page returnPage, Database database) : base(returnPage)
         {
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));
@@ -31,12 +31,6 @@
             {
                 this.Subtitle = "Secrets are used to get a token";
             }
-        }
-
-
-        public override Page Show()
-        {
-            return new MainMenu(this.database);
         }
     }
 }

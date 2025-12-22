@@ -6,7 +6,7 @@
     public static class Program
     {
         private const string TITLE = "AUTH DATABASE MANAGER";
-        private static readonly Version VERSION = new Version(1, 49);
+        private static readonly Version VERSION = new Version(1, 61);
 
 
         private static void Main()
@@ -31,6 +31,7 @@
                     Console.WriteLine();
                 }
 
+                page.PreShow();
                 page = page.Show();
 
                 if (page == null)

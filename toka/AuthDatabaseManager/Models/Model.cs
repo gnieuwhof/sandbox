@@ -34,7 +34,7 @@
 
         public abstract InputBase[] CreateInputs(Database database);
 
-        public abstract int Create(Database database);
+        public abstract int Create(Database database, Guid id);
 
         public abstract InputBase[] UpdateInputs(Database database);
 
@@ -43,7 +43,7 @@
         public abstract void SetValues();
 
 
-        public static T SelectRecord<T>(IEnumerable<T> records)
+        public static T SelectRecord<T>(IEnumerable<T> records, bool defaultToFirst)
             where T : Model
         {
             if (records?.Any() != true)
@@ -55,9 +55,23 @@
 
             while (true)
             {
-                Console.Write($"Number (c to Cancel):");
+                if (defaultToFirst && (records.Count() == 1))
+                {
+                    return records.First();
+                }
+
+                string options = defaultToFirst
+                    ? "Number (default: 1, c to Cancel)"
+                    : "Number (c to Cancel)";
+
+                Console.Write($"{options}:");
 
                 string str = Console.ReadLine();
+
+                if (defaultToFirst && (str == ""))
+                {
+                    return records.First();
+                }
 
                 if (str == "c")
                 {
@@ -100,6 +114,11 @@
             }
 
             return grid;
+        }
+
+        public virtual T[] PreShow<T>(T[] models) where T : Model
+        {
+            return models;
         }
     }
 }

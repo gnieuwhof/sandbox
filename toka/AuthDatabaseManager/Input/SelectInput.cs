@@ -40,7 +40,7 @@
             Write.Lines(lines);
             Console.WriteLine();
 
-            Model selected = Model.SelectRecord(records);
+            Model selected = Model.SelectRecord(records, defaultToFirst: true);
 
             return selected;
         }

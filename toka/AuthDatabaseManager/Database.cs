@@ -130,6 +130,7 @@
         }
 
         public PrivateKey PrivateKey(
+            Guid id,
             string name,
             string keyFilePath,
             string fingerprint,
@@ -147,7 +148,7 @@
 
             var privateKey = new PrivateKey
             {
-                ID = Guid.NewGuid(),
+                ID = id,
                 CreatedOn = utcNow,
                 Name = name,
                 Content = content,
@@ -160,13 +161,14 @@
             return privateKey;
         }
 
-        public Registration Registration(string name, string scope, int validFor)
+        public Registration Registration(Guid id, 
+            string name, string scope, int validFor)
         {
             DateTime utcNow = DateTime.UtcNow;
 
             var registration = new Registration
             {
-                ID = Guid.NewGuid(),
+                ID = id,
                 CreatedOn = utcNow,
                 Name = name,
                 Scopes = scope,
@@ -179,6 +181,7 @@
         }
 
         public Secret Secret(
+            Guid id,
             string name,
             Guid registrationId,
             string secretValue,
@@ -198,11 +201,11 @@
             string base64Pbkdf2 = Pbkdf2(secretValue);
 
             int min = Math.Min(3, secretValue.Length);
-            string hint = secretValue.Substring(0, min);
+            string hint = secretValue[..min];
 
             var secret = new Secret
             {
-                ID = Guid.NewGuid(),
+                ID = id,
                 CreatedOn = utcNow,
                 Name = name,
                 FkRegistration = registrationId,
@@ -224,7 +227,7 @@
             }
 
             byte[] derived = Rfc2898DeriveBytes.Pbkdf2(
-                value, new byte[0], 100000, HashAlgorithmName.SHA512, 64);
+                value, Array.Empty<byte>(), 100000, HashAlgorithmName.SHA512, 64);
 
             string result = Convert.ToBase64String(derived);
 

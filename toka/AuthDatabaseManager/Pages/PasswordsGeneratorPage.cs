@@ -12,9 +12,8 @@
 
 
         public PasswordsGeneratorPage(Page returnPage, Database database)
+            : base(returnPage)
         {
-            this.ReturnPage = returnPage;
-
             this.database = database;
         }
 

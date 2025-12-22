@@ -4,6 +4,12 @@
     {
         public override string Title => "Quit";
 
+
+        public Quit() : base(returnPage: null)
+        {
+        }
+
+
         public override Page Show()
         {
             return null;

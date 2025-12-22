@@ -14,8 +14,8 @@
         public override string Title { get; }
 
 
-        public UpdatePage(Database database, Model record)
-            : base(record)
+        public UpdatePage(Page returnPage, Database database, Model record)
+            : base(returnPage, record)
         {
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));
@@ -58,7 +58,7 @@
 
                         if (inputValue != previousVal)
                         {
-                            Row before = new Row(
+                            var before = new Row(
                                 ConsoleColor.Red, $"{inp.Description}:", previousVal);
 
                             lines.Add(before);
@@ -139,10 +139,6 @@
                 return this.Retry();
             }
 
-            Write.Color(ConsoleColor.Green, $"{this.modelName} saved.");
-            Console.WriteLine("(any key to continue)");
-            Console.ReadKey();
-
             return this.ReturnPage;
         }
 
@@ -152,9 +148,7 @@
                 .GetTableFromType(this.record.GetType())
                 .FirstOrDefault(m => m.ID == this.record.ID);
 
-            Page page = new UpdatePage(this.database, model);
-
-            page.ReturnPage = this.ReturnPage;
+            var page = new UpdatePage(this.ReturnPage, this.database, model);
 
             return page;
         }

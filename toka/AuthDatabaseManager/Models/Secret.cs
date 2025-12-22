@@ -7,6 +7,8 @@
 
     public class Secret : Model, ISecret
     {
+        private readonly Model parent;
+
         public Guid FkRegistration { get; set; }
 
         [SQLite.NotNull]
@@ -22,6 +24,15 @@
             new[] { "", "Name:", "Expires:", "Hint:", "Registration:", "Status:" };
 
         public override string CollectionName => "Secrets";
+
+
+        public Secret()
+        {
+        }
+        public Secret(Model parent)
+        {
+            this.parent = parent;
+        }
 
 
         public override Row Row(Database database)
@@ -130,13 +141,16 @@
                 Default = DateTime.UtcNow.Date.AddMonths(12)
             };
 
-            return new InputBase[]
+            var inputs = new List<InputBase>();
+            inputs.Add(this.nameInput);
+            if (this.parent is null)
             {
-                this.nameInput,
-                this.registrationInput,
-                this.secretInput,
-                this.expiresInput
-            };
+                inputs.Add(this.registrationInput);
+            }
+            inputs.Add(this.secretInput);
+            inputs.Add(this.expiresInput);
+
+            return inputs.ToArray();
         }
 
         public override InputBase[] UpdateInputs(Database database)
@@ -163,16 +177,29 @@
             this.Expires = this.expiresInput.Value;
         }
 
-        public override int Create(Database database)
+        public override int Create(Database database, Guid id)
         {
+            Guid registrationId =
+                this.parent?.ID ?? this.registrationInput.Value.ID;
+
             Secret secret = database.Secret(
+                id,
                 this.nameInput.Value,
-                this.registrationInput.Value.ID,
+                registrationId,
                 this.secretInput.Value,
                 this.expiresInput.Value
                 );
 
             return (secret == null) ? 0 : 1;
+        }
+
+        public override T[] PreShow<T>(T[] models)
+        {
+            var casted = models.Cast<Secret>();
+
+            var ordered = casted.OrderBy(c => c.Expires);
+
+            return ordered.Cast<T>().ToArray();
         }
     }
 }

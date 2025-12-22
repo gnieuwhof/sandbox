@@ -16,9 +16,9 @@
 
                 return new()
                 {
-                    ('1', new MainModelPage<PrivateKey>(db, new CreatePage(db, new PrivateKey()))),
-                    ('2', new MainModelPage<Registration>(db, new CreatePage(db, new Registration()))),
-                    ('3', new MainModelPage<Secret>(db, new CreatePage(db, new Secret()))),
+                    ('1', new MainModelPage<PrivateKey>(null, db, new CreatePage(null, db, new PrivateKey()))),
+                    ('2', new MainModelPage<Registration>(null, db, new CreatePage(null, db, new Registration()))),
+                    ('3', new MainModelPage<Secret>(null, db, new CreatePage(null, db, new Secret()))),
                     (null, LINE),
                     ('i', new InfoPage(this)),
                     ('t', new ToolsPage(this, db)),
@@ -32,7 +32,7 @@
         public override string Title => "Main Menu";
 
 
-        public MainMenu(Database database)
+        public MainMenu(Database database) : base(returnPage: null)
         {
             this.database = database ??
                 throw new ArgumentNullException(nameof(database));

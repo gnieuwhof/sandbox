@@ -5,51 +5,27 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class InactiveModelPage<T> : ModelPage<T> where T : Model, new()
+    public class InactiveModelPage<T> : ShowModelsPage<T> where T : Model, new()
     {
         public override string Title => "Inactive " + base.Title;
 
 
-        public InactiveModelPage(Database database) : base(database)
+        public InactiveModelPage(Page returnPage, Database database)
+            : base(returnPage, database)
         {
+            this.GetRecords = this.GetInactiveRecords;
         }
 
 
-        public override Page Show()
+        private IEnumerable<T> GetInactiveRecords()
         {
             T[] records = this.database.GetInactiveRecords<T>();
 
-            T instance = Activator.CreateInstance<T>();
-            var grid = instance.GetGrid(this.database, records);
+            return records;
+        }
 
-            var list = new List<Row>();
-
-            T record = records.FirstOrDefault();
-
-            if (record != null)
-            {
-                list.Add(new Row(record.Columns));
-            }
-
-            list.AddRange(grid);
-
-            IEnumerable<Row> aligned = Helper.Align(list);
-
-            List<Row> lines = aligned.ToList();
-
-            foreach (Row row in lines.Skip(1))
-            {
-                row.Color = ConsoleColor.DarkGray;
-            }
-
-            if (!records.Any())
-            {
-                lines.Add(new Row("(there are no records to show)"));
-            }
-
-            Write.Lines(lines);
-            Console.WriteLine();
-
+        protected override Page AfterShow()
+        {
             string legend = "Back B";
             if (records.Any())
             {
@@ -68,7 +44,8 @@
                     case "d":
                     case "s":
                         {
-                            T selected = Model.SelectRecord(records);
+                            T selected = Model.SelectRecord(
+                                records, defaultToFirst: (input != "d"));
 
                             if (selected != null)
                             {
@@ -76,13 +53,11 @@
 
                                 if (input == "s")
                                 {
-                                    page = new DetailsPage(this.database, selected);
+                                    page = new DetailsPage(this, this.database, selected);
                                 }
                                 else
                                 {
                                     string operation = (input == "e") ? "Enable" : "Delete";
-
-                                    string executed = (input == "e") ? "Enabled" : "Deleted";
 
                                     Action<Model> action = (input == "e")
                                         ? (model) => this.database.Enable(selected)
@@ -93,16 +68,15 @@
                                         : ConsoleColor.Red;
 
                                     page = new OperationModel(
+                                        this.ReturnPage,
                                         selected,
                                         operation,
-                                        executed,
                                         action,
                                         color,
-                                        this.database
+                                        this.database,
+                                        this
                                         );
                                 }
-
-                                page.ReturnPage = this;
 
                                 return page;
                             }
