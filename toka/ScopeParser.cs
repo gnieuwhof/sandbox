@@ -27,7 +27,13 @@ namespace ScopesTest
         public static string GetScopes(string registrationScopes,
             string requestScopes, out string error)
         {
-            string[] regScopes = registrationScopes.Split(' ');
+            if (string.IsNullOrWhiteSpace(requestScopes))
+            {
+                error = "There are no request scopes.";
+                return null;
+            }
+
+            string[] regScopes = $"{registrationScopes}".Split(' ');
             string[] reqScopes = requestScopes.Split(' ');
             error = null;
 
