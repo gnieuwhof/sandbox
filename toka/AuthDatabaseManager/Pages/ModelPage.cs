@@ -25,7 +25,7 @@
             }
             else if (typeof(T) == typeof(Registration))
             {
-                this.Subtitle = "Registrations a what the token gives access to";
+                this.Subtitle = "Registrations are what the token gives access to";
             }
             else if (typeof(T) == typeof(Secret))
             {

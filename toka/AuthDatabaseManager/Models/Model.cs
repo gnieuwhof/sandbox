@@ -96,21 +96,23 @@
             var grid = new List<Row>();
 
             int index = 0;
-            foreach (object record in records)
+            foreach (Model record in records)
             {
                 ++index;
-                if (record is Model model)
-                {
-                    var columns = new List<string>();
 
-                    columns.Add($"{index}");
+                var columns = new List<string>();
 
-                    var modelRow = model.Row(database);
+                columns.Add($"{index}");
 
-                    columns.AddRange(modelRow.Columns);
+                var modelRow = record.Row(database);
 
-                    grid.Add(new Row(modelRow.Color, columns.ToArray()));
-                }
+                columns.AddRange(modelRow.Columns);
+
+                ConsoleColor color = record.Disabled
+                    ? ConsoleColor.DarkGray
+                    : modelRow.Color;
+
+                grid.Add(new Row(color, columns.ToArray()));
             }
 
             return grid;
