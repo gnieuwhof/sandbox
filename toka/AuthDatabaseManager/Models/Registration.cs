@@ -44,7 +44,7 @@
                 new Row( "Scopes:", this.Scopes ),
                 new Row( "Validity (min):", $"{this.ValidityPeriod}" ),
                 new Row( "Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
-                new Row( "Modified On:", this.ModifiedOn?.ToString("yyyy-MM-dd HH:mm:ss") ),
+                new Row( "Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
                 new Row( "Disabled:", $"{this.Disabled}" ),
             };
 

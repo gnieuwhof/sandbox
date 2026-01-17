@@ -78,7 +78,7 @@
                 new Row( "Hash:", this.DerivedHash ),
                 new Row( color, "Expires:", $"{this.Expires:yyyy-MM-dd}" ),
                 new Row( "Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
-                new Row( "Modified On:", this.ModifiedOn?.ToString("yyyy-MM-dd HH:mm:ss") ),
+                new Row( "Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
                 new Row( "Disabled:", $"{this.Disabled}" ),
             };
 

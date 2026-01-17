@@ -150,6 +150,7 @@
             {
                 ID = id,
                 CreatedOn = utcNow,
+                ModifiedOn = utcNow,
                 Name = name,
                 Content = content,
                 ValidFrom = validFrom.Value,
@@ -170,6 +171,7 @@
             {
                 ID = id,
                 CreatedOn = utcNow,
+                ModifiedOn = utcNow,
                 Name = name,
                 Scopes = scope,
                 ValidityPeriod = validFor
@@ -207,6 +209,7 @@
             {
                 ID = id,
                 CreatedOn = utcNow,
+                ModifiedOn = utcNow,
                 Name = name,
                 FkRegistration = registrationId,
                 Expires = expires.Value,

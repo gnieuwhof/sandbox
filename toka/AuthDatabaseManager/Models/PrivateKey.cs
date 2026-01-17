@@ -50,7 +50,7 @@
                 new Row( "Valid From:", this.ValidFrom.ToString("yyyy-MM-dd") ),
                 new Row( "Fingerprint:", this.Fingerprint ),
                 new Row( "Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
-                new Row( "Modified On:", this.ModifiedOn?.ToString("yyyy-MM-dd HH:mm:ss") ),
+                new Row( "Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
                 new Row( "Disabled:", $"{this.Disabled}" ),
             };
 
