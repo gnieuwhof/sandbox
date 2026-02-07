@@ -163,7 +163,7 @@
         }
 
         public Registration Registration(Guid id, 
-            string name, string scope, int validFor)
+            string name, string audience, string scope, int validFor)
         {
             DateTime utcNow = DateTime.UtcNow;
 
@@ -173,6 +173,7 @@
                 CreatedOn = utcNow,
                 ModifiedOn = utcNow,
                 Name = name,
+                Audience = audience,
                 Scopes = scope,
                 ValidityPeriod = validFor
             };

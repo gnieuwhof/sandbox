@@ -1,13 +1,15 @@
 ﻿namespace AuthDatabaseManager.Models
 {
     using AuthDatabaseManager.Input;
-    using AuthDatabaseManager.Pages;
     using System;
     using System.Collections.Generic;
     using System.Linq;
 
     public class Registration : Model, IRegistration
     {
+        [SQLite.NotNull]
+        public string Audience { get; set; }
+
         [SQLite.NotNull]
         public string Scopes { get; set; }
 
@@ -28,6 +30,7 @@
 
             IEnumerable<Row> record = details
                 .Where(d => !d.Columns[0].StartsWith("ID"))
+                .Where(d => !d.Columns[0].StartsWith("Audience"))
                 .Where(d => !d.Columns[0].StartsWith("Created"))
                 .Where(d => !d.Columns[0].StartsWith("Modified"))
                 .Where(d => !d.Columns[0].StartsWith("Disabled"));
@@ -41,6 +44,7 @@
             {
                 new Row( "ID:", $"{this.ID}" ),
                 new Row( "Name:", this.Name ),
+                new Row( "Audience:", this.Audience ),
                 new Row( "Scopes:", this.Scopes ),
                 new Row( "Validity (min):", $"{this.ValidityPeriod}" ),
                 new Row( "Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
@@ -52,6 +56,7 @@
         }
 
         private InputVal<string> nameInput;
+        private InputVal<string> audienceInput;
         private InputVal<string> scopesInput;
         private InputVal<int> validityInput;
 
@@ -59,6 +64,7 @@
         public override InputBase[] CreateInputs(Database database)
         {
             this.nameInput = new InputVal<string>(database, "Name");
+            this.audienceInput = new InputVal<string>(database, "Audience");
             this.scopesInput = new InputVal<string>(database, "Scopes");
             this.validityInput = new InputVal<int>(database, "Validity (min)");
             this.validityInput.Default = 60;
@@ -67,6 +73,7 @@
             return new InputBase[]
             {
                 this.nameInput,
+                this.audienceInput,
                 this.scopesInput,
                 this.validityInput
             };
@@ -75,6 +82,7 @@
         public override InputBase[] UpdateInputs(Database database)
         {
             this.nameInput = new InputVal<string>(database, "Name");
+            this.audienceInput = new InputVal<string>(database, "Audience");
             this.scopesInput = new InputVal<string>(database, "Scopes");
             this.validityInput = new InputVal<int>(database, "Validity (min)");
             this.validityInput.Validator = Validate;
@@ -82,6 +90,7 @@
             return new InputBase[]
             {
                 this.nameInput,
+                this.audienceInput,
                 this.scopesInput,
                 this.validityInput
             };
@@ -90,6 +99,7 @@
         public override void SetDefaults()
         {
             this.nameInput.Default = this.Name;
+            this.audienceInput.Default = this.Audience;
             this.scopesInput.Default = this.Scopes;
             this.validityInput.Default = this.ValidityPeriod;
         }
@@ -97,6 +107,7 @@
         public override void SetValues()
         {
             this.Name = this.nameInput.Value;
+            this.Audience = this.audienceInput.Value;
             this.Scopes = this.scopesInput.Value;
             this.ValidityPeriod = this.validityInput.Value;
         }
@@ -106,6 +117,7 @@
             Registration registration = database.Registration(
                 id,
                 this.nameInput.Value,
+                this.audienceInput.Value,
                 this.scopesInput.Value,
                 this.validityInput.Value
                 );
