@@ -26,6 +26,8 @@
 
     public interface IRegistration : IModel
     {
+        string Audience { get; set; }
+
         public string Scopes { get; set; }
 
         public int ValidityPeriod { get; set; }
