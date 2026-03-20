@@ -23,7 +23,16 @@
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("Fingerprint:");
-            Write.Warning("openssl pkey -pubin -in public.key -outform DER | openssl dgst -md5");
+            Write.Color(ConsoleColor.Magenta, "openssl pkey -pubin -in public.key -outform DER | openssl dgst -md5");
+            Write.Warning("openssl x509 -in cert.pem -noout -fingerprint");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Public certificate:");
+            Write.Warning("openssl req -new -x509 -key private.pem -passin file:passphrase.txt -out cert.pem -days 365");
+            Console.WriteLine();
+            Console.WriteLine();
+            Console.WriteLine("Private certificate:");
+            Write.Warning("openssl pkcs12 -export -out cert.pfx -inkey private.pem -passin file:pass.txt -in cert.pem");
             Console.WriteLine();
             Console.WriteLine();
             Console.WriteLine("(any key to continue)");
