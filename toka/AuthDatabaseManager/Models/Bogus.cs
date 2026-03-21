@@ -1,9 +1,9 @@
-﻿using AuthDatabaseManager.Input;
-using System;
-using System.Collections.Generic;
-
-namespace AuthDatabaseManager.Models
+﻿namespace AuthDatabaseManager.Models
 {
+    using AuthDatabaseManager.Input;
+    using System;
+    using System.Collections.Generic;
+
     public class Bogus : Model
     {
         public override string[] Columns => throw new System.NotImplementedException();
@@ -11,11 +11,6 @@ namespace AuthDatabaseManager.Models
         public override string CollectionName => throw new System.NotImplementedException();
 
         public override IEnumerable<Row> Details(Database database)
-        {
-            throw new System.NotImplementedException();
-        }
-
-        public override IEnumerable<Row> Record(Database database)
         {
             throw new System.NotImplementedException();
         }

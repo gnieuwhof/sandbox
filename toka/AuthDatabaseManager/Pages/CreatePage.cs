@@ -41,59 +41,68 @@
 
             while (true)
             {
-                bool result = Inputs.Get(this.database, inputs);
-
-                if (result)
+                try
                 {
-                    var lines = new List<Row>();
+                    bool result = Inputs.Get(this.database, inputs);
 
-                    foreach (InputBase inp in inputs)
+                    if (result)
                     {
-                        string inputValue = inp.GetValue();
+                        var lines = new List<Row>();
 
-                        var row = new Row($"{inp.Description}:", inputValue);
+                        foreach (InputBase inp in inputs)
+                        {
+                            string inputValue = inp.GetValue();
 
-                        lines.Add(row);
+                            var row = new Row($"{inp.Description}:", inputValue);
+
+                            lines.Add(row);
+                        }
+
+                        base.record.PreCreate(lines);
+
+                        IEnumerable<Row> aligned = Helper.Align(lines);
+
+                        Write.Lines(aligned);
+                        Console.WriteLine();
+
+                        Console.Write("Enter: Y, Cancel: c, Retry: r (otherwise):");
+
+                        string ans = Console.ReadLine();
+                        Console.WriteLine();
+
+                        if (ans == "c")
+                        {
+                            return this.ReturnPage;
+                        }
+
+                        if (ans == "" || ans == "y")
+                        {
+                            break;
+                        }
+
+                        // Retry.
+                        return this;
                     }
 
-                    IEnumerable<Row> aligned = Helper.Align(lines);
-
-                    Write.Lines(aligned);
-                    Console.WriteLine();
-
-                    Console.Write("Enter: Y, Cancel: c, Retry: r (otherwise):");
-
-                    string ans = Console.ReadLine();
-                    Console.WriteLine();
-
-                    if (ans == "c")
-                    {
-                        return this.ReturnPage;
-                    }
-
-                    if (ans == "" || ans == "y")
-                    {
-                        break;
-                    }
-
-                    // Retry.
-                    return this;
+                    Console.WriteLine("(Cancelled)");
+                    return RetryOrGoBack();
                 }
-
-                Console.WriteLine("(Cancelled)");
-                Console.Write("Retry R, Back b:");
-                string input = Console.ReadLine();
-                if (input == "b")
+                catch (Exception e)
                 {
-                    return this.ReturnPage;
+                    Write.Error("Could not process input");
+                    Write.Error(e.Message);
+                    if (e.InnerException != null)
+                    {
+                        Write.Error("InnerException:");
+                        Write.Error(e.InnerException.Message);
+                    }
+                    return RetryOrGoBack();
                 }
-
-                // Retry.
-                return this;
             }
 
             try
             {
+                this.record.SetValues();
                 this.record.Create(this.database, id);
             }
             catch (Exception ex)
@@ -101,18 +110,23 @@
                 Write.Error("(Error)");
                 Write.Error(ex.Message);
                 Console.WriteLine();
-                Console.Write("Retry R, Back b:");
-                string input = Console.ReadLine();
-                if (input == "b")
-                {
-                    return this.ReturnPage;
-                }
-
-                // Retry.
-                return this;
+                return RetryOrGoBack();
             }
 
             return this.ReturnPage;
+        }
+
+        private Page RetryOrGoBack()
+        {
+            Console.Write("Retry R, Back b:");
+            string input = Console.ReadLine();
+            if (input == "b")
+            {
+                return this.ReturnPage;
+            }
+
+            // Retry.
+            return this;
         }
     }
 }

@@ -1,6 +1,6 @@
 ﻿namespace AuthDatabaseManager.Models
 {
-    public enum SecretStatus
+    public enum CertificateOrSecretStatus
     {
         Valid,
         Expiring,

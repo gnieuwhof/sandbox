@@ -31,6 +31,10 @@
             {
                 this.Subtitle = "Secrets are used to get a token";
             }
+            else if (typeof(T) == typeof(Certificate))
+            {
+                this.Subtitle = "Certificates are used to get a token";
+            }
         }
     }
 }

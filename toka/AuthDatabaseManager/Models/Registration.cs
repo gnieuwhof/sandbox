@@ -55,7 +55,6 @@
             return result;
         }
 
-        private InputVal<string> nameInput;
         private InputVal<string> audienceInput;
         private InputVal<string> scopesInput;
         private InputVal<int> validityInput;

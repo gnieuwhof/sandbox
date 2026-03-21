@@ -28,19 +28,6 @@
 
         public override string CollectionName => "Private Keys";
 
-        public override IEnumerable<Row> Record(Database database)
-        {
-            IEnumerable<Row> details = this.Details(database);
-
-            IEnumerable<Row> record = details
-                .Where(d => !d.Columns[0].StartsWith("ID"))
-                .Where(d => !d.Columns[0].StartsWith("Created"))
-                .Where(d => !d.Columns[0].StartsWith("Modified"))
-                .Where(d => !d.Columns[0].StartsWith("Disabled"));
-
-            return record;
-        }
-
         public override IEnumerable<Row> Details(Database database)
         {
             var result = new[]
@@ -138,8 +125,6 @@
         }
 
         private InputVal<string> pemPathInput;
-
-        private InputVal<string> nameInput;
         private InputVal<string> fingerprintInput;
         private InputVal<DateTime> validFromInput;
 

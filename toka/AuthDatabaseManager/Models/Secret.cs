@@ -39,7 +39,7 @@
         {
             Registration registration = database.Registration(FkRegistration);
 
-            SecretStatus status = GetStatus();
+            CertificateOrSecretStatus status = GetStatus();
 
             ConsoleColor color = GetColor(status);
 
@@ -49,19 +49,6 @@
             }
 
             return new Row(color, Name, $"{Expires:yyyy-MM-dd}", Hint, registration?.Name, $"{status}");
-        }
-
-        public override IEnumerable<Row> Record(Database database)
-        {
-            IEnumerable<Row> details = this.Details(database);
-
-            IEnumerable<Row> record = details
-                .Where(d => !d.Columns[0].StartsWith("ID"))
-                .Where(d => !d.Columns[0].StartsWith("Created"))
-                .Where(d => !d.Columns[0].StartsWith("Modified"))
-                .Where(d => !d.Columns[0].StartsWith("Disabled"));
-
-            return record;
         }
 
         public override IEnumerable<Row> Details(Database database)
@@ -87,47 +74,45 @@
 
         private ConsoleColor GetColor()
         {
-            SecretStatus status = GetStatus();
+            CertificateOrSecretStatus status = GetStatus();
 
             ConsoleColor result = GetColor(status);
 
             return result;
         }
 
-        private static ConsoleColor GetColor(SecretStatus status)
+        private static ConsoleColor GetColor(CertificateOrSecretStatus status)
         {
             return status switch
             {
-                SecretStatus.Expiring => ConsoleColor.Yellow,
-                SecretStatus.Expired => ConsoleColor.Red,
+                CertificateOrSecretStatus.Expiring => ConsoleColor.Yellow,
+                CertificateOrSecretStatus.Expired => ConsoleColor.Red,
                 _ => ConsoleColor.Gray,
             };
         }
 
-        private SecretStatus GetStatus()
+        private CertificateOrSecretStatus GetStatus()
         {
             if (this.Disabled)
             {
-                return SecretStatus.Disabled;
+                return CertificateOrSecretStatus.Disabled;
             }
 
             DateTime nowDate = DateTime.UtcNow.Date;
             if (this.Expires.Date < nowDate)
             {
-                return SecretStatus.Expired;
+                return CertificateOrSecretStatus.Expired;
             }
             else if ((this.Expires - nowDate).TotalDays <= 31)
             {
-                return SecretStatus.Expiring;
+                return CertificateOrSecretStatus.Expiring;
             }
 
-            return SecretStatus.Valid;
+            return CertificateOrSecretStatus.Valid;
         }
 
         private InputVal<string> secretInput;
         private InputVal<Registration> registrationInput;
-
-        private InputVal<string> nameInput;
         private InputVal<DateTime> expiresInput;
 
         public override InputBase[] CreateInputs(Database database)

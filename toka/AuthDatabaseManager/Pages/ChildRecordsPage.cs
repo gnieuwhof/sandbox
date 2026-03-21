@@ -5,16 +5,16 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class PrivateKeySecretsPage : ShowModelsPage<Secret>
+    public class ChildRecordsPage<T> : ShowModelsPage<T> where T : Model, new()
     {
         private readonly Model parent;
 
 
-        public PrivateKeySecretsPage(
+        public ChildRecordsPage(
             Page returnPage,
             Database database,
             Model parent,
-            Func<IEnumerable<Secret>> getRecords
+            Func<IEnumerable<T>> getRecords
             )
             : base(returnPage, database, getRecords)
         {
@@ -40,13 +40,14 @@
 
                 if (input == "c")
                 {
-                    page = new CreatePage(this, this.database, new Secret(this.parent));
+                    T instance = (T)Activator.CreateInstance(typeof(T), this.parent);
+                    page = new CreatePage(this, this.database, instance);
 
                     return page;
                 }
                 else if (input == "d" || input == "s")
                 {
-                    var selected = (Secret)Model.SelectRecord(
+                    var selected = (T)Model.SelectRecord(
                         records, defaultToFirst: (input != "d"));
 
                     if (selected != null)
@@ -73,7 +74,7 @@
                 }
                 else if (input == "i")
                 {
-                    Page inactivePage = new InactiveModelPage<Secret>(this, this.database);
+                    Page inactivePage = new InactiveModelPage<T>(this, this.database);
 
                     return inactivePage;
                 }

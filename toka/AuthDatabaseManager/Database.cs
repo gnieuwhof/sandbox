@@ -162,6 +162,34 @@
             return privateKey;
         }
 
+        public Certificate Certificate(
+            Guid id,
+            string name,
+            Guid registrationId,
+            string publicPem,
+            string x5t,
+            DateTime expires
+            )
+        {
+            DateTime utcNow = DateTime.UtcNow;
+
+            var certificate = new Certificate
+            {
+                ID = id,
+                CreatedOn = utcNow,
+                ModifiedOn = utcNow,
+                FkRegistration = registrationId,
+                Name = name,
+                PublicPem = publicPem,
+                X5t = x5t,
+                Expires = expires
+            };
+
+            this.connection.Insert(certificate);
+
+            return certificate;
+        }
+
         public Registration Registration(Guid id, 
             string name, string audience, string scope, int validFor)
         {

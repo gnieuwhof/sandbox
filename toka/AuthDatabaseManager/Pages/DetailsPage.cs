@@ -48,19 +48,28 @@
             string actions = $"Back B, Modify m, {dOption} d";
             if (isRegistration)
             {
-                actions += ", Secrets s";
+                actions += ", Secrets s, Certificates c";
             }
             Console.Write($"{actions}:");
 
             string input = Console.ReadLine();
 
-            if (isRegistration && (input == "s"))
+            if (isRegistration)
             {
+                if (input == "s")
+                {
+                    Page ret = new ChildRecordsPage<Secret>(this,
+                        this.database, this.record, this.GetChildSecrets);
 
-                Page ret = new PrivateKeySecretsPage(this,
-                    this.database, this.record, this.GetChildSecrets);
+                    return ret;
+                }
+                if (input == "c")
+                {
+                    Page ret = new ChildRecordsPage<Certificate>(this,
+                        this.database, this.record, this.GetChildCertificates);
 
-                return ret;
+                    return ret;
+                }
             }
 
             if (input == "m")
@@ -115,5 +124,18 @@
 
             return records;
         }
+
+        private IEnumerable<Certificate> GetChildCertificates()
+        {
+            var records = this.database.GetActiveRecords<Certificate>();
+
+            records = records
+                .Where(r => r.FkRegistration == this.record.ID)
+                .Cast<Certificate>()
+                .ToArray();
+
+            return records;
+        }
+
     }
 }

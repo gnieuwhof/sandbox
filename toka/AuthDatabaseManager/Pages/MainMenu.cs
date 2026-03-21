@@ -19,6 +19,7 @@
                     ('1', new MainModelPage<PrivateKey>(null, db, new CreatePage(null, db, new PrivateKey()))),
                     ('2', new MainModelPage<Registration>(null, db, new CreatePage(null, db, new Registration()))),
                     ('3', new MainModelPage<Secret>(null, db, new CreatePage(null, db, new Secret()))),
+                    ('4', new MainModelPage<Certificate>(null, db, new CreatePage(null, db, new Certificate()))),
                     (null, LINE),
                     ('i', new InfoPage(this)),
                     ('t', new ToolsPage(this, db)),

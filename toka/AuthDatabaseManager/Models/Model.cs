@@ -8,6 +8,9 @@
 
     public abstract class Model
     {
+        protected InputVal<string> nameInput;
+
+
         [SQLite.PrimaryKey]
         public Guid ID { get; set; }
 
@@ -26,7 +29,21 @@
 
         public abstract Row Row(Database database);
 
-        public abstract IEnumerable<Row> Record(Database database);
+        public virtual IEnumerable<Row> Record(Database database)
+        {
+            IEnumerable<Row> details = this.Details(database);
+
+            IEnumerable<Row> record = details
+                .Where(d => !d.Columns[0].StartsWith("ID"))
+                .Where(d => !d.Columns[0].StartsWith("Created"))
+                .Where(d => !d.Columns[0].StartsWith("Modified"))
+                .Where(d => !d.Columns[0].StartsWith("Disabled"));
+
+            return record;
+        }
+
+        public virtual void PreCreate(IList<Row> lines) { }
+
 
         public abstract IEnumerable<Row> Details(Database database);
 
