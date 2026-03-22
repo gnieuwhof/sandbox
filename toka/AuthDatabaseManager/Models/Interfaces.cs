@@ -43,4 +43,15 @@
 
         public string Hint { get; set; }
     }
+
+    public interface ICertificate : IModel
+    {
+        public Guid FkRegistration { get; set; }
+
+        public string X5t { get; set; }
+
+        public string PublicPem { get; set; }
+
+        public DateTime Expires { get; set; }
+    }
 }

@@ -1,4 +1,4 @@
-namespace TokenConsole
+﻿namespace TokenConsole
 {
     using System;
     using System.Collections.Generic;
@@ -20,14 +20,18 @@ namespace TokenConsole
         public static async Task<HttpResponseMessage> GetUPAuthResponse(HttpClient httpClient,
             Uri authorizationUrl, string username, string password, string scope)
         {
-            string postData =
-                $"&client_id={CLIENT_ID}" +
-                $"&grant_type=password" +
-                $"&username={username}" +
-                $"&password={password}" +
-                $"&scope={scope}";
+            var values = new Dictionary<string, string>
+            {
+                { "client_id", CLIENT_ID },
+                { "grant_type", "password" },
+                { "username", username },
+                { "password", password },
+                { "scope", scope },
+            };
 
-            HttpResponseMessage response = await GetAuthResponse(httpClient, authorizationUrl, postData);
+            var content = new FormUrlEncodedContent(values);
+
+            HttpResponseMessage response = await GetAuthResponse(httpClient, authorizationUrl, content);
 
             return response;
         }
@@ -35,14 +39,17 @@ namespace TokenConsole
         public static async Task<HttpResponseMessage> GetCSAuthResponse(HttpClient httpClient,
             Uri authorizationUrl, string clientId, string secret, string scope)
         {
-            string postData =
-                $"&client_id={clientId}" +
-                $"&grant_type=client_credentials" +
-                $"&client_secret={secret}" +
-                $"&scope={scope}" +
-                $"";
+            var values = new Dictionary<string, string>
+            {
+                { "client_id", clientId },
+                { "grant_type", "client_credentials" },
+                { "client_secret", secret },
+                { "scope", scope },
+            };
 
-            HttpResponseMessage response = await GetAuthResponse(httpClient, authorizationUrl, postData);
+            var content = new FormUrlEncodedContent(values);
+
+            HttpResponseMessage response = await GetAuthResponse(httpClient, authorizationUrl, content);
 
             return response;
         }
@@ -82,26 +89,27 @@ namespace TokenConsole
         {
             string assertion = Assertion(authorizationUrl, clientId, rsaPrivateKey, x5t);
 
-            string postData =
-                $"&client_id={clientId}" +
-                $"&grant_type=client_credentials" +
-                $"&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer" +
-                $"&client_assertion={assertion}" +
-                $"&scope={scope}" +
-                $"";
+            var values = new Dictionary<string, string>
+            {
+                { "client_id", clientId },
+                { "grant_type", "client_credentials" },
+                { "client_assertion_type", "urn:ietf:params:oauth:client-assertion-type:jwt-bearer" },
+                { "client_assertion", assertion },
+                { "scope", scope },
+            };
 
-            HttpResponseMessage response = await GetAuthResponse(httpClient, authorizationUrl, postData);
+            var content = new FormUrlEncodedContent(values);
+
+            HttpResponseMessage response = await GetAuthResponse(httpClient, authorizationUrl, content);
 
             return response;
         }
 
         private static async Task<HttpResponseMessage> GetAuthResponse(
-            HttpClient httpClient, Uri authorizationUrl, string postData)
+            HttpClient httpClient, Uri authorizationUrl, FormUrlEncodedContent content)
         {
             HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, authorizationUrl);
-            request.Content = new StringContent(postData, Encoding.UTF8);
-            request.Content.Headers.Remove("Content-Type");
-            request.Content.Headers.TryAddWithoutValidation("Content-Type", $"application/x-www-form-urlencoded");
+            request.Content = content;
 
             ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls13;
 
