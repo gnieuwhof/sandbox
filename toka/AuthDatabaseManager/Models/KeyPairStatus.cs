@@ -1,6 +1,6 @@
 ﻿namespace AuthDatabaseManager.Models
 {
-    public enum PrivateKeyStatus
+    public enum KeyPairStatus
     {
         Current,
         Future,

@@ -24,8 +24,18 @@
 
         public bool Disabled { get; set; }
 
+        //
+
+        public abstract string Title { get; }
+
+        public abstract string Subtitle { get; }
+
+        public virtual Dictionary<string, ConsoleColor> Legend { get; }
+
+        public virtual Dictionary<string, ConsoleColor> DetailsLegend { get; }
 
         public abstract string[] Columns { get; }
+
 
         public abstract Row Row(Database database);
 
@@ -47,8 +57,6 @@
 
         public abstract IEnumerable<Row> Details(Database database);
 
-        public abstract string CollectionName { get; }
-
         public abstract InputBase[] CreateInputs(Database database);
 
         public abstract int Create(Database database, Guid id);
@@ -60,7 +68,9 @@
         public abstract void SetValues();
 
 
-        public static T SelectRecord<T>(IEnumerable<T> records, bool defaultToFirst)
+        public static T SelectRecord<T>(IEnumerable<T> records,
+            bool defaultToFirst, object defaultvalue = null
+            )
             where T : Model
         {
             if (records?.Any() != true)
@@ -77,9 +87,22 @@
                     return records.First();
                 }
 
+                int defaultIndex = 1;
+                if (defaultvalue is Model model)
+                {
+                    foreach (T record in records)
+                    {
+                        if (record.ID == model.ID)
+                        {
+                            break;
+                        }
+                        ++defaultIndex;
+                    }
+                }
+
                 string options = defaultToFirst
-                    ? "Number (default: 1, c to Cancel)"
-                    : "Number (c to Cancel)";
+                    ? $"Number (default: {defaultIndex}, c to Cancel)"
+                    : $"Number (c to Cancel)";
 
                 Console.Write($"{options}:");
 
@@ -87,7 +110,7 @@
 
                 if (defaultToFirst && (str == ""))
                 {
-                    return records.First();
+                    return records.ElementAt(defaultIndex - 1);
                 }
 
                 if (str == "c")

@@ -29,7 +29,7 @@
             string legend = "Back B";
             if (records.Any())
             {
-                legend = $"{legend}, Enable e, Delete d, Show s";
+                legend = $"{legend}, Enable e, Delete d, Show s (or number)";
             }
             legend += ":";
 
@@ -38,7 +38,19 @@
                 Console.Write(legend);
                 string input = Console.ReadLine();
 
-                switch(input)
+                if (int.TryParse(input, out int num))
+                {
+                    --num;
+                    if ((num >= 0) && (num <= records.Count()))
+                    {
+                        Model selected = records.ElementAt(num);
+                        var details = new DetailsPage(this, this.database, selected);
+                        details.ReturnPage = this;
+                        return details;
+                    }
+                }
+
+                switch (input)
                 {
                     case "e":
                     case "d":

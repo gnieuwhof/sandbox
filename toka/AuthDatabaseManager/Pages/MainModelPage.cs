@@ -34,7 +34,7 @@
             string legend = "Back B, Create: c";
             if (records.Any())
             {
-                legend = $"{legend}, Disable d, Show s";
+                legend = $"{legend}, Disable d, Show s (or number)";
             }
             legend += ", Inactive Records i:";
 
@@ -42,6 +42,18 @@
             {
                 Console.Write(legend);
                 string input = Console.ReadLine();
+
+                if (int.TryParse(input, out int num))
+                {
+                    --num;
+                    if ((num >= 0) && (num <= records.Count()))
+                    {
+                        Model selected = records.ElementAt(num);
+                        var details = new DetailsPage(this, this.database, selected);
+                        details.ReturnPage = this;
+                        return details;
+                    }
+                }
 
                 if (input == "c")
                 {

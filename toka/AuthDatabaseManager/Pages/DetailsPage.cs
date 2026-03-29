@@ -26,6 +26,8 @@
             string modelName = Helper.GetName(record);
 
             this.Title = $"{modelName} Details";
+
+            this.Legend = record.DetailsLegend;
         }
 
 
@@ -33,8 +35,17 @@
         {
             Type type = this.record.GetType();
             bool isRegistration = (type == typeof(Registration));
+            bool isAdministration = (type == typeof(Administration));
 
             IEnumerable<Row> details = this.record.Details(this.database);
+
+            if (this.record.Disabled)
+            {
+                foreach (Row row in details)
+                {
+                    row.Color = ConsoleColor.DarkGray;
+                }
+            }
 
             IEnumerable<Row> aligned = Helper.Align(details);
 
@@ -50,6 +61,10 @@
             {
                 actions += ", Secrets s, Certificates c";
             }
+            if (isAdministration)
+            {
+                actions += ", Registrations r";
+            }
             Console.Write($"{actions}:");
 
             string input = Console.ReadLine();
@@ -58,23 +73,45 @@
             {
                 if (input == "s")
                 {
-                    Page ret = new ChildRecordsPage<Secret>(this,
-                        this.database, this.record, this.GetChildSecrets);
+                    Page ret = new ChildRecordsPage<Secret>(
+                        this,
+                        this.database,
+                        this.record,
+                        () => this.GetChildren<Secret>(
+                            s => s.FkRegistration == this.record.ID)
+                        );
 
                     return ret;
                 }
                 if (input == "c")
                 {
-                    Page ret = new ChildRecordsPage<Certificate>(this,
-                        this.database, this.record, this.GetChildCertificates);
+                    Page ret = new ChildRecordsPage<Certificate>(
+                        this,
+                        this.database,
+                        this.record,
+                        () => this.GetChildren<Certificate>(
+                            c => c.FkRegistration == this.record.ID)
+                        );
 
                     return ret;
                 }
             }
+            if (isAdministration && (input == "r"))
+            {
+                Page ret = new ChildRecordsPage<Registration>(
+                    this,
+                    this.database,
+                    this.record,
+                    () => this.GetChildren<Registration>(
+                        r => r.FkAdministration == this.record.ID)
+                    );
+
+                return ret;
+            }
 
             if (input == "m")
             {
-                Page page = new UpdatePage(this, this.database, this.record);
+                Page page = new ModifyPage(this, this.database, this.record);
 
                 return page;
             }
@@ -113,29 +150,17 @@
             return this.ReturnPage;
         }
 
-        private IEnumerable<Secret> GetChildSecrets()
+        private IEnumerable<T> GetChildren<T>(Func<T, bool> predicate)
+            where T : Model, new()
         {
-            var records = this.database.GetActiveRecords<Secret>();
+            var records = this.database.GetActiveRecords<T>();
 
             records = records
-                .Where(r => r.FkRegistration == this.record.ID)
-                .Cast<Secret>()
+                .Where(predicate)
+                .Cast<T>()
                 .ToArray();
 
             return records;
         }
-
-        private IEnumerable<Certificate> GetChildCertificates()
-        {
-            var records = this.database.GetActiveRecords<Certificate>();
-
-            records = records
-                .Where(r => r.FkRegistration == this.record.ID)
-                .Cast<Certificate>()
-                .ToArray();
-
-            return records;
-        }
-
     }
 }

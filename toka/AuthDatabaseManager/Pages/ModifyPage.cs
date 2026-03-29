@@ -6,7 +6,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class UpdatePage : RecordPage
+    public class ModifyPage : RecordPage
     {
         protected readonly Database database;
 
@@ -14,7 +14,7 @@
         public override string Title { get; }
 
 
-        public UpdatePage(Page returnPage, Database database, Model record)
+        public ModifyPage(Page returnPage, Database database, Model record)
             : base(returnPage, record)
         {
             this.database = database ??
@@ -40,6 +40,7 @@
 
             bool changed = false;
 
+            string input;
             while (true)
             {
                 bool result = Inputs.Get(this.database, inputs);
@@ -48,6 +49,7 @@
                 {
                     var lines = new List<Row>();
                     int index = 0;
+                    bool parentChanged = false;
                     foreach (InputBase inp in inputs)
                     {
                         string previousVal = defaults[index];
@@ -66,6 +68,11 @@
                             row.Color = ConsoleColor.Green;
 
                             changed = true;
+
+                            if (inp.Type == InputBase.InputType.ModelInput)
+                            {
+                                parentChanged = true;
+                            }
                         }
 
                         lines.Add(row);
@@ -77,6 +84,18 @@
 
                     Write.Lines(aligned);
                     Console.WriteLine();
+
+                    if (parentChanged)
+                    {
+                        Write.Warning("WARNING: The parent has been changed!");
+                        Write.Warning("Do you want to cancel? (Y/n)");
+                        input = Console.ReadLine();
+                        if (input != "n")
+                        {
+                            return this.ReturnPage;
+                        }
+                        Console.WriteLine();
+                    }
 
                     if (!changed)
                     {
@@ -109,7 +128,7 @@
 
                 Console.WriteLine("(Cancelled)");
                 Console.Write("Retry R, Back b:");
-                string input = Console.ReadLine();
+                input = Console.ReadLine();
                 if (input == "b")
                 {
                     return this.ReturnPage;
@@ -130,7 +149,7 @@
                 Write.Error(ex.Message);
                 Console.WriteLine();
                 Console.Write("Retry R, Back b:");
-                string input = Console.ReadLine();
+                input = Console.ReadLine();
                 if (input == "b")
                 {
                     return this.ReturnPage;
@@ -148,7 +167,7 @@
                 .GetTableFromType(this.record.GetType())
                 .FirstOrDefault(m => m.ID == this.record.ID);
 
-            var page = new UpdatePage(this.ReturnPage, this.database, model);
+            var page = new ModifyPage(this.ReturnPage, this.database, model);
 
             return page;
         }

@@ -1,6 +1,7 @@
 ﻿namespace AuthDatabaseManager.Pages
 {
     using System;
+    using System.Collections.Generic;
 
     public abstract class Page
     {
@@ -12,6 +13,8 @@
         public abstract string Title { get; }
 
         public string Subtitle { get; protected set; }
+
+        public Dictionary<string, ConsoleColor> Legend { get; protected set; }
 
         public Page ReturnPage { get; set; }
 

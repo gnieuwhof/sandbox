@@ -24,6 +24,21 @@
         public DateTime ValidFrom { get; set; }
     }
 
+    public interface IKeyPairs : IModel
+    {
+        public string PrivatePem { get; set; }
+
+        public string PublicKey { get; set; }
+
+        public string Fingerprint { get; set; }
+
+        public DateTime ValidFrom { get; set; }
+    }
+
+    public interface IAdministration : IModel
+    {
+    }
+
     public interface IRegistration : IModel
     {
         string Audience { get; set; }
@@ -42,6 +57,17 @@
         public DateTime Expires { get; set; }
 
         public string Hint { get; set; }
+    }
+
+    public interface ICertificate : IModel
+    {
+        public Guid FkRegistration { get; set; }
+
+        public string PublicPem { get; set; }
+
+        public string X5t { get; set; }
+
+        public DateTime Expires { get; set; }
     }
 
     public interface ICertificate : IModel

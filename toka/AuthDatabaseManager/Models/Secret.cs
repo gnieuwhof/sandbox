@@ -3,116 +3,37 @@
     using AuthDatabaseManager.Input;
     using System;
     using System.Collections.Generic;
-    using System.Linq;
 
-    public class Secret : Model, ISecret
+    public class Secret : RegistrationItem, ISecret
     {
-        private readonly Model parent;
-
-        public Guid FkRegistration { get; set; }
-
         [SQLite.NotNull]
         public string DerivedHash { get; set; }
-
-        public DateTime Expires { get; set; }
 
         [SQLite.NotNull]
         public string Hint { get; set; }
 
+        //
 
         public override string[] Columns =>
             new[] { "", "Name:", "Expires:", "Hint:", "Registration:", "Status:" };
 
-        public override string CollectionName => "Secrets";
+        public override string Subtitle =>
+            "Secrets are used to get a token";
+
+        public override string Title => "Secrets";
 
 
         public Secret()
         {
         }
-        public Secret(Model parent)
+
+        public Secret(Model parent) : base(parent)
         {
-            this.parent = parent;
         }
 
 
-        public override Row Row(Database database)
-        {
-            Registration registration = database.Registration(FkRegistration);
-
-            CertificateOrSecretStatus status = GetStatus();
-
-            ConsoleColor color = GetColor(status);
-
-            if (registration == null)
-            {
-                color = ConsoleColor.DarkMagenta;
-            }
-
-            return new Row(color, Name, $"{Expires:yyyy-MM-dd}", Hint, registration?.Name, $"{status}");
-        }
-
-        public override IEnumerable<Row> Details(Database database)
-        {
-            ConsoleColor color = GetColor();
-            Registration registration = database.Registration(FkRegistration);
-
-            var result = new[]
-            {
-                new Row( "ID:", $"{this.ID}" ),
-                new Row( "Name:", this.Name ),
-                new Row( "Registration:", registration?.Name ),
-                new Row( "Hint:", this.Hint ),
-                new Row( "Hash:", this.DerivedHash ),
-                new Row( color, "Expires:", $"{this.Expires:yyyy-MM-dd}" ),
-                new Row( "Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
-                new Row( "Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss") ),
-                new Row( "Disabled:", $"{this.Disabled}" ),
-            };
-
-            return result;
-        }
-
-        private ConsoleColor GetColor()
-        {
-            CertificateOrSecretStatus status = GetStatus();
-
-            ConsoleColor result = GetColor(status);
-
-            return result;
-        }
-
-        private static ConsoleColor GetColor(CertificateOrSecretStatus status)
-        {
-            return status switch
-            {
-                CertificateOrSecretStatus.Expiring => ConsoleColor.Yellow,
-                CertificateOrSecretStatus.Expired => ConsoleColor.Red,
-                _ => ConsoleColor.Gray,
-            };
-        }
-
-        private CertificateOrSecretStatus GetStatus()
-        {
-            if (this.Disabled)
-            {
-                return CertificateOrSecretStatus.Disabled;
-            }
-
-            DateTime nowDate = DateTime.UtcNow.Date;
-            if (this.Expires.Date < nowDate)
-            {
-                return CertificateOrSecretStatus.Expired;
-            }
-            else if ((this.Expires - nowDate).TotalDays <= 31)
-            {
-                return CertificateOrSecretStatus.Expiring;
-            }
-
-            return CertificateOrSecretStatus.Valid;
-        }
-
-        private InputVal<string> secretInput;
         private InputVal<Registration> registrationInput;
+        private InputVal<string> secretInput;
         private InputVal<DateTime> expiresInput;
 
         public override InputBase[] CreateInputs(Database database)
@@ -141,11 +62,14 @@
         public override InputBase[] UpdateInputs(Database database)
         {
             this.nameInput = new InputVal<string>(database, "Name");
+            this.registrationInput = new InputVal<Registration>(
+                database, "Registration");
             this.expiresInput = new InputVal<DateTime>(database, "Expires");
 
             return new InputBase[]
             {
                 this.nameInput,
+                this.registrationInput,
                 this.expiresInput
             };
         }
@@ -153,24 +77,37 @@
         public override void SetDefaults()
         {
             this.nameInput.Default = this.Name;
+
+            Guid? registrationId = (this.FkRegistration != Guid.Empty)
+                ? this.FkRegistration
+                : this.parent?.ID;
+            this.registrationInput
+                .SetDefault<Registration>(registrationId);
+
             this.expiresInput.Default = this.Expires;
         }
 
         public override void SetValues()
         {
             this.Name = this.nameInput.Value;
+
+            if (this.registrationInput.Value == null)
+            {
+                this.registrationInput.SetValue(this.parent);
+            }
+
+            this.FkRegistration =
+                this.registrationInput.Value.ID;
+
             this.Expires = this.expiresInput.Value;
         }
 
         public override int Create(Database database, Guid id)
         {
-            Guid registrationId =
-                this.parent?.ID ?? this.registrationInput.Value.ID;
-
             Secret secret = database.Secret(
                 id,
                 this.nameInput.Value,
-                registrationId,
+                this.registrationInput.Value.ID,
                 this.secretInput.Value,
                 this.expiresInput.Value
                 );
@@ -178,13 +115,107 @@
             return (secret == null) ? 0 : 1;
         }
 
-        public override T[] PreShow<T>(T[] models)
+        //
+
+        public override Row Row(Database database)
         {
-            var casted = models.Cast<Secret>();
+            Registration registration =
+                database.Record<Registration>(FkRegistration);
 
-            var ordered = casted.OrderBy(c => c.Expires);
+            CertificateOrSecretStatus status = GetStatus();
 
-            return ordered.Cast<T>().ToArray();
+            ConsoleColor rowColor = GetColor(status);
+
+            ParentsStatus parentsStatus = database.GetParentsStatus(this);
+            if (parentsStatus == ParentsStatus.Deleted)
+            {
+                rowColor = ConsoleColor.Magenta;
+            }
+            else if (parentsStatus == ParentsStatus.Disabled)
+            {
+                rowColor = ConsoleColor.DarkGray;
+            }
+
+            return new Row(rowColor, Name, $"{Expires:yyyy-MM-dd}", Hint, registration?.Name, $"{status}");
+        }
+
+        public override IEnumerable<Row> Details(Database database)
+        {
+            CertificateOrSecretStatus status = GetStatus();
+
+            ConsoleColor color = GetColor(status);
+
+            Registration registration =
+                database.Record<Registration>(FkRegistration);
+
+            ConsoleColor regColor = ConsoleColor.Gray;
+            if (registration == null)
+            {
+                regColor = ConsoleColor.Magenta;
+            }
+            else if (registration.Disabled)
+            {
+                regColor = ConsoleColor.DarkGray;
+            }
+
+            IEnumerable<string> parts = Split(this.DerivedHash, 38);
+
+            var rows = new List<Row>();
+            rows.Add(new Row("ID:", $"{this.ID}"));
+            rows.Add(new Row("Name:", this.Name));
+            rows.Add(new Row(regColor, "Registration:", registration?.Name));
+            if (registration != null)
+            {
+                Administration administration =
+                    database.Record<Administration>(registration.FkAdministration);
+                ConsoleColor adminColor = ConsoleColor.Gray;
+                if (administration == null)
+                {
+                    adminColor = ConsoleColor.Magenta;
+                }
+                else if (administration.Disabled)
+                {
+                    adminColor = ConsoleColor.DarkGray;
+                }
+                rows.Add(new Row(adminColor, "Administration:", administration?.Name));
+            }
+            rows.Add(new Row("Hint:", this.Hint));
+            string hash = "Hash:";
+            foreach (string part in parts)
+            {
+                rows.Add(new Row(hash, part));
+                hash = "";
+            }
+            string expires = status switch
+            {
+                CertificateOrSecretStatus.Expired => "Expired",
+                _ => "Expires"
+            };
+            rows.Add(new Row(color, $"{expires}:", $"{this.Expires:yyyy-MM-dd}"));
+            rows.Add(new Row("Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")));
+            rows.Add(new Row("Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss")));
+            rows.Add(new Row("Disabled:", $"{this.Disabled}"));
+
+            return rows;
+        }
+        private static IEnumerable<string> Split(string toSplit, int sizes)
+        {
+            var result = new List<string>();
+
+            string remainder = toSplit;
+
+            while (remainder.Length > 0)
+            {
+                int min = Math.Min(remainder.Length, sizes);
+
+                string part = remainder.Substring(0, min);
+
+                result.Add(part);
+
+                remainder = remainder.Substring(min);
+            }
+
+            return result;
         }
     }
 }

@@ -51,20 +51,18 @@
             return database;
         }
 
-
-        public Registration Registration(Guid id)
+        public T Record<T>(Guid? id) where T : Model, new()
         {
-            Registration result = this.connection
-                .Table<Registration>()
-                .Where(r => r.Disabled == false)
+            T result = this.connection
+                .Table<T>()
                 .FirstOrDefault(r => r.ID == id);
 
             return result;
         }
 
-        private T[] GetTable<T>() where T : Model, new()
+        public TableQuery<T> GetTable<T>() where T : Model, new()
         {
-            T[] result = this.connection.Table<T>().ToArray();
+            TableQuery<T> result = this.connection.Table<T>();
 
             return result;
         }
@@ -129,15 +127,17 @@
             return this.connection.Update(model);
         }
 
-        public PrivateKey PrivateKey(
+        public KeyPair KeyPair(
             Guid id,
             string name,
+            string pemFilePath,
             string keyFilePath,
             string fingerprint,
             DateTime? validFrom = null
             )
         {
-            string content = File.ReadAllText(keyFilePath);
+            string privatePem = File.ReadAllText(pemFilePath);
+            string publicKey = File.ReadAllText(keyFilePath);
 
             DateTime utcNow = DateTime.UtcNow;
 
@@ -146,52 +146,42 @@
                 validFrom = utcNow.Date;
             }
 
-            var privateKey = new PrivateKey
+            var keyPair = new KeyPair
             {
                 ID = id,
                 CreatedOn = utcNow,
                 ModifiedOn = utcNow,
                 Name = name,
-                Content = content,
+                PrivatePem = privatePem,
+                PublicKey = publicKey,
                 ValidFrom = validFrom.Value,
                 Fingerprint = fingerprint
             };
 
-            this.connection.Insert(privateKey);
+            this.connection.Insert(keyPair);
 
-            return privateKey;
+            return keyPair;
         }
 
-        public Certificate Certificate(
-            Guid id,
-            string name,
-            Guid registrationId,
-            string publicPem,
-            string x5t,
-            DateTime expires
-            )
+        public Administration Administration(Guid id, string name)
         {
             DateTime utcNow = DateTime.UtcNow;
 
-            var certificate = new Certificate
+            var administration = new Administration
             {
                 ID = id,
                 CreatedOn = utcNow,
                 ModifiedOn = utcNow,
-                FkRegistration = registrationId,
                 Name = name,
-                PublicPem = publicPem,
-                X5t = x5t,
-                Expires = expires
             };
 
-            this.connection.Insert(certificate);
+            this.connection.Insert(administration);
 
-            return certificate;
+            return administration;
         }
 
-        public Registration Registration(Guid id, 
-            string name, string audience, string scope, int validFor)
+        public Registration Registration(Guid id, string name,
+            Guid administrationId, string audience, string scope, int validFor)
         {
             DateTime utcNow = DateTime.UtcNow;
 
@@ -201,6 +191,7 @@
                 CreatedOn = utcNow,
                 ModifiedOn = utcNow,
                 Name = name,
+                FkAdministration = administrationId,
                 Audience = audience,
                 Scopes = scope,
                 ValidityPeriod = validFor
@@ -251,6 +242,64 @@
             return secret;
         }
 
+        public Certificate Certificate(
+            Guid id,
+            string name,
+            Guid registrationId,
+            string publicPem,
+            string x5t,
+            DateTime expires
+            )
+        {
+            DateTime utcNow = DateTime.UtcNow;
+
+            var certificate = new Certificate
+            {
+                ID = id,
+                CreatedOn = utcNow,
+                ModifiedOn = utcNow,
+                FkRegistration = registrationId,
+                Name = name,
+                PublicPem = publicPem,
+                X5t = x5t,
+                Expires = expires
+            };
+
+            this.connection.Insert(certificate);
+
+            return certificate;
+        }
+
+        public ParentsStatus GetParentsStatus(IChild child)
+        {
+            _ = child ?? throw new ArgumentNullException(nameof(child));
+
+            Model parent = child.Parent(this);
+
+            if (parent == null)
+            {
+                return ParentsStatus.Deleted;
+            }
+
+            if (parent.Disabled)
+            {
+                return ParentsStatus.Disabled;
+            }
+
+            if (parent is IChild pc)
+            {
+                // Recurse!
+                return this.GetParentsStatus(pc);
+            }
+
+            return ParentsStatus.Enabled;
+        }
+
+        public void Vacuum()
+        {
+            this.connection.Execute("VACUUM");
+        }
+
         private static string Pbkdf2(string value)
         {
             if (string.IsNullOrWhiteSpace(value))
@@ -265,30 +314,5 @@
 
             return result;
         }
-
-        //public IEnumerable<Row> GetGrid(IEnumerable<Model> records)
-        //{
-        //    var grid = new List<Row>();
-
-        //    int index = 0;
-        //    foreach (object record in records)
-        //    {
-        //        ++index;
-        //        if (record is Model model)
-        //        {
-        //            var columns = new List<string>();
-
-        //            columns.Add($"{index}");
-
-        //            var modelRow = model.Row(this);
-
-        //            columns.AddRange(modelRow.Columns);
-
-        //            grid.Add(new Row(modelRow.Color, columns.ToArray()));
-        //        }
-        //    }
-
-        //    return grid;
-        //}
     }
 }

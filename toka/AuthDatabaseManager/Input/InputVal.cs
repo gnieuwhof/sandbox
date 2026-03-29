@@ -7,6 +7,7 @@
     {
         private readonly Database database;
 
+
         public T Value { get; set; }
 
 
@@ -98,6 +99,13 @@
             }
 
             throw new ArgumentException("Invalid type");
+        }
+
+        public void SetDefault<M>(Guid? id) where M : Model, new()
+        {
+            M val = this.database.Record<M>(id.Value);
+
+            this.Default = val;
         }
     }
 }

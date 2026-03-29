@@ -2,15 +2,14 @@
 {
     using System.Collections.Generic;
 
-    public class ToolsPage : MenuPage
+    public class DiagnosisPage : MenuPage
     {
-        public ToolsPage(Page returnPage, Database database)
+        public DiagnosisPage(Page returnPage, Database database)
             : base(database, returnPage, "q")
         {
         }
 
-
-        public override string Title => "Tools";
+        public override string Title => "Diagosis";
 
         protected override List<(char?, object)> Options
         {
@@ -20,11 +19,9 @@
 
                 return new()
                 {
-                    ('1', new Hex2Base64Page(this)),
-                    ('2', new SecretsGeneratorPage(this, this.database)),
-                    ('3', new PasswordsGeneratorPage(this, this.database)),
-                    (null, LINE),
-                    ('v', new VacuumPage(this, this.database)),
+                    ('1', new DiagnosisDetailsPage(this, this.database, DiagLevel.Info)),
+                    ('2', new DiagnosisDetailsPage(this, this.database, DiagLevel.Warning)),
+                    ('3', new DiagnosisDetailsPage(this, this.database, DiagLevel.Error)),
                     (null, LINE),
                     ('q', this.ReturnPage),
                 };

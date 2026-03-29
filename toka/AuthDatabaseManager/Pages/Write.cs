@@ -42,5 +42,15 @@
 
             Console.ForegroundColor = foregroundColor;
         }
+
+        public static void Cyan(string message)
+        {
+            Color(ConsoleColor.Cyan, message);
+        }
+
+        public static void Green(string message)
+        {
+            Color(ConsoleColor.Green, message);
+        }
     }
 }

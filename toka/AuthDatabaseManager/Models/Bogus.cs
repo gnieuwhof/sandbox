@@ -8,7 +8,9 @@
     {
         public override string[] Columns => throw new System.NotImplementedException();
 
-        public override string CollectionName => throw new System.NotImplementedException();
+        public override string Title => throw new System.NotImplementedException();
+
+        public override string Subtitle => throw new NotImplementedException();
 
         public override IEnumerable<Row> Details(Database database)
         {

@@ -10,7 +10,7 @@
         {
             while (true)
             {
-                Console.WriteLine(description);
+                Console.WriteLine($"{description}:");
                 string input = Console.ReadLine();
 
                 if (File.Exists(input))

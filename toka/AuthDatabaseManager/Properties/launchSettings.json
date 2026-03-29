@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "AuthDatabaseManager": {
+      "commandName": "Project",
+      "commandLineArgs": "orthrus.db3"
+    }
+  }
+}

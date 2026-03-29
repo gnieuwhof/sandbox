@@ -22,12 +22,26 @@
         }
 
 
+        public override string Title
+        {
+            get
+            {
+                if (!string.IsNullOrWhiteSpace(this.parent?.Name))
+                {
+                    return $"{this.parent.Name}: {base.Title}";
+                }
+
+                return base.Title;
+            }
+        }
+
+
         protected override Page AfterShow()
         {
             string legend = "Back B, Create: c";
             if (this.records.Any())
             {
-                legend = $"{legend}, Disable d, Show s";
+                legend = $"{legend}, Disable d, Show s (or number)";
             }
             legend += ":";
 
@@ -35,6 +49,18 @@
             {
                 Console.Write(legend);
                 string input = Console.ReadLine();
+
+                if (int.TryParse(input, out int num))
+                {
+                    --num;
+                    if ((num >= 0) && (num <= records.Count()))
+                    {
+                        Model selected = records.ElementAt(num);
+                        var details = new DetailsPage(this, this.database, selected);
+                        details.ReturnPage = this;
+                        return details;
+                    }
+                }
 
                 Page page;
 

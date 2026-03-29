@@ -7,46 +7,98 @@
     using System.Linq;
     using System.Security.Cryptography.X509Certificates;
 
-    public class Certificate : Model
+    public class Certificate : RegistrationItem, ICertificate
     {
-        private readonly Model parent;
-
-
-        public Guid FkRegistration { get; set; }
-
         [SQLite.NotNull]
         public string PublicPem { get; set; }
 
         [SQLite.NotNull]
         public string X5t { get; set; }
 
-        public DateTime Expires { get; set; }
-
+        //
 
         public override string[] Columns =>
             new[] { "", "Name:", "Expires:", "x5t:", "Registration:", "Status:" };
 
-        public override string CollectionName => "Certificates";
+        public override string Title => "Certificates";
+
+        public override string Subtitle =>
+            "Certificates are used to get a token";
 
 
         public Certificate()
         {
         }
-        public Certificate(Model parent)
+
+        public Certificate(Model parent) : base(parent)
         {
-            this.parent = parent;
         }
 
 
+        private InputVal<Registration> registrationInput;
+        private InputVal<string> publicPemPathInput;
+
+        public override InputBase[] CreateInputs(Database database)
+        {
+            this.nameInput = new InputVal<string>(database, "Name");
+            this.registrationInput = new InputVal<Registration>(
+                database, "Registration");
+            this.publicPemPathInput = new InputVal<string>(database,
+                "Public PEM (CRT) file path", InputBase.InputType.FileInput);
+
+            var inputs = new List<InputBase>();
+            inputs.Add(this.nameInput);
+            if (this.parent is null)
+            {
+                inputs.Add(this.registrationInput);
+            }
+            inputs.Add(this.publicPemPathInput);
+
+            return inputs.ToArray();
+        }
+
+        public override InputBase[] UpdateInputs(Database database)
+        {
+            this.nameInput = new InputVal<string>(database, "Name");
+            this.registrationInput = new InputVal<Registration>(
+                database, "Registration");
+
+            return new InputBase[]
+            {
+                this.nameInput,
+                this.registrationInput,
+            };
+        }
+        public override void SetDefaults()
+        {
+            this.nameInput.Default = this.Name;
+
+            Guid? registrationId = (this.FkRegistration != Guid.Empty)
+                ? this.FkRegistration
+                : this.parent?.ID;
+            this.registrationInput
+                .SetDefault<Registration>(registrationId);
+        }
+
+        public override void SetValues()
+        {
+            this.Name = this.nameInput.Value;
+
+            if (this.registrationInput.Value == null)
+            {
+                this.registrationInput.SetValue(this.parent);
+            }
+
+            this.FkRegistration =
+                this.registrationInput.Value.ID;
+        }
+
         public override int Create(Database database, Guid id)
         {
-            Guid registrationId =
-                this.parent?.ID ?? this.registrationInput.Value.ID;
-
             Certificate certificate = database.Certificate(
                 id,
                 this.Name,
-                registrationId,
+                this.registrationInput.Value.ID,
                 this.PublicPem,
                 this.X5t,
                 this.Expires
@@ -55,64 +107,91 @@
             return (certificate == null) ? 0 : 1;
         }
 
-        private InputVal<Registration> registrationInput;
-
-        private InputVal<string> pemPathInput;
-
-        public override InputBase[] CreateInputs(Database database)
+        public override Row Row(Database database)
         {
-            this.nameInput = new InputVal<string>(database, "Name");
-            this.registrationInput = new InputVal<Registration>(
-                database, "Registration");
-            this.pemPathInput = new InputVal<string>(database,
-                "PEM file path", InputBase.InputType.FileInput);
+            Registration registration =
+                database.Record<Registration>(FkRegistration);
 
-            var inputs = new List<InputBase>();
-            inputs.Add(this.nameInput);
-            if (this.parent is null)
+            CertificateOrSecretStatus status = GetStatus();
+
+            ConsoleColor rowColor = GetColor(status);
+
+            ParentsStatus parentsStatus = database.GetParentsStatus(this);
+            if (parentsStatus == ParentsStatus.Deleted)
             {
-                inputs.Add(this.registrationInput);
+                rowColor = ConsoleColor.Magenta;
             }
-            inputs.Add(this.pemPathInput);
+            else if (parentsStatus == ParentsStatus.Disabled)
+            {
+                rowColor = ConsoleColor.DarkGray;
+            }
 
-            return inputs.ToArray();
+            return new Row(rowColor, this.Name, $"{Expires:yyyy-MM-dd}", this.X5t, registration?.Name, $"{status}");
         }
 
         public override IEnumerable<Row> Details(Database database)
         {
             ConsoleColor color = GetColor();
-            Registration registration = database.Registration(FkRegistration);
 
+            ParentsStatus parentsStatus = database.GetParentsStatus(this);
+
+            Registration registration =
+                database.Record<Registration>(FkRegistration);
+
+            ConsoleColor regColor = ConsoleColor.Gray;
+            if (registration == null)
+            {
+                regColor = ConsoleColor.Magenta;
+            }
+            else if (registration.Disabled)
+            {
+                regColor = ConsoleColor.DarkGray;
+            }
+
+            var rows = new List<Row>();
+            rows.Add(new Row("ID:", $"{this.ID}"));
+
+            string pem = "Public PEM (CRT):";
             string[] pemLines = this.PublicPem.Replace("\r\n", "\n").Split('\n');
-
-            var list = new List<Row>();
-            list.Add(new Row("ID:", $"{this.ID}"));
-
-            list.Add(new Row("PEM:", ""));
-            int i = 0;
             foreach (string line in pemLines)
             {
-                ++i;
                 if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
                 }
-                list.Add(new Row($"{i}:", line));
+                rows.Add(new Row(pem, line));
+                pem = "";
             }
 
-            list.Add(new Row("Name:", this.Name));
-            list.Add(new Row("x5t:", this.X5t));
+            rows.Add(new Row("Name:", this.Name));
+            rows.Add(new Row(regColor, "Registration:", registration?.Name));
+            if (registration != null)
+            {
+                Administration administration =
+                    database.Record<Administration>(registration.FkAdministration);
+                ConsoleColor adminColor = ConsoleColor.Gray;
+                if(administration == null)
+                {
+                    adminColor = ConsoleColor.Magenta;
+                }
+                else if(administration.Disabled)
+                {
+                    adminColor = ConsoleColor.DarkGray;
+                }
+                rows.Add(new Row(adminColor, "Administration:", administration?.Name));
+            }
+            rows.Add(new Row("x5t:", this.X5t));
 
             byte[] x5tBytes = FromBase64Url(this.X5t);
             string kidFromX5t = Convert.ToHexString(x5tBytes);
-            list.Add(new Row("kid:", kidFromX5t));
+            rows.Add(new Row("kid:", kidFromX5t));
 
-            list.Add(new Row(color, "Expires:", $"{this.Expires:yyyy-MM-dd}"));
-            list.Add(new Row("Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")));
-            list.Add(new Row("Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss")));
-            list.Add(new Row("Disabled:", $"{this.Disabled}"));
+            rows.Add(new Row(color, "Expires:", $"{this.Expires:yyyy-MM-dd}"));
+            rows.Add(new Row("Created On:", this.CreatedOn.ToString("yyyy-MM-dd HH:mm:ss")));
+            rows.Add(new Row("Modified On:", this.ModifiedOn.ToString("yyyy-MM-dd HH:mm:ss")));
+            rows.Add(new Row("Disabled:", $"{this.Disabled}"));
 
-            return list.ToArray();
+            return rows.ToArray();
         }
         private static byte[] FromBase64Url(string base64Url)
         {
@@ -130,61 +209,6 @@
             byte[] bytes = Convert.FromBase64String(padded);
 
             return bytes;
-        }
-
-        private ConsoleColor GetColor()
-        {
-            CertificateOrSecretStatus status = GetStatus();
-
-            ConsoleColor result = GetColor(status);
-
-            return result;
-        }
-
-        private static ConsoleColor GetColor(CertificateOrSecretStatus status)
-        {
-            return status switch
-            {
-                CertificateOrSecretStatus.Expiring => ConsoleColor.Yellow,
-                CertificateOrSecretStatus.Expired => ConsoleColor.Red,
-                _ => ConsoleColor.Gray,
-            };
-        }
-
-        private CertificateOrSecretStatus GetStatus()
-        {
-            if (this.Disabled)
-            {
-                return CertificateOrSecretStatus.Disabled;
-            }
-
-            DateTime nowDate = DateTime.UtcNow.Date;
-            if (this.Expires.Date < nowDate)
-            {
-                return CertificateOrSecretStatus.Expired;
-            }
-            else if ((this.Expires - nowDate).TotalDays <= 31)
-            {
-                return CertificateOrSecretStatus.Expiring;
-            }
-
-            return CertificateOrSecretStatus.Valid;
-        }
-
-        public override Row Row(Database database)
-        {
-            Registration registration = database.Registration(FkRegistration);
-
-            CertificateOrSecretStatus status = GetStatus();
-
-            ConsoleColor color = GetColor(status);
-
-            if (registration == null)
-            {
-                color = ConsoleColor.DarkMagenta;
-            }
-
-            return new Row(color, this.Name, $"{Expires:yyyy-MM-dd}", this.X5t, registration?.Name, $"{status}");
         }
 
         public override void PreCreate(IList<Row> lines)
@@ -220,33 +244,15 @@
             }
             catch (Exception e)
             {
-                throw new Exception($"Could not process PEM file '{path}'", e);
+                throw new Exception($"Could not process public PEM (CRT) file '{path}'", e);
             }
         }
+
         private static string Base64UrlEncode(byte[] bytes)
         {
             string base64 = Convert.ToBase64String(bytes);
             base64 = base64.Replace('+', '-').Replace('/', '_').TrimEnd('=');
             return base64;
-        }
-        public override void SetDefaults()
-        {
-            this.nameInput.Default = this.Name;
-        }
-
-        public override void SetValues()
-        {
-            this.Name = this.nameInput.Value;
-        }
-
-        public override InputBase[] UpdateInputs(Database database)
-        {
-            this.nameInput = new InputVal<string>(database, "Name");
-
-            return new InputBase[]
-            {
-                this.nameInput,
-            };
         }
     }
 }
