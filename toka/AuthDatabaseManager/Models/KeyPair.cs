@@ -5,7 +5,7 @@
     using System.Collections.Generic;
     using System.Linq;
 
-    public class KeyPair : Model, IKeyPairs
+    public class KeyPair : Model, IKeyPair
     {
         [SQLite.NotNull]
         public string PrivatePem { get; set; }
