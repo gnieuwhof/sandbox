@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "TokenTool": {
+      "commandName": "Project",
+      "commandLineArgs": "config.json 123"
+    }
+  }
+}
