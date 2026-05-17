@@ -52,5 +52,10 @@
         {
             Color(ConsoleColor.Green, message);
         }
+
+        public static void Dark(string message)
+        {
+            Color(ConsoleColor.DarkGray, message);
+        }
     }
 }

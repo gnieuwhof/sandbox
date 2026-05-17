@@ -8,7 +8,7 @@
     public static class Program
     {
         private const string TITLE = "AUTH DATABASE MANAGER";
-        private static readonly Version VERSION = new Version(1, 90);
+        private static readonly Version VERSION = new Version(1, 91);
 
 
         private static void Main(string[] args)
